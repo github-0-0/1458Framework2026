@@ -16,6 +16,7 @@ import frc.robot.lib.util.COTSTalonFXSwerveConstants;
 import frc.robot.lib.util.SwerveModuleConstants;
 import frc.robot.subsystems.SwerveDrive.KinematicLimits;
 import frc.robot.subsystems.limelight.GoalTracker;
+import frc.robot.subsystems.vision.VisionDeviceConstants;
 
 public final class Constants {
     public static final double stickDeadband = 0.07;
@@ -170,6 +171,21 @@ public final class Constants {
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
 
+    public static VisionDeviceConstants kLeftVisionDevice = new VisionDeviceConstants(); // dot 13
+    public static VisionDeviceConstants kRightVisionDevice = new VisionDeviceConstants(); // dot 12
+
+    static {
+        kLeftVisionDevice.kTableName = "limelight-c";
+        kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
+                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325)),
+                Rotation2d.fromDegrees(-27));
+
+        kRightVisionDevice.kTableName = "limelight-bw";
+        kRightVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
+                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
+                Rotation2d.fromDegrees(27.0));
+    }
+    
     public static final class LimelightConstants {
 
 		public static final double kNoteHeight = 0.0508;
