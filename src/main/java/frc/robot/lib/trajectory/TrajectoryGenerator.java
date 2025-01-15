@@ -6,17 +6,32 @@ import frc.robot.subsystems.DummySubsystem;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.String;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.util.FileVersionException;
+
 import java.io.IOException;
 
 //dc.10.21.2024, this class is going to load all paths pre-defined via PathWeaver tool
 
 public class TrajectoryGenerator {
     
+    public RobotConfig config;
     //the trajectories used in auto mode
     private TrajectorySet mTrajectorySet = null;
-
+    
     public class TrajectorySet {
 		//the parent folder NEEDs to be "./src/main/deploy/"
+        /*  old wpilib trajectories
         public Trajectory testTrajectoryZigzag = loadTrajectory("paths/output/s.0.0.zigzag.wpilib.json"); 
         public Trajectory testTrajectoryBackForth = loadTrajectory("paths/output/s.0.0.back.n.forth.n.return.wpilib.json"); 
         public Trajectory testTrajectoryStraightForward = loadTrajectory("paths/output/s.0.0.StraightForward.n.return.wpilib.json"); 
@@ -26,7 +41,8 @@ public class TrajectoryGenerator {
         public Trajectory testTrajectoryBeeDancing = loadTrajectory("paths/output/s.0.0.BeeDancing.wpilib.json");         
         public Trajectory testTrajectorySmallLoop = loadTrajectory("paths/output/s.0.0.smallloop.wpilib.json");         
         public Trajectory testTrajectoryOhNo = loadTrajectory("paths/output/s.0.0.oh.no.wpilib.json");
-        public Trajectory testTrajectoryForwardBack = loadTrajectory("paths/output/s.0.0.shrimple.wpilib.json");
+        public Trajectory testTrajectoryForwardBack = loadTrajectory("paths/output/s.0.0.shrimple.wpilib.json");*/
+        public PathPlannerTrajectory testPathPlannerTrajectory = loadPathPlannerTrajectory("S1-C1");
         /* dc.10.21.2024, additional trajectory can be added similar to the TestTrajectory */
 
         private Trajectory loadTrajectory (String sJsonFile){
@@ -39,6 +55,17 @@ public class TrajectoryGenerator {
                 return trajectory;
             } catch(IOException err){
                 System.out.println("Trajectory loaded failed! =" + sJsonFile + ";err=" + err);
+                return null;
+            }
+        }
+        private PathPlannerTrajectory loadPathPlannerTrajectory (String sJsonFile) {
+            PathPlannerPath path;
+            try {
+                path = PathPlannerPath.fromPathFile(sJsonFile);
+                System.out.println("Trajectory loaded successfully! =" + path.toString());
+                return path.getIdealTrajectory(config).get();
+            } catch (FileVersionException | IOException | ParseException e) {
+                System.out.println("Trajectory loaded failed! =" + sJsonFile + ";err=" + e);
                 return null;
             }
         }
@@ -57,6 +84,13 @@ public class TrajectoryGenerator {
     public TrajectoryGenerator (){
         //dc.to be implemented
         //TODO: finish trajectory generator constructor
+        try{
+        config = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+        // Handle exception as needed
+        System.out.println("whyyyyyyy");
+        e.printStackTrace();
+        }
     }
 
     //actually create the trajectory object

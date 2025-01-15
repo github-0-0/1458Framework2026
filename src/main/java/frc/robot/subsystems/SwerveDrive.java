@@ -1,6 +1,11 @@
 package frc.robot.subsystems;
 
-//dc.10.25.2024, ported from com.team1678.frc2024.subsystems.Drive;
+//dc.10.25.2024, ported from com.team1678.frc2024.subsystems.Drive
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.controllers.PathFollowingController;
 
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -33,6 +38,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
+import frc.robot.lib.trajectory.PathPlannerTrajectoryIterator;
 import frc.robot.lib.trajectory.TrajectoryIterator;
 //TODO:import com.team254.lib.trajectory.TimedView;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -44,6 +50,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,6 +119,16 @@ public class SwerveDrive extends Subsystem {
 		mWheelTracker = new WheelTracker(mModules);
 
 		SmartDashboard.putData("Field", m_field);
+	
+	}
+
+	private ChassisSpeeds getRobotRelativeSpeeds() {
+		return new ChassisSpeeds();
+	}
+
+	private Object driveRobotRelative(ChassisSpeeds speeds) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'driveRobotRelative'");
 	}
 
 	public void setKinematicLimits(KinematicLimits newLimits) {
@@ -287,6 +304,15 @@ public class SwerveDrive extends Subsystem {
 	}
 
 	public synchronized void setTrajectory(TrajectoryIterator trajectory) {
+		if (mMotionPlanner != null) {
+			mOverrideTrajectory = false;
+			mMotionPlanner.reset();
+			mMotionPlanner.setTrajectory(trajectory);
+			mControlState = DriveControlState.PATH_FOLLOWING;
+		}
+	}
+
+	public synchronized void setTrajectory(PathPlannerTrajectoryIterator trajectory) {
 		if (mMotionPlanner != null) {
 			mOverrideTrajectory = false;
 			mMotionPlanner.reset();

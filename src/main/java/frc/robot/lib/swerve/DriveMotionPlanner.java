@@ -2,6 +2,8 @@ package frc.robot.lib.swerve;
 
 import java.util.List;
 
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
+
 //dc.10.21.2024, rewrite citrus code using wpilib Trajectory classes
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,6 +13,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.lib.trajectory.PathPlannerTrajectoryIterator;
 import frc.robot.lib.trajectory.TrajectoryIterator;
 import frc.robot.Constants;
 import frc.robot.lib.control.Lookahead;
@@ -51,6 +54,7 @@ public class DriveMotionPlanner {
 	}
 
     TrajectoryIterator mCurrentTrajectory;
+	PathPlannerTrajectoryIterator mCurrentPathPlannerTrajectory;//!!
 
     double mDt = 0.0;   //delta of time
     boolean mIsReversed = false;
@@ -104,7 +108,31 @@ public class DriveMotionPlanner {
 			}
 		}
     }
-
+	public void setTrajectory(final PathPlannerTrajectoryIterator trajectory) {
+        mCurrentPathPlannerTrajectory = trajectory;
+		mSetpoint = trajectory.getState();
+//		mLastSetpoint = null;
+		useDefaultCook = true;
+		mSpeedLookahead = new Lookahead(
+				kAdaptivePathMinLookaheadDistance,
+				kAdaptivePathMaxLookaheadDistance,
+				0.0,
+				Constants.SwerveConstants.maxAutoSpeed);
+		mCurrentTrajectoryLength =
+				mCurrentPathPlannerTrajectory.trajectory().getTotalTimeSeconds();	//dc.11.21.24, replace citrus code = .getLastPoint().state().t();
+		
+		//check if trajectory is reversed
+		List<PathPlannerTrajectoryState> stateList = trajectory.trajectory().getStates();
+		for (int i = 0; i < stateList.size(); ++i) {
+			if (stateList.get(i).linearVelocity > Util.kEpsilon) {
+				mIsReversed = false;
+				break; //dc.11.21.24, assume all states of the trajectory have the same direction
+			} else if (stateList.get(i).linearVelocity  < -Util.kEpsilon) {
+				mIsReversed = true;
+				break;
+			}
+		}
+	}
 	public void reset() {
 //		mErrorTracker.reset();
 		mTranslationalError = new Translation2d();
@@ -221,11 +249,11 @@ public class DriveMotionPlanner {
 
     // check if we complete the current trajectory
     public boolean isDone() {
-		if (mCurrentTrajectory!=null){
+		if (mCurrentPathPlannerTrajectory!=null){
 		}
-		if(mCurrentTrajectory.isDone()){
+		if(mCurrentPathPlannerTrajectory.isDone()){
 		}
-		return mCurrentTrajectory != null && mCurrentTrajectory.isDone();
+		return mCurrentPathPlannerTrajectory != null && mCurrentPathPlannerTrajectory.isDone();
 	}
 
 	//dc. add Twist2d pid_error as input parameter to remove dependency on class property in original citrus code
