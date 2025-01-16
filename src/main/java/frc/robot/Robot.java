@@ -13,6 +13,7 @@ import frc.robot.Loops.Looper;
 //import frc.robot.controlboard.DriverControls;
 import frc.robot.subsystems.DummySubsystem;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.vision.VisionDeviceManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -35,7 +36,6 @@ public class Robot extends TimedRobot {
 
   public static final CTREConfigs ctreConfigs = new CTREConfigs();
 
-  
   private Command m_autonomousCommand;
 
   private RobotContainer25 m_robotContainer;
@@ -52,11 +52,11 @@ public class Robot extends TimedRobot {
     
 
     for (int port = 5800; port <= 5809; port++) {
-      edu.wpi.first.net.PortForwarder.add(port, "limelight.local", port);
+      edu.wpi.first.net.PortForwarder.add(port, "limelight-c.local", port);
+      edu.wpi.first.net.PortForwarder.add(port, "limelight-bw.local", port);
     } 
     
-    //subsystems and loop framework init code move to RobotContainer25 class
-
+    //subsystems and loop framework init code move to RobotContainer25 class  
   }
 
   /**

@@ -22,6 +22,7 @@ import frc.robot.subsystems.Cancoders;
 import frc.robot.subsystems.DummySubsystem;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.vision.VisionDeviceManager;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
@@ -59,8 +60,9 @@ public class RobotContainer25 {
     
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
-	
 
+    private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
+	
     //contructor
     public RobotContainer25 (){
         try{
@@ -88,7 +90,8 @@ public class RobotContainer25 {
             //add subsystems to its manager
             m_SubsystemManager.setSubsystems(
                 m_SwerveDrive,
-                m_ExampleSubsystem
+                m_ExampleSubsystem,
+                m_VisionDevices
                 //Insert instances of additional subsystems here
             );
             //register subsystems to loopers
