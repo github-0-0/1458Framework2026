@@ -113,6 +113,8 @@ public class RobotState {
 		vehicle_velocity_measured = measured_velocity;
 		vehicle_velocity_measured_filtered.add(measured_velocity);
 		vehicle_velocity_predicted = predicted_velocity;
+
+		lastTimestamp = now;
 	}
 
 	/**
@@ -179,7 +181,7 @@ public class RobotState {
 	}
 
 	/**
-	 * Gets initial odometry error. Odometry initializes to the origin, while the
+	 * Gets initial odometry error. Odometry initializes to the origin, eile the
 	 * robot starts at an unknown position on the field.
 	 *
 	 * @return Initial odometry error translation.

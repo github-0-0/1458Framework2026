@@ -114,6 +114,10 @@ public class SwerveDrive extends Subsystem {
 		SmartDashboard.putData("Field", m_field);
 	}
 
+	public void setWheelTrackerPose(Pose2d initial) {
+		mWheelTracker.resetPose(initial);
+	}
+
 	public void setKinematicLimits(KinematicLimits newLimits) {
 		this.mKinematicLimits = newLimits;
 	}
