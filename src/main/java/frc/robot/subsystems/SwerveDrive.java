@@ -111,7 +111,7 @@ public class SwerveDrive extends Subsystem {
 		mPigeon.setYaw(0.0);
 		mWheelTracker = new WheelTracker(mModules);
 
-		SmartDashboard.putData("Field", m_field);
+		SmartDashboard.putData("Pure WheelTracker", m_field);
 	}
 
 	public void setWheelTrackerPose(Pose2d initial) {
