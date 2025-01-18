@@ -55,7 +55,7 @@ public class RobotContainer25 {
     public final SubsystemManager m_SubsystemManager = SubsystemManager.getInstance();
     /* Subsystems instance */
     private DummySubsystem m_ExampleSubsystem;
-    private SwerveDrive m_SwerveDrive;
+    public SwerveDrive m_SwerveDrive;
     private Cancoders m_Cancoders;
     
     public AutoModeExecutor m_AutoModeExecutor;

@@ -58,6 +58,8 @@ public class RobotState {
 	private boolean mHasRecievedVisionUpdate = false;
 	private boolean mIsInAuto = false;
 
+	public double lastTimestamp = 0;
+
 	public RobotState() {
 		reset(0.0, new InterpolatingPose2d());
 	}
@@ -82,6 +84,8 @@ public class RobotState {
 		vehicle_velocity_measured = new Twist2d();
 		vehicle_velocity_predicted = new Twist2d();
 		vehicle_velocity_measured_filtered = new MovingAverageTwist2d(25);
+
+		lastTimestamp = now;
 		// mLatestVisionUpdate = new Optional();
 		// mPoseAcceptor = new VisionPoseAcceptor();
 	}
@@ -120,6 +124,7 @@ public class RobotState {
 		// If it's the first update don't do filtering
 		if (!mLatestVisionUpdate.isPresent() || initial_field_to_odom.isEmpty()) {
 			double vision_timestamp = update.timestamp;
+			lastTimestamp = update.timestamp;
 			Pose2d proximate_dt_pose = odometry_to_vehicle.getInterpolated(new InterpolatingDouble(vision_timestamp));
 			Translation2d field_to_vision = update.field_to_camera
 					.plus(update.getRobotToCamera()
@@ -134,6 +139,7 @@ public class RobotState {
 			mLatestVisionUpdate = Optional.ofNullable(update);
 		} else {
 			double vision_timestamp = mLatestVisionUpdate.get().timestamp;
+			lastTimestamp = mLatestVisionUpdate.get().timestamp;
 			Pose2d proximate_dt_pose = odometry_to_vehicle.getInterpolated(new InterpolatingDouble(vision_timestamp));
 			mLatestVisionUpdate = Optional.ofNullable(update);
 			Translation2d field_to_vision = mLatestVisionUpdate
