@@ -86,6 +86,9 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     m_robotStatePose = m_robotContainer.m_SwerveDrive.getPose();
+    m_robotStateField.setRobotPose(m_robotStatePose);
+
+    SmartDashboard.putData("Robot State", m_robotStateField);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
