@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.hardware.CANcoder;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -168,10 +167,11 @@ public class Elevator extends Subsystem {
 	//TODO: figure out how to put a state in smart dashbaord
 }
 
-
+  /*
   public void reset() {
     //mLeftEncoder.setPosition(0.0);
   }
+  */
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
