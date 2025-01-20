@@ -18,19 +18,23 @@ public class TestAutoMode extends AutoModeBase {
     }
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("TestPathMode: Running test auto mode!");
+        System.out.println("TestAutoMode: Running test auto mode!");
         String[] actions = autoString.split(" ");
 		String action;
         for (int i = 0; i < actions.length; i++) {
 			action = actions[i];
             switch (action) {
 				case "Path":
-					while (actions[i] != "Stop") {
-                        String start = actions[i]+actions[++i];
+					while (!actions[i+3].equals("Stop")) {
+                        String start = actions[++i]+actions[++i];
                         String end = actions[++i]+actions[++i];
+                        System.out.println(start+"-"+end);
                         runAction(new SwerveTrajectoryAction(trajectorySet.set.get(start+"-"+end)));
                         i--;
+                        i--;
 					}
+                    i += 3;
+                    break;
                 case "Wait":
                     // Assuming the next part in the string is a time duration for the wait action
                     if (i + 1 < actions.length) {
