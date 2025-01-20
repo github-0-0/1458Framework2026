@@ -3,7 +3,6 @@ package frc.robot.subsystems.vision;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import frc.robot.FieldLayout;
-import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.VisionUpdate;
 import frc.robot.subsystems.Subsystem;
@@ -200,7 +199,7 @@ public class VisionDevice extends Subsystem {
 
 			if (VisionDeviceManager.visionDisabled()) {
 				continue;
-			}
+			}	
 			
 			if (initial) {
 				SwerveDrive.getInstance().setWheelTrackerPose(camera_pose.transformBy(mConstants.kRobotToCamera));

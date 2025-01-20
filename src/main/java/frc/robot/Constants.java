@@ -173,43 +173,30 @@ public final class Constants {
 
     public static VisionDeviceConstants kLeftVisionDevice = new VisionDeviceConstants(); // dot 13
     public static VisionDeviceConstants kRightVisionDevice = new VisionDeviceConstants(); // dot 12
+    public static VisionDeviceConstants kFrontVisionDevice = new VisionDeviceConstants();
+    public static VisionDeviceConstants kBackVisionDevice = new VisionDeviceConstants();
 
     static {
-        kLeftVisionDevice.kTableName = "limelight-c";
+        kLeftVisionDevice.kTableName = "limelight-left";
         kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325)),
                 Rotation2d.fromDegrees(-27));
 
-        kRightVisionDevice.kTableName = "limelight-bw";
+        kRightVisionDevice.kTableName = "limelight-right";
         kRightVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
                 Rotation2d.fromDegrees(27.0));
+        
+        kFrontVisionDevice.kTableName = "limelight-front";
+        kFrontVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
+                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
+                Rotation2d.fromDegrees(27.0));
+
+        kBackVisionDevice.kTableName = "limelight-back";
+        kBackVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
+                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
+                Rotation2d.fromDegrees(27.0));
     }
-    
-    public static final class LimelightConstants {
-
-		public static final double kNoteHeight = 0.0508;
-		public static final double kNoteTargetOffset = 0.2;
-		public static final double kMaxNoteTrackingDistance = 6.75;
-		public static final double kNoteTrackEpsilon = 1.0;
-
-		public static final String kName = "limelight";
-		public static final Translation2d kRobotToCameraTranslation = new Translation2d(0.0, 0.0);
-		public static final double kCameraHeightMeters = isEpsilon ? 0.59 : 0.65;
-		public static final Rotation2d kCameraPitch = Rotation2d.fromDegrees(-18.0);
-		public static final Rotation2d kCameraYaw = Rotation2d.fromDegrees(0.0);
-
-		public static final GoalTracker.Configuration kNoteTrackerConstants = new GoalTracker.Configuration();
-
-		static {
-			kNoteTrackerConstants.kMaxTrackerDistance = 0.46;
-			kNoteTrackerConstants.kMaxGoalTrackAge = 0.5;
-			kNoteTrackerConstants.kCameraFrameRate = 30.0;
-			kNoteTrackerConstants.kStabilityWeight = 1.0;
-			kNoteTrackerConstants.kAgeWeight = 0.2;
-			kNoteTrackerConstants.kSwitchingWeight = 0.2;
-		}
-	}
 
     //dc.10.21.2024, citrus code constants
     public static final class SwerveConstants {

@@ -57,8 +57,10 @@ public class Robot extends TimedRobot {
     
 
     for (int port = 5800; port <= 5809; port++) {
-      edu.wpi.first.net.PortForwarder.add(port, "limelight-c.local", port);
-      edu.wpi.first.net.PortForwarder.add(port, "limelight-bw.local", port);
+      edu.wpi.first.net.PortForwarder.add(port, "limelight-left.local", port);
+      edu.wpi.first.net.PortForwarder.add(port, "limelight-right.local", port);
+      edu.wpi.first.net.PortForwarder.add(port, "limelight-front.local", port);
+      edu.wpi.first.net.PortForwarder.add(port, "limelight-back.local", port);
     }
     
     m_robotStateField = new Field2d();
