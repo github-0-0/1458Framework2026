@@ -1,5 +1,7 @@
 package frc.robot.autos.modes;
 
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeEndedException;
 import frc.robot.autos.actions.SwerveTrajectoryAction;
@@ -17,7 +19,16 @@ public class TestPathMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException {
 		System.out.println("TestPathMode: Running test mode auto!");
-		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("CS1-R1"), ResetWheelTracker.SET_TO_STARTING_POS));
+		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("P1-CS1b"), ResetWheelTracker.SET_TO_STARTING_POS));
+		/*
+		for(String trajectory:trajectorySet.set.keySet()){
+			System.out.println(trajectory);
+			runAction(new WaitAction(1));
+			runAction(new SwerveTrajectoryAction(trajectorySet.set.get(trajectory), ResetWheelTracker.SET_TO_STARTING_POS));
+			System.out.println("Done with "+trajectory);
+		}*/
+		
+		//runAction(new SwerveTrajectoryAction(trajectorySet.set.get("CS1-R1"), ResetWheelTracker.SET_TO_STARTING_POS));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySmallLoop, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryZigzag, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySlowCurve, true));
