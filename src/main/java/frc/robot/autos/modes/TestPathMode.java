@@ -16,7 +16,7 @@ public class TestPathMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException {
 		System.out.println("TestPathMode: Running test mode auto!");
-		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySmallLoop, true));
+//		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySmallLoop, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryZigzag, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySlowCurve, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryBackForth, true));

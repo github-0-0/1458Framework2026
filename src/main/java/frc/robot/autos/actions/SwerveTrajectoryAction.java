@@ -2,6 +2,9 @@ package frc.robot.autos.actions;
 
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.lib.trajectory.*;
+
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+
 import edu.wpi.first.math.trajectory.*;
 
 public class SwerveTrajectoryAction implements Action {
@@ -11,11 +14,11 @@ public class SwerveTrajectoryAction implements Action {
 	private final TrajectoryIterator mTrajectory;
 	private final boolean mResetGyro;
 
-	public SwerveTrajectoryAction(Trajectory trajectory) {
+	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory) {
 		this(trajectory, false);
 	}
 
-	public SwerveTrajectoryAction(Trajectory trajectory, boolean resetPose) {
+	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory, boolean resetPose) {
 		mTrajectory = new TrajectoryIterator(trajectory);
 		mDrive = SwerveDrive.getInstance();
 		mResetGyro = resetPose;
