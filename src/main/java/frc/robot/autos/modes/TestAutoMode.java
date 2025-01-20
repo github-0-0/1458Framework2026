@@ -36,9 +36,8 @@ public class TestAutoMode extends AutoModeBase {
                     i += 3;
                     break;
                 case "Wait":
-                    // Assuming the next part in the string is a time duration for the wait action
                     if (i + 1 < actions.length) {
-                        String waitTime = actions[++i]; // Increment i to get the wait time
+                        String waitTime = actions[++i];
                         runAction(new WaitAction(Double.parseDouble(waitTime)));
                     }
                     break;
