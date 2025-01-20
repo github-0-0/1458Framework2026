@@ -14,13 +14,14 @@ public class TrajectoryIterator {
 
     //construtor code
     public TrajectoryIterator (PathPlannerTrajectory curTrajectory){
-        mCurrentTrajectory=curTrajectory;
+        mCurrentTrajectory = curTrajectory;
         current_sample_ = curTrajectory.getStates().get(0);
         //progress_ = view_.first_interpolant();        //dc. is it not zero??
     }
 
     //advance by additional time on the trajectory
     public Trajectory.State advance (double additional_progress){
+//        System.out.println("soup "+additional_progress);
         progress_ = Math.max(0.0, Math.min(mCurrentTrajectory.getTotalTimeSeconds(), progress_ + additional_progress));
         current_sample_ = mCurrentTrajectory.sample(progress_);
         return fromPathPlannerTrajectoryState(current_sample_);

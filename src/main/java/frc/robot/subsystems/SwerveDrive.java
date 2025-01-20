@@ -56,7 +56,7 @@ public class SwerveDrive extends Subsystem {
 		PATH_FOLLOWING
 	}
 
-	private WheelTracker mWheelTracker;
+	public WheelTracker mWheelTracker;
 	private final Field2d m_field = new Field2d();
 	private Pigeon mPigeon = Pigeon.getInstance();
 	public SwerveModule[] mModules;

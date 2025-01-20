@@ -192,21 +192,23 @@ public class DriveMotionPlanner {
 				double searchStepSize = 1.0;	// these search steps are temporal, in seconds 
 				double previewQuantity = 0.0;
 				double searchDirection = 1.0;
-/* 
+//*  
 				//dc.1.20.2025, bugfix for robot oscilation around sharp turning points of trajectory.  
 				//negative previewQuantity leads robot backward, take out code for backward trajectory exploring
 				//TODO: further review;
 
 				double forwardDistance = distanceToTrajectory(current_pose, previewQuantity + searchStepSize);
 				double reverseDistance = distanceToTrajectory(current_pose, previewQuantity - searchStepSize);
-				searchDirection =Math.signum(reverseDistance - forwardDistance);
-*/
+				searchDirection = Math.signum(reverseDistance - forwardDistance);
+//*/
 				while (searchStepSize > 0.001) {
 					SmartDashboard.putNumber("PurePursuit/PreviewDist(m)", distanceToTrajectory(current_pose, previewQuantity));
+					//System.out.println(distanceToTrajectory(current_pose, previewQuantity + searchStepSize * searchDirection)+" eggdog "+distanceToTrajectory(current_pose, previewQuantity));
+					//System.out.println(searchStepSize+" YOU ME GAS STATION "+searchDirection+" WHAT ARE WE GETTING FOR DINNER? "+previewQuantity);
 					if (Util.epsilonEquals(distanceToTrajectory(current_pose, previewQuantity), 0.0, 0.0003937)) break; //break if robot is right on the preview-pose of the trajectory
 					while (distanceToTrajectory(current_pose, previewQuantity + searchStepSize * searchDirection) 
 							< distanceToTrajectory(current_pose, previewQuantity)) { 		/* continue search if next step trajectory point is closer to current_pose than current trajectory point */ 
-						previewQuantity += searchStepSize * searchDirection;	/* continue to next point */
+								previewQuantity += searchStepSize * searchDirection;	/* continue to next point */
 					}
 					searchStepSize /= 10.0;	//reduce search step size by one factor
 					searchDirection *= -1;	//reverse the search direction
@@ -220,6 +222,7 @@ public class DriveMotionPlanner {
 					previewQuantity=Constants.kLooperDt;	//use the loop cycle dt, TODO: add code to handle reverse trajectory
 				}
 				sample_point = mCurrentTrajectory.advance(previewQuantity);
+				
 				// RobotState.getInstance().setDisplaySetpointPose(Pose2d.fromTranslation(RobotState.getInstance().getFieldToOdom(timestamp)).transformBy(sample_point.state().state().getPose()));
 				mSetpoint = sample_point;
 				//3.calculate chassis speed for next movement via pure pursuit algo, 
