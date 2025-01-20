@@ -331,16 +331,14 @@ public final class Constants {
         public static final int kMaxCurrent = 40;
         public static final double kMaxPowerUp = 0.1;
         public static final double kMaxPowerDown = 0.1;
-    
-        public static final double kStowHeight = 0.0;
+        
+        //TODO: Find correct elevator heights for each level
+        public static final double kGROUNDHeight = 0.0;
+        public static final double kL1Height = 5.0; //Most likely wrong
         public static final double kL2Height = 9.0;
         public static final double kL3Height = 25.14;
         public static final double kL4Height = 52.0;
         public static final double kMaxHeight = 56.2;
-        public static final double kGroundAlgaeHeight = 0.0;
-        public static final double kScoreAlgaeHeight = 0.0;
-        public static final double kLowAlgaeHeight = 24.8;
-        public static final double kHighAlgaeHeight = 42.5;
         
         public static final TalonFXConfiguration ElevatorConfiguration() {
             TalonFXConfiguration config = new TalonFXConfiguration();

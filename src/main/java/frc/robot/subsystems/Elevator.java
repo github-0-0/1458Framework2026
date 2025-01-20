@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import com.ctre.phoenix6.hardware.TalonFX;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Elevator extends Subsystem {
 
@@ -29,10 +29,15 @@ public class Elevator extends Subsystem {
   }
 
   private TalonFX mLeftMotor;
-  private CANcoder mLeftEncoder;
+  //private CANcoder mLeftEncoder;
+  DigitalInput level0 = new DigitalInput(0);
+  DigitalInput level1 = new DigitalInput(1);
+  DigitalInput level2 = new DigitalInput(2);
+  DigitalInput level3 = new DigitalInput(3);
+  DigitalInput level4 = new DigitalInput(4);
 
   private TalonFX mRightMotor;
-  private CANcoder mRightEncoder;
+  //private CANcoder mRightEncoder;
 
   private TrapezoidProfile mProfile;
   private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
@@ -60,12 +65,12 @@ public class Elevator extends Subsystem {
 
     // LEFT ELEVATOR MOTOR
     mLeftMotor = new TalonFX(Constants.Elevator.kElevatorLeftMotorId);
-    mLeftEncoder = Cancoders.getInstance().getElevatorLeft();
+    //mLeftEncoder = Cancoders.getInstance().getElevatorLeft();
     setUpElevatorMotor(mLeftMotor);
 
     // RIGHT ELEVATOR MOTOR
     mRightMotor = new TalonFX(Constants.Elevator.kElevatorRightMotorId);
-    mRightEncoder = Cancoders.getInstance().getElevatorRight();
+    //mRightEncoder = Cancoders.getInstance().getElevatorRight();
     setUpElevatorMotor(mRightMotor);
 
     // mRightMotor.setInverted(true);
@@ -80,12 +85,11 @@ public class Elevator extends Subsystem {
 
   public enum ElevatorState {
     NONE,
-    STOW,
+    GROUND,
+    L1,
     L2,
     L3,
     L4,
-    A1,
-    A2
   }
 
   private static class PeriodicIO {
@@ -94,7 +98,7 @@ public class Elevator extends Subsystem {
 
     boolean is_elevator_pos_control = false;
 
-    ElevatorState state = ElevatorState.STOW;
+    ElevatorState state = ElevatorState.GROUND;
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -131,7 +135,7 @@ public class Elevator extends Subsystem {
           ArbFFUnits.kVoltage);*/ //TODO: verify if this patch works
       mLeftMotor.setControl(m_request.withPosition(mCurState.position));
     } else {
-      mCurState.position = mLeftEncoder.getPosition().getValueAsDouble();
+      //mCurState.position = mLeftEncoder.getPosition().getValueAsDouble();
       mCurState.velocity = 0;
       mLeftMotor.set(mPeriodicIO.elevator_power);
     }
@@ -147,9 +151,9 @@ public class Elevator extends Subsystem {
 
   @Override
   public void outputTelemetry() {
-    SmartDashboard.putNumber("Position/Current", mLeftEncoder.getPosition().getValueAsDouble());
+    //SmartDashboard.putNumber("Position/Current", mLeftEncoder.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Position/Target", mPeriodicIO.elevator_target);
-    SmartDashboard.putNumber("Velocity/Current", mLeftEncoder.getVelocity().getValueAsDouble());
+    //SmartDashboard.putNumber("Velocity/Current", mLeftEncoder.getVelocity().getValueAsDouble());
 
     SmartDashboard.putNumber("Position/Setpoint", mCurState.position);
     SmartDashboard.putNumber("Velocity/Setpoint", mCurState.velocity);
@@ -166,7 +170,7 @@ public class Elevator extends Subsystem {
 
 
   public void reset() {
-    mLeftEncoder.setPosition(0.0);
+    //mLeftEncoder.setPosition(0.0);
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -175,16 +179,38 @@ public class Elevator extends Subsystem {
     return mPeriodicIO.state;
   }
 
+  public ElevatorState getLevel() {
+    if (level4.get()) {
+      return ElevatorState.L4;
+    } else if (level3.get()) {
+      return ElevatorState.L3;
+    } else if (level2.get()) {
+      return ElevatorState.L2;
+    } else if (level1.get()) {
+      return ElevatorState.L1;
+    } else if (level0.get()) {
+      return ElevatorState.GROUND;
+    } else {
+      return ElevatorState.NONE;
+    }
+  }
+
   public void setElevatorPower(double power) {
     SmartDashboard.putNumber("setElevatorPower", power);
     mPeriodicIO.is_elevator_pos_control = false;
     mPeriodicIO.elevator_power = power;
   }
 
-  public void goToElevatorStow() {
+  public void goToElevatorGround() {
     mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kStowHeight;
-    mPeriodicIO.state = ElevatorState.STOW;
+    mPeriodicIO.elevator_target = Constants.Elevator.kGROUNDHeight;
+    mPeriodicIO.state = ElevatorState.GROUND;
+  }
+  
+  public void goToElevatorL1() {
+    mPeriodicIO.is_elevator_pos_control = true;
+    mPeriodicIO.elevator_target = Constants.Elevator.kL1Height;
+    mPeriodicIO.state = ElevatorState.L1;
   }
 
   public void goToElevatorL2() {
@@ -203,18 +229,6 @@ public class Elevator extends Subsystem {
     mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.kL4Height;
     mPeriodicIO.state = ElevatorState.L4;
-  }
-
-  public void goToAlgaeLow() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kLowAlgaeHeight;
-    mPeriodicIO.state = ElevatorState.A1;
-  }
-
-  public void goToAlgaeHigh() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kHighAlgaeHeight;
-    mPeriodicIO.state = ElevatorState.A2;
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
