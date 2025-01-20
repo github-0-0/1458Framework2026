@@ -3,7 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
+import com.pathplanner.lib.config.RobotConfig;
 //dc.10.21.2024 classes used in SwerveConstants
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
@@ -17,6 +17,7 @@ import frc.robot.lib.util.SwerveModuleConstants;
 import frc.robot.subsystems.SwerveDrive.KinematicLimits;
 import frc.robot.subsystems.limelight.GoalTracker;
 import frc.robot.subsystems.vision.VisionDeviceConstants;
+import com.pathplanner.lib.config.RobotConfig;
 
 public final class Constants {
     public static final double stickDeadband = 0.07;
@@ -314,6 +315,20 @@ public final class Constants {
 
     }
     
+    public static final class PathPlannerRobotConfig {
+        public static RobotConfig config = null;
+        //ok java
+        static {
+            try {
+                config = RobotConfig.fromGUISettings();
+            } catch (Exception e) {
+                System.err.println("Pathplanner Configs failed to load!");
+                e.printStackTrace();
+            }
+        }
+    }
+    
+
     /* dc.10.21.2024 extra constants needed during porting of citrus SwerveModule.java code */
 
     // Timeout constants

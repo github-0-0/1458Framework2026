@@ -1,11 +1,18 @@
 package frc.robot.lib.trajectory;
 
 import edu.wpi.first.math.trajectory.*;
+import edu.wpi.first.util.struct.parser.ParseException;
 import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.Constants;
 import frc.robot.subsystems.DummySubsystem;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.util.FileVersionException;
+
 import java.io.IOException;
 
 //dc.10.21.2024, this class is going to load all paths pre-defined via PathWeaver tool
@@ -39,6 +46,17 @@ public class TrajectoryGenerator {
                 return trajectory;
             } catch(IOException err){
                 System.out.println("Trajectory loaded failed! =" + sJsonFile + ";err=" + err);
+                return null;
+            }
+        }
+        private PathPlannerTrajectory loadPathPlannerTrajectory (String sJsonFile) {
+            PathPlannerPath path;
+            try {
+                path = PathPlannerPath.fromPathFile(sJsonFile);
+                System.out.println("Trajectory loaded successfully! =" + path.toString());
+                return path.getIdealTrajectory(Constants.PathPlannerRobotConfig.config).get();
+            } catch (Exception e) {
+                System.out.println("Trajectory loaded failed! =" + sJsonFile + ";err=" + e);
                 return null;
             }
         }
