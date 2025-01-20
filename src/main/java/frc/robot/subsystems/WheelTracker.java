@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.lib.drivers.Pigeon;
 import frc.robot.lib.swerve.SwerveModule;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -167,10 +168,10 @@ public class WheelTracker {
 	}
 
 	/*DC.12.9.24. Bugfix for wheel odometry update
-	* We need to negate deltaPosition.dy value because position reading of our robot's rotation motor 
-	* increases along clock-wise direction while CCW assumed in original citrus code. 
-	* So if rotation motor turns to positive degree (relative to zero position), robot is actually turning right side, 
-	* which translates into a negative strafe (y-direction) movement, and vice versus. 
+	* We need to negate deltaPosition.dy value because position reading of our robot's rotation motor
+	* increases along clock-wise direction while CCW assumed in original citrus code.
+	* So if rotation motor turns to positive degree (relative to zero position), robot is actually turning right side,
+	* which translates into a negative strafe (y-direction) movement, and vice versus.
 	* similar fixes also apply to setSteeringAngleOptimized(), resetToAbsolute() in SwerveModule();
 	*/
 	private void updateWheelOdometry(SwerveModule module, WheelProperties props) {
@@ -183,18 +184,23 @@ public class WheelTracker {
 		double xCorrectionFactor = 1.0;
 		double yCorrectionFactor = 1.0;
 
-		if (Math.signum(deltaPosition.getX()) == 1.0) {
-			xCorrectionFactor = (8.6 / 9.173);
+		if (Robot.isSimulation()) {
+			xCorrectionFactor = 4.0;
+			yCorrectionFactor = 4.0;
+		} else {
+			if (Math.signum(deltaPosition.getX()) == 1.0) {
+				xCorrectionFactor = (8.6 / 9.173);
 
-		} else if (Math.signum(deltaPosition.getX()) == -1.0) {
-			xCorrectionFactor = (8.27 / 9.173);
-		}
+			} else if (Math.signum(deltaPosition.getX()) == -1.0) {
+				xCorrectionFactor = (8.27 / 9.173);
+			}
 
-		if (Math.signum(deltaPosition.getY()) == 1.0) {
-			yCorrectionFactor = (3.638 / 4.0);
+			if (Math.signum(deltaPosition.getY()) == 1.0) {
+				yCorrectionFactor = (3.638 / 4.0);
 
-		} else if (Math.signum(deltaPosition.getY()) == -1.0) {
-			yCorrectionFactor = (3.660 / 4.0);
+			} else if (Math.signum(deltaPosition.getY()) == -1.0) {
+				yCorrectionFactor = (3.660 / 4.0);
+			}
 		}
 
 //		SmartDashboard.putString(
