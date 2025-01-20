@@ -14,13 +14,14 @@ public class TestAutoMode extends AutoModeBase {
     public String autoString;
 
     public TestAutoMode() {
-        autoString = "Path CS 1 R 1 P 1 Stop Wait 2 Path CS 2 R 2 Stop";
+        autoString = "Path CS 1 R 1 P 1 Stop Wait 2 Path P 1 CS 2 R 2 Stop";
     }
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("TestAutoMode: Running test auto mode!");
         String[] actions = autoString.split(" ");
 		String action;
+        Boolean isFirstTrajectory = true;
         for (int i = 0; i < actions.length; i++) {
 			action = actions[i];
             switch (action) {
@@ -28,8 +29,9 @@ public class TestAutoMode extends AutoModeBase {
 					while (!actions[i+3].equals("Stop")) {
                         String start = actions[++i]+actions[++i];
                         String end = actions[++i]+actions[++i];
-                        System.out.println(start+"-"+end);
-                        runAction(new SwerveTrajectoryAction(trajectorySet.set.get(start+"-"+end)));
+                        System.out.println(start+"-"+end+" "+isFirstTrajectory);
+                        runAction(new SwerveTrajectoryAction(trajectorySet.set.get(start+"-"+end),!isFirstTrajectory?ResetWheelTracker.NO:ResetWheelTracker.SET_TO_STARTING_POS));
+                        isFirstTrajectory = false;
                         i--;
                         i--;
 					}
