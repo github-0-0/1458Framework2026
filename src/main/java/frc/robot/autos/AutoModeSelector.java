@@ -8,7 +8,8 @@ import java.util.Optional;
 public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
-		TESTPATHMODE
+		TESTPATHMODE,
+		TESTAUTOMODE
 	}
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -20,6 +21,7 @@ public class AutoModeSelector {
 	public AutoModeSelector() {
 		mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
 		mModeChooser.addOption("Test Path Mode", DesiredMode.TESTPATHMODE);
+		mModeChooser.addOption("Test Auto Mode", DesiredMode.TESTAUTOMODE);
 		mModeChooser.setDefaultOption("Test Path Mode", DesiredMode.TESTPATHMODE);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
 	}
@@ -61,6 +63,9 @@ public class AutoModeSelector {
 			
 			case TESTPATHMODE:
 				return Optional.of(new TestPathMode());
+
+			case TESTAUTOMODE:
+				return Optional.of(new TestAutoMode());
 
 			default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);

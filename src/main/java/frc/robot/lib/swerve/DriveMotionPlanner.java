@@ -219,7 +219,7 @@ public class DriveMotionPlanner {
 				if (previewQuantity < 0.0){
 					//dc.1.20.2025, bugfix for robot oscilation around sharp turning points of trajectory, see above comments for move detail.
 					System.out.println("PurePursuit trajectory advance backwards = " + previewQuantity + " around time=" + mCurrentTrajectory.getProgress() + ", mError=" + mError.getTranslation().getNorm());
-					previewQuantity=Constants.kLooperDt;	//use the loop cycle dt, TODO: add code to handle reverse trajectory
+//					previewQuantity=Constants.kLooperDt;	//use the loop cycle dt, TODO: add code to handle reverse trajectory
 				}
 				sample_point = mCurrentTrajectory.advance(previewQuantity);
 				
