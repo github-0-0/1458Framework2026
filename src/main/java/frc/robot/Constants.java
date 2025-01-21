@@ -314,6 +314,106 @@ public final class Constants {
 		}
 
     }
+
+    public static class Elevator {
+        //TODO: tune elevator constants to bot
+        public static final int kElevatorLeftMotorId = 9;
+        public static final int kElevatorRightMotorId = 10;
+    
+        public static final double kP = 0.15;
+        public static final double kI = 0;
+        public static final double kD = 0.0;
+        public static final double kIZone = 5.0;
+        public static final double kG = 0.5;
+    
+        public static final double kMaxVelocity = 65;
+        public static final double kMaxAcceleration = 200;
+        public static final int kCurrentThreshold = 45;
+        public static final int kMaxCurrent = 40;
+        public static final double kMaxPowerUp = 0.1;
+        public static final double kMaxPowerDown = 0.1;
+        
+        //TODO: Find correct elevator heights for each level
+        public static final double kGROUNDHeight = 0.0;
+        public static final double kL1Height = 5.0; //Most likely wrong
+        public static final double kL2Height = 9.0;
+        public static final double kL3Height = 25.14;
+        public static final double kL4Height = 52.0;
+        public static final double kMaxHeight = 56.2;
+        
+        public static final TalonFXConfiguration ElevatorConfiguration() {
+            TalonFXConfiguration config = new TalonFXConfiguration();
+            config.CurrentLimits.StatorCurrentLimitEnable = true;
+            config.CurrentLimits.StatorCurrentLimit = Constants.Elevator.kMaxCurrent;//citrus code value = 110;
+            config.CurrentLimits.SupplyCurrentLimitEnable = true;
+            config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.kMaxCurrent;//citrus value = 90;
+            config.Voltage.PeakForwardVoltage = 12.0;
+            config.Voltage.PeakReverseVoltage = -12.0;
+            // Set PID values for the elevator motor
+            config.Slot0.kP = Constants.Elevator.kP;
+            config.Slot0.kI = Constants.Elevator.kI;
+            config.Slot0.kD = Constants.Elevator.kD;
+            config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+            return config;
+        }
+    }
+    
+    public static class Intake {
+        //TODO: Tune intake constants to bot
+
+        // Motors
+        public static final int kIntakeMotorId = 9;
+        public static final int kPivotMotorId = 10;
+    
+        // DIO
+        public static final int k_pivotEncoderId = 0;
+        public static final int k_intakeLimitSwitchId = 2;
+    
+        // Absolute encoder offset
+        public static final double k_pivotEncoderOffset = 0.166842; // Straight up, sketchy to reset to "up"
+    
+        // Pivot set point angles
+        public static final double k_pivotAngleGround = 60;
+        public static final double k_pivotAngleSource = 190;
+        public static final double k_pivotAngleAmp = k_pivotAngleSource;
+        public static final double k_pivotAngleStow = 275;
+    
+        // Intake speeds
+        public static final double k_intakeSpeed = 0.7;
+        public static final double k_ejectSpeed = -0.45;
+        public static final double k_feedShooterSpeed = -0.5;
+        
+        public static final TalonFXConfiguration IntakeConfiguration() {
+            TalonFXConfiguration config = new TalonFXConfiguration();
+            config.CurrentLimits.StatorCurrentLimitEnable = true;
+            config.CurrentLimits.StatorCurrentLimit = 10;
+            config.CurrentLimits.SupplyCurrentLimitEnable = true;
+            config.CurrentLimits.SupplyCurrentLimit = 10;
+            config.Voltage.PeakForwardVoltage = 12.0;
+            config.Voltage.PeakReverseVoltage = -12.0;
+            return config;
+        }
+      }
+
+      public static class Shooter {
+        public static final int kShooterLeftMotorId = 12;
+        public static final int kShooterRightMotorId = 13;
+
+        public static final double kShooterP = 0.00005;
+        public static final double kShooterI = 0.0;
+        public static final double kShooterD = 0.0;
+        public static final double kShooterFF = 0.0002;
+
+        public static final double kShooterMinOutput = 0;
+        public static final double kShooterMaxOutput = 1;
+        public static final TalonFXConfiguration ShooterConfiguration() {
+            TalonFXConfiguration config = new TalonFXConfiguration();
+            config.Slot0.kP = Constants.Shooter.kShooterP;
+            config.Slot0.kI = Constants.Shooter.kShooterI;
+            config.Slot0.kD = Constants.Shooter.kShooterD;
+            return config;
+        }
+      }
     
     public static final class PathPlannerRobotConfig {
         public static RobotConfig config = null;
