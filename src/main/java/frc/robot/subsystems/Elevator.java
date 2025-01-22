@@ -14,16 +14,31 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class Elevator extends Subsystem {
 
     private static Elevator mInstance;
+
+    public enum ElevatorState {
+        NONE, 
+        GROUND, 
+        L1, 
+        L2, 
+        L3, 
+        L4
+    }
+
     private PeriodicIO mPeriodicIO;
+
     private TalonFX mLeftMotor;
     private TalonFX mRightMotor;
+
     private DigitalInput magneticLimitSensor = new DigitalInput(0);
+
     private int currentLevelIndex = 0;
     private boolean lastMagnetState = false;
     private boolean movingUp = false;
+
     private TrapezoidProfile mProfile;
     private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
     private TrapezoidProfile.State mGoalState = new TrapezoidProfile.State();
+
     private PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
     private double prevUpdateTime = Timer.getFPGATimestamp();
 
@@ -54,9 +69,6 @@ public class Elevator extends Subsystem {
         motor.setNeutralMode(NeutralModeValue.Brake);
     }
 
-    public enum ElevatorState {
-        NONE, GROUND, L1, L2, L3, L4
-    }
 
     private static class PeriodicIO {
         double elevator_target = 0.0;
@@ -70,7 +82,6 @@ public class Elevator extends Subsystem {
         double curTime = Timer.getFPGATimestamp();
         double dt = curTime - prevUpdateTime;
         prevUpdateTime = curTime;
-
         if (mPeriodicIO.is_elevator_pos_control) {
             mGoalState.position = mPeriodicIO.elevator_target;
             mCurState = mProfile.calculate(dt, mCurState, mGoalState);
@@ -79,7 +90,6 @@ public class Elevator extends Subsystem {
             mCurState.velocity = 0;
             mLeftMotor.set(mPeriodicIO.elevator_power);
         }
-
         movingUp = mPeriodicIO.elevator_power > 0;
         updateLevel();
         mLeftMotor.set(mPeriodicIO.elevator_power);
@@ -94,14 +104,14 @@ public class Elevator extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putNumber("Position/Target", mPeriodicIO.elevator_target);
-        SmartDashboard.putNumber("Position/Setpoint", mCurState.position);
-        SmartDashboard.putNumber("Velocity/Setpoint", mCurState.velocity);
-        SmartDashboard.putNumber("Current/Left", mLeftMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Current/Right", mRightMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putBoolean("Magnet Detected", magneticLimitSensor.get());
-        SmartDashboard.putNumber("Current Level Index", currentLevelIndex);
-        SmartDashboard.putString("Current Level State", getLevel().toString());
+        SmartDashboard.putNumber("Elevator/Position/Target", mPeriodicIO.elevator_target);
+        SmartDashboard.putNumber("Elevator/Position/Setpoint", mCurState.position);
+        SmartDashboard.putNumber("Elevator/Velocity/Setpoint", mCurState.velocity);
+        SmartDashboard.putNumber("Elevator/Current/Left", mLeftMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Elevator/Current/Right", mRightMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putBoolean("Elevator/Magnet Detected", magneticLimitSensor.get());
+        SmartDashboard.putNumber("Elevator/Current Level Index", currentLevelIndex);
+        SmartDashboard.putString("Elevator/Current Level State", getLevel().toString());
     }
 
     private void updateLevel() {
