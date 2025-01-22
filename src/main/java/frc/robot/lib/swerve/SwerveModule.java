@@ -95,10 +95,7 @@ public class SwerveModule extends Subsystem {
 		mSignals[2] = mAngleMotor.getRotorPosition();
 		mSignals[3] = mAngleMotor.getRotorVelocity();
 
-	/*dc: Todo: update motor sim according to CTRE 2025 APIs 
-		mDriveMotorSim = new DCMotorSim(DCMotor.getFalcon500(1), Constants.Swerve.driveGearRatio, 0.001);
-		mAngleMotorSim = new DCMotorSim(DCMotor.getFalcon500(1), Constants.Swerve.angleGearRatio, 0.001);
-	*/
+		//dc. Venka's upgrade simulation code to WPIlib 2025 version.
 		mDriveMotorSim = new DCMotorSim(
 			LinearSystemId.createDCMotorSystem(
 				DCMotor.getFalcon500(1), 0.001, Constants.Swerve.driveGearRatio),
@@ -181,15 +178,6 @@ public class SwerveModule extends Subsystem {
 		} else if (relativeDegrees < -90.0) {
 			relativeDegrees += 180.0;
 			flip = true;
-		}
- 		{//todo: debug code, TBR
-//			if (mCounter++ >50){
-//				mCounter =0;
-//				SmartDashboard.putString("Module #"+ kModuleNumber+" setSteeringAngleOpti(), desiredAngle, angleUnclamped",
-//					String.format("%.2f,%.2f", targetClamped, angleUnclamped));
-//				SmartDashboard.putString("Module #"+ kModuleNumber+" setSteeringAngleOpti(), relativeDegreesPreFlip, relativeDegrees",
-//					String.format("%.2f,%.2f", relativeDegreesPreFlip,relativeDegrees));
-//			}
 		}
 		setSteeringAngleRaw(angleUnclamped + relativeDegrees);
 		target_angle = angleUnclamped + relativeDegrees;
