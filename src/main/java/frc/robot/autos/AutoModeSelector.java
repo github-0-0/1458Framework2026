@@ -9,7 +9,9 @@ public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
 		TESTPATHMODE,
-		TESTAUTOMODE
+		TESTAUTOMODE,
+		TESTAUTOMODE2,
+		TESTAUTOMODE3
 	}
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -24,7 +26,8 @@ public class AutoModeSelector {
 		mModeChooser.addOption("Test Auto Mode", DesiredMode.TESTAUTOMODE);
 		mModeChooser.setDefaultOption("Test Path Mode", DesiredMode.TESTPATHMODE);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
-		mModeChooser.addOption("Test Path Auto Mode 2", DesiredMode.TESTAUTOMODE);
+		mModeChooser.addOption("Test Path Auto Mode 2", DesiredMode.TESTAUTOMODE2);
+		mModeChooser.addOption("Test Path Auto Mode 3", DesiredMode.TESTAUTOMODE3);
 	}
 
 	public void updateModeCreator(boolean force_regen) {
@@ -67,7 +70,13 @@ public class AutoModeSelector {
 
 			case TESTAUTOMODE:
 				return Optional.of(new TestAutoMode());
-
+				
+			case TESTAUTOMODE2:
+				return Optional.of(new TestAutoMode2());
+				
+			case TESTAUTOMODE3:
+				return Optional.of(new TestAutoMode3());
+				
 			default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
 				break;

@@ -21,42 +21,51 @@ public class TestAutoMode2 extends AutoModeBase {
     public TestAutoMode2() {
         autoString = "[ ( Wait 1 Elevator L4 Shoot ) ( CS 1 R 1 P 1 ) ] Wait 2 P 1 CS 2 R 2 ";
     }
-                //TODO: Fix Errors here
+    //TODO: Fix Errors here
     public Action parsePath(String action) {
+        Action returnAction;
         switch (action) {
             case "CS":
-                if(lastPoint==null){
+                if (lastPoint == null) {
                     action = lastPoint;
                     return parsePath(action);
                 } else {
                     action = lastPoint;
+                    returnAction = new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint + "-CS"),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO);     
                     isFirstTrajectory = false;
-                    return (new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint + "-CS"),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));     
                 }
+                break;
             case "P":
                 if (lastPoint == null) {
                     action = lastPoint;
                     return parsePath(action);
                 } else {
-                    return (new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-P"),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
+                    returnAction = new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-P"),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO);
+                    isFirstTrajectory = false;
                 }
+                break;
             case "S":
                 if (lastPoint == null) {
                     action = lastPoint;
                     return parsePath(action);
                 } else {
-                    return (new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-S"),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
+                    returnAction = new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-S"),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO);
+                    isFirstTrajectory = false;
                 }
+                break;
             case "R":
                 if (lastPoint == null) {
                     action = lastPoint;
                     return parsePath(action);
                 } else {
-                    return (new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-R"),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
+                    returnAction = new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-R"),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO);
+                    isFirstTrajectory = false;
                 }
+                break;
             default:
                 return null;
             }
+        return returnAction;
     } 
     
     @Override

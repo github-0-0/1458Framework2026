@@ -44,10 +44,11 @@ public class SwerveTrajectoryAction implements Action {
 				Pose2d newPose = mTrajectory.getState().poseMeters;
 				System.out.println("Reset wheel tracker to pose: X: " + newPose.getX() + " Y: "+ newPose.getY()+ " Degrees: "+newPose.getRotation().getDegrees());
 				mWheelTracker.resetPose(newPose);
-				
+				/*
 				double newRotation = mTrajectory.getState().poseMeters.getRotation().getDegrees();
 				System.out.println("Reset gyro to " + newRotation);
 				mDrive.zeroGyro(newRotation);
+				*/
 				
 				break;
 			case NO:

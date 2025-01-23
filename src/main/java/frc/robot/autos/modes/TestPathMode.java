@@ -19,7 +19,7 @@ public class TestPathMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException {
 		System.out.println("TestPathMode: Running test mode auto!");
-		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("P1-CS1b"), ResetWheelTracker.SET_TO_STARTING_POS));
+		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R1-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
 		/*
 		for(String trajectory:trajectorySet.set.keySet()){
 			System.out.println(trajectory);
