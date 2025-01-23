@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.lib.drivers.Pigeon;
 import frc.robot.lib.swerve.SwerveModule;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -166,35 +167,43 @@ public class WheelTracker {
 		resetModulePoses(mRobotPose);
 	}
 
-	/*DC.12.9.24. Bugfix for wheel odometry update
+	/*DC.12.9.24. Bugfix for wheel odometry update during path-following algo
 	* We need to negate deltaPosition.dy value because position reading of our robot's rotation motor 
 	* increases along clock-wise direction while CCW assumed in original citrus code. 
 	* So if rotation motor turns to positive degree (relative to zero position), robot is actually turning right side, 
 	* which translates into a negative strafe (y-direction) movement, and vice versus. 
 	* similar fixes also apply to setSteeringAngleOptimized(), resetToAbsolute() in SwerveModule();
+	*
+	*DC.1.20.25. Bugfix for movement direction messed-up after robot turning
+	* It is caused by the same problem as above. Since robotHeading (from gyro) assumes CCW as positive reading, while wheel moduleAngle() is the opposite. 
+	* Therefore, wheelAngle in field frame shall = moduleAngle(CW, in robot frame) - robotHeading (CCW, in field frame)
 	*/
 	private void updateWheelOdometry(SwerveModule module, WheelProperties props) {
 		double currentEncDistance = module.getDriveDistanceMeters();
 		double deltaEncDistance = currentEncDistance - props.previousEncDistance;
-		Rotation2d wheelAngle = module.getModuleAngle().rotateBy(Rotation2d.fromRadians(robotHeading));
+		Rotation2d wheelAngle = module.getModuleAngle().rotateBy(Rotation2d.fromRadians(-robotHeading));//negate robotHeading as it is CCW positive while module is CW positive
 		Translation2d deltaPosition = new Translation2d(wheelAngle.getCos() * deltaEncDistance,
 				-wheelAngle.getSin() * deltaEncDistance); //negate the strafe movement as are rotation motor is clockwise as positive, see comments above for detail.
-
 		double xCorrectionFactor = 1.0;
 		double yCorrectionFactor = 1.0;
 
-		if (Math.signum(deltaPosition.getX()) == 1.0) {
-			xCorrectionFactor = (8.6 / 9.173);
+		if (Robot.isSimulation()) {
+			xCorrectionFactor = 4.0;
+			yCorrectionFactor = 4.0;
+		} else {
+			if (Math.signum(deltaPosition.getX()) == 1.0) {
+				xCorrectionFactor = (8.6 / 9.173);
 
-		} else if (Math.signum(deltaPosition.getX()) == -1.0) {
-			xCorrectionFactor = (8.27 / 9.173);
-		}
+			} else if (Math.signum(deltaPosition.getX()) == -1.0) {
+				xCorrectionFactor = (8.27 / 9.173);
+			}
 
-		if (Math.signum(deltaPosition.getY()) == 1.0) {
-			yCorrectionFactor = (3.638 / 4.0);
+			if (Math.signum(deltaPosition.getY()) == 1.0) {
+				yCorrectionFactor = (3.638 / 4.0);
 
-		} else if (Math.signum(deltaPosition.getY()) == -1.0) {
-			yCorrectionFactor = (3.660 / 4.0);
+			} else if (Math.signum(deltaPosition.getY()) == -1.0) {
+				yCorrectionFactor = (3.660 / 4.0);
+			}
 		}
 
 //		SmartDashboard.putString(

@@ -448,6 +448,7 @@ public class SwerveDrive extends Subsystem {
 
 		ChassisSpeeds wanted_speeds;
 		if (mOverrideHeading) {
+			System.out.println("updateSetPoint(): override heading is TRUE;");
 			stabilizeHeading(mTrackingAngle);
 			double new_omega = mHeadingController.update(mPeriodicIO.heading.getRadians(), Timer.getFPGATimestamp());
 			ChassisSpeeds speeds = new ChassisSpeeds(twist_vel.dx, twist_vel.dy, new_omega);
