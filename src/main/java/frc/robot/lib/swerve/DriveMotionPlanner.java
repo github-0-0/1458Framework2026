@@ -226,7 +226,7 @@ public class DriveMotionPlanner {
 				// RobotState.getInstance().setDisplaySetpointPose(Pose2d.fromTranslation(RobotState.getInstance().getFieldToOdom(timestamp)).transformBy(sample_point.state().state().getPose()));
 				mSetpoint = sample_point;
 				//3.calculate chassis speed for next movement via pure pursuit algo, 
-				mOutput = updatePurePursuit(current_pose, 0.0);
+				mOutput = updatePurePursuit(current_pose, mCurrentTrajectory.current_chassis_speeds.omegaRadiansPerSecond);
 			}
 		} else {
 			if (mCurrentTrajectory.getLastPoint().velocityMetersPerSecond == 0.0) {

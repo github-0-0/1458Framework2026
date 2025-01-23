@@ -1,6 +1,8 @@
 package frc.robot.lib.trajectory;
 
 import java.util.List;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.*;
 import com.pathplanner.lib.trajectory.*;
 //dc.10.21.2024, rewrite the TrajectoryIterator class based on wpilib Trajectory package, main functions as following
@@ -11,11 +13,13 @@ public class TrajectoryIterator {
     protected double progress_ = 0.0;
     protected PathPlannerTrajectoryState current_sample_;     //corresponding to TrajectorySamplePoint in citrus code
     protected PathPlannerTrajectory mCurrentTrajectory=null;
+    public ChassisSpeeds current_chassis_speeds;
 
     //construtor code
     public TrajectoryIterator (PathPlannerTrajectory curTrajectory){
         mCurrentTrajectory = curTrajectory;
         current_sample_ = curTrajectory.getStates().get(0);
+        current_chassis_speeds = current_sample_.fieldSpeeds;
         //progress_ = view_.first_interpolant();        //dc. is it not zero??
     }
 
@@ -24,6 +28,7 @@ public class TrajectoryIterator {
 //        System.out.println("soup "+additional_progress);
         progress_ = Math.max(0.0, Math.min(mCurrentTrajectory.getTotalTimeSeconds(), progress_ + additional_progress));
         current_sample_ = mCurrentTrajectory.sample(progress_);
+        current_chassis_speeds = current_sample_.fieldSpeeds;
         return fromPathPlannerTrajectoryState(current_sample_);
     }
 
