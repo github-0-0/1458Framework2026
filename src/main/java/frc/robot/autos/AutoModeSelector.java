@@ -24,6 +24,7 @@ public class AutoModeSelector {
 		mModeChooser.addOption("Test Auto Mode", DesiredMode.TESTAUTOMODE);
 		mModeChooser.setDefaultOption("Test Path Mode", DesiredMode.TESTPATHMODE);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
+		mModeChooser.addOption("Test Path Auto Mode 2", DesiredMode.TESTAUTOMODE);
 	}
 
 	public void updateModeCreator(boolean force_regen) {
