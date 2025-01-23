@@ -188,7 +188,8 @@ public class RobotContainer25 {
             if (m_AutoModeExecutor != null) {
 			    m_AutoModeExecutor.stop();
 		    }
-            CrashTracker.logTest("Testing crashtracker - if you see this it works");
+            testChassisSpeedConvert();
+            //CrashTracker.logTest("Testing crashtracker - if you see this it works");
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -224,10 +225,19 @@ public class RobotContainer25 {
                 double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
                 double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
                 double rotationVal = MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
-    //                System.out.println("DC: manualModePeriodc() translationVal=" + translationVal + ", StrafeVal=" + strafeVal + ", rotationVal=" + rotationVal);
-                    m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+/*                 if (translationVal!=0.0 || strafeVal!=0.0 ) { 
+                    //dc 1.20.25, debug issues after robot rotation
+                    System.out.println("DC: manualModePeriodc() field speed: tVal=" + translationVal + ", sVal=" + strafeVal + ", rVal=" + rotationVal);
+                    System.out.println("DC: manualModePeriodc() swerveHeading =" + m_SwerveDrive.getHeading().getDegrees());
+                    ChassisSpeeds rs = ChassisSpeeds.fromFieldRelativeSpeeds(
                         translationVal, strafeVal, rotationVal,
-                        Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
+                        Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance));
+                    System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
+                }
+*/
+                m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    translationVal, strafeVal, rotationVal,
+                    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
 
 
 //			mDriverControls.oneControllerMode();
@@ -237,6 +247,16 @@ public class RobotContainer25 {
 			throw t;
 		}
 
+    }
+
+    public void testChassisSpeedConvert (){
+        double tV= 2;
+        double sV=0.0;//1;
+        double rV=0.0;
+        ChassisSpeeds rs = ChassisSpeeds.fromFieldRelativeSpeeds( tV, sV, rV, Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance));
+        System.out.println("DC: testChassisSpeedConvert field speed: tVal=" + tV + ", sVal=" + sV + ", rVal=" + rV);
+        System.out.println("DC: testChassisSpeedConvert robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
+        System.out.println("DC: testChassisSpeedConvert swerveHeading: heading=" + m_SwerveDrive.getHeading() + ", field=" + sV + ", rVal=" + rV);
     }
 
     //dummy methods for now.

@@ -179,15 +179,6 @@ public class SwerveModule extends Subsystem {
 			relativeDegrees += 180.0;
 			flip = true;
 		}
- 		{//todo: debug code, TBR
-//			if (mCounter++ >50){
-//				mCounter =0;
-//				SmartDashboard.putString("Module #"+ kModuleNumber+" setSteeringAngleOpti(), desiredAngle, angleUnclamped",
-//					String.format("%.2f,%.2f", targetClamped, angleUnclamped));
-//				SmartDashboard.putString("Module #"+ kModuleNumber+" setSteeringAngleOpti(), relativeDegreesPreFlip, relativeDegrees",
-//					String.format("%.2f,%.2f", relativeDegreesPreFlip,relativeDegrees));
-//			}
-		}
 		setSteeringAngleRaw(angleUnclamped + relativeDegrees);
 		target_angle = angleUnclamped + relativeDegrees;
 		return flip;
