@@ -1,5 +1,5 @@
 CS = coral station
-CS 1 = coral station closest to barge (top of field)
+CS 1 = coral station closest to our barge (top of field)
 CS 2 = coral station closest to processor (bottom of field)
 
 P 1 = processor
