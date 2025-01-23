@@ -17,6 +17,7 @@ public class TrajectoryGenerator {
 
     public class TrajectorySet {
 		//the parent folder NEEDs to be "./src/main/deploy/"
+        public Trajectory testTrajectoryRotation90 = loadTrajectory("paths/output/s.0.0.rotation.90degree.wpilib.json"); 
         public Trajectory testTrajectoryZigzag = loadTrajectory("paths/output/s.0.0.zigzag.wpilib.json"); 
         public Trajectory testTrajectoryBackForth = loadTrajectory("paths/output/s.0.0.back.n.forth.n.return.wpilib.json"); 
         public Trajectory testTrajectoryStraightForward = loadTrajectory("paths/output/s.0.0.StraightForward.n.return.wpilib.json"); 
