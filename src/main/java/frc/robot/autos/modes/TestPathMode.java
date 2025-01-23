@@ -22,7 +22,7 @@ public class TestPathMode extends AutoModeBase {
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryBackForth, true)); //not working in sim
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryOneCircle, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryTwoCircle, true));
-		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryBeeDancing, true));
+		//runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryBeeDancing, true));
 /*//TODO: chain other test actions here 
 		System.out.println("TestPathMode: wait for 1 seconds!");
 		runAction(new WaitAction(1));
