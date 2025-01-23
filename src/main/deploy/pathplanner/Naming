@@ -1,0 +1,19 @@
+CS = coral station
+CS 1 = coral station closest to our barge (top of field)
+CS 2 = coral station closest to processor (bottom of field)
+
+P 1 = processor
+
+S = start
+S 1 = top starting position
+S 2 = between top and center cages
+S 3 = between center and bottom cages
+S 4 = bottom starting position (between center and closest cage to center)
+
+R = reef
+R 1 = top right reef face
+R 2 = top reef face
+R 3 = top left reef face
+R 4 = bottom left reef face
+R 5 = bottom reef face
+R 6 = bottom right reef face
