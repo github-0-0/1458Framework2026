@@ -26,8 +26,8 @@ public class Intake extends Subsystem {
 
   private final PIDController m_pivotPID = new PIDController(k_pivotMotorP, k_pivotMotorI, k_pivotMotorD);
 
-  private final CANcoder m_pivotEncoder = new CANcoder(Constants.Intake.k_pivotEncoderId);
-  private final DigitalInput m_IntakeLimitSwitch = new DigitalInput(Constants.Intake.k_intakeLimitSwitchId);
+  private final CANcoder m_pivotEncoder = new CANcoder(99); //TODO: change ID
+  
 
   //public final LEDs m_leds = LEDs.getInstance();
 
@@ -209,7 +209,7 @@ public class Intake extends Subsystem {
   public boolean getIntakeHasNote() {
     // NOTE: this is intentionally inverted, because the limit switch is normally
     // closed
-    return !m_IntakeLimitSwitch.get();
+    return Laser.inRangeIntake();
   }
 
   // Pivot helper functions
