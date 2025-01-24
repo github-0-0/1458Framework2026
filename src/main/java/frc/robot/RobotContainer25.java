@@ -152,8 +152,8 @@ public class RobotContainer25 {
             RobotState.getInstance().setIsInAuto(false);//let robot state apply stricter vision filtering
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
             //select the auto_mode
-            m_AutoModeSelector.reset();
-            m_AutoModeSelector.updateModeCreator(false);
+//            m_AutoModeSelector.reset();
+//            m_AutoModeSelector.updateModeCreator(false);
             Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
             if (autoMode.isPresent() && (autoMode.get() != m_AutoModeExecutor.getAutoMode())) {
                 m_AutoModeExecutor.setAutoMode(autoMode.get());
