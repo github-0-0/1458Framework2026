@@ -672,6 +672,11 @@ public class SwerveDrive extends Subsystem {
 		odometryReset = true;
 		Pose2d wanted_pose = pose;
 		mWheelTracker.resetPose(wanted_pose);
+		//dc.1.24.2025, bugfix, force update odometry after resetPose for WheelTracker. 
+		// Otherwise, RobotState will NOT be updated until next cycle (20ms later, at OnLoop()).. 
+		// Therefore, immediate call to getPose() will return pose before reset. 
+		// Wield behavior are found for SwerveTrajectoryAction() in SIM mode
+		RobotState.getInstance().addOdometryUpdate(Timer.getFPGATimestamp(),new InterpolatingPose2d(mWheelTracker.getRobotPose()),mPeriodicIO.measured_velocity,mPeriodicIO.predicted_velocity);
 	}
 /*
 //dc.zeroReference
