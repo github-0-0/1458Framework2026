@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.lib.drivers.Pigeon;
 import frc.robot.lib.swerve.SwerveModule;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -199,7 +200,11 @@ public class WheelTracker {
 		} else if (Math.signum(deltaPosition.getY()) == -1.0) {
 			yCorrectionFactor = (3.660 / 4.0);
 		}
-
+/*  		if (Robot.isSimulation()) {//scale up speed in simulation mode
+			xCorrectionFactor *= 4.0;
+			yCorrectionFactor *= 4.0;
+		} 
+*/
 //		SmartDashboard.putString(
 //				"Correction Factors", String.valueOf(xCorrectionFactor) + ":" + String.valueOf(yCorrectionFactor));
 

@@ -303,6 +303,17 @@ public class RobotState {
 		return mHasRecievedVisionUpdate;
 	}
 
+	/**
+	 * Updates tracker to use stricter auto vision filtering.
+	 * @param in_auto If auto filters should be used.
+	 */
+	public synchronized void setIsInAuto(boolean in_auto) {
+		mIsInAuto = in_auto;
+	}
+
+	/**
+	 * Class to hold information about a vision update.
+	 */
 	public static class VisionUpdate {
 		private double timestamp;
 		private Translation2d field_to_camera;

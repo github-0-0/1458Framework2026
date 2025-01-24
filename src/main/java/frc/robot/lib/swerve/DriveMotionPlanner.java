@@ -255,9 +255,9 @@ public class DriveMotionPlanner {
 		double actual_lookahead_distance = distance(mSetpoint.poseMeters, lookahead_state.poseMeters);
 		double adaptive_lookahead_distance = mSpeedLookahead.getLookaheadForSpeed(mSetpoint.velocityMetersPerSecond); // (lookahead_range) * (speed - min_speed) / (speed_range) + min_lookahead
 				//+ kAdaptiveErrorLookaheadCoefficient * mError.getTranslation().getNorm(); //TODO: TB restored, dc.12.7.24, turn off mError compensation
-		SmartDashboard.putNumber("PurePursuit/Error.dx", mError.getTranslation().getX());
-		SmartDashboard.putNumber("PurePursuit/Error.dy", mError.getTranslation().getY());
-		SmartDashboard.putNumber("PurePursuit/Error.Radians", mError.getRotation().getRadians());
+//		SmartDashboard.putNumber("PurePursuit/Error.dx", mError.getTranslation().getX());
+//		SmartDashboard.putNumber("PurePursuit/Error.dy", mError.getTranslation().getY());
+//		SmartDashboard.putNumber("PurePursuit/Error.Radians", mError.getRotation().getRadians());
 		
 		// try Points on Trajectory to approach max lookahead_distance (adaptive_lookahead_distance)
 		while (actual_lookahead_distance < adaptive_lookahead_distance
@@ -266,10 +266,10 @@ public class DriveMotionPlanner {
 			lookahead_state = mCurrentTrajectory.preview(lookahead_time);
 			actual_lookahead_distance = distance(mSetpoint.poseMeters, lookahead_state.poseMeters);
 		}
+		//dc.1.19.2025, i believe this is a bug in citrus code. When this happens, 
+		//lookahead_time must >= trajectory.remainingProgress, .preview() shall return the last point to lookahead_state 
+		//We DON'T need to translate its Pose, and robot shall converge to it
 		if (actual_lookahead_distance < adaptive_lookahead_distance) {
-			//dc.1.19.2025, i believe this is a bug in citrus code. When this case happens, 
-			//lookahead_time must >= trajectory.remainingProgress, .preview() shall return the last point to lookahead_state 
-			//We DON'T need to translate its Pose, and robot shall converge to it
 			/*
 			Transform2d transform = new Transform2d(
 					new Translation2d((mIsReversed ? -1.0 : 1.0)* (kPathMinLookaheadDistance - actual_lookahead_distance),0.0), 
@@ -281,10 +281,6 @@ public class DriveMotionPlanner {
 					lookahead_state.poseMeters.transformBy(transform),//do we need this? or just use the pose of end point on trajectory?
 					lookahead_state.curvatureRadPerMeter);
 			*/
-//			System.out.println("PurePursuit() lookahead_time >= end of trajectory, lookahead_state.timeSeconds=" + lookahead_state.timeSeconds);
-//			System.out.println("PurePursuit() lookahead_time >= end of trajectory, lookahead_state.poseMeters" + lookahead_state.poseMeters.getTranslation());
-			System.out.println("PurePursuit() lookahead_time >= end of trajectory, remaining progress (s) =" + mCurrentTrajectory.getRemainingProgress() + ", mError=" + mError.getTranslation().getNorm());
-
 		}
 		SmartDashboard.putNumber("PurePursuit/ActualLookaheadDist(m)", actual_lookahead_distance);
 		SmartDashboard.putNumber("PurePursuit/AdaptiveLookahead(m)", adaptive_lookahead_distance);
@@ -293,11 +289,10 @@ public class DriveMotionPlanner {
 		SmartDashboard.putNumber("PurePursuit/RemainingProgress(s)", mCurrentTrajectory.getRemainingProgress());
 		SmartDashboard.putNumber("PurePursuit/PathVelocity(m/s)", lookahead_state.velocityMetersPerSecond);
 
+		//dc.1.19.2025, i believe this is a bug in citrus code, it causes path follower stop too earlier before the end of trajectory 
+		//even when lookahead_state.velocity is zero, i believe robot shall continue forward from its current position to lookahead_state
+		//it will take quite some cycles for robot actually reach the end of path.
 		if (lookahead_state.velocityMetersPerSecond == 0.0) {
-//			System.out.println("PurePursuit() lookahead_state.velocity IS 0.0, remaining progress (s) =" + mCurrentTrajectory.getRemainingProgress());
-			//dc.1.19.2025, i believe this is a bug in citrus code, it causes path follower stop too earlier before the end of trajectory 
-			//even when lookahead_state.velocity is zero, i believe robot shall continue forward from its current position to lookahead_state
-			//the trajectory shall NOT advance to the end and robot shall NOT stop. 
 			/* 
 			mCurrentTrajectory.advance(Double.POSITIVE_INFINITY); //advance to the end of Trajectory
 			return new ChassisSpeeds(); 
@@ -309,8 +304,6 @@ public class DriveMotionPlanner {
 		Translation2d lookaheadTranslation = lookahead_state.poseMeters.getTranslation().minus(current_pose.getTranslation());//dc.12.7.24, bugfix, flip the vector
 		/* original citrus code = "new Translation2d(
 				current_pose.getTranslation(), lookahead_state.state().getTranslation());"*/		
-//		SmartDashboard.putNumber("PurePursuit/lookAheadTranslation.dx", lookaheadTranslation.getX());
-//		SmartDashboard.putNumber("PurePursuit/lookAheadTranslation.dy", lookaheadTranslation.getY());
 
 		// Set the steering direction as the direction of the vector
 		Rotation2d steeringDirection = lookaheadTranslation.getAngle();// original citrus code = "".direction();"
@@ -320,7 +313,6 @@ public class DriveMotionPlanner {
 
 		// Use the Velocity Feedforward of the Closest Point on the Trajectory
 		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond) / Constants.SwerveConstants.maxAutoSpeed; 
-		SmartDashboard.putNumber("PurePursuit/NormalizedSpeed", normalizedSpeed);
 
 		// The Default Cook is the minimum speed to use. So if a feedforward speed is less than defaultCook, the robot
 		// will drive at the defaultCook speed
@@ -332,11 +324,38 @@ public class DriveMotionPlanner {
 		// Convert the Polar Coordinate (speed, direction) into a Rectangular Coordinate (Vx, Vy) in Robot Frame
 		final Translation2d steeringVector =
 				new Translation2d(steeringDirection.getCos() * normalizedSpeed, steeringDirection.getSin() * normalizedSpeed);
+
+		// dc.1.22.2025, finally let's 'compensate the rotation speed in pursuiting lookahead state
+		// method1. compensate omega speed from current trajectory state with angle error of current pose 
+//		Rotation2d currPoseRotationDelta = current_pose.getRotation().minus(mSetpoint.poseMeters.getRotation());//dc.1.22.2025, add code to support pose rotation on the trajectory
+//		double deltaOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > Util.kEpsilon )? currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * Math.abs(mSetpoint.velocityMetersPerSecond) : 0.0;
+//		double deltaOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > Util.kEpsilon )? currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed*Constants.SwerveConstants.maxAutoSpeed: 0.0;
+
+		// method2. calc omega directly from angle difference between current pose and lookahead state
+		Rotation2d currPoseRotationDelta = lookahead_state.poseMeters.getRotation().minus(current_pose.getRotation());//dc.1.22.2025, 2nd methods for calc oemga
+		double trueOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > kAdaptivePathMinLookaheadDistance)? 
+			currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed*Constants.SwerveConstants.maxAutoSpeed : 
+			(mCurrentTrajectory.getRemainingProgress() >0.0)? currPoseRotationDelta.getRadians() / mCurrentTrajectory.getRemainingProgress():0 ;
+		SmartDashboard.putNumber("PurePursuit/Heading.Error", current_pose.getRotation().minus(mSetpoint.poseMeters.getRotation()).getDegrees());
+		
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
 				steeringVector.getX() * Constants.SwerveConstants.maxAutoSpeed,
-				steeringVector.getY() * Constants.SwerveConstants.maxAutoSpeed,
-				feedforwardOmegaRadiansPerSecond);
+				steeringVector.getY() * Constants.SwerveConstants.maxAutoSpeed,				
+//				mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond - deltaOmegaRadiansPerSecond);		
+				trueOmegaRadiansPerSecond);
 
+		//output debug info as we get close to the end of path
+		if (actual_lookahead_distance < adaptive_lookahead_distance) {
+			System.out.println("PurePursuit() remaining (s) =" + mCurrentTrajectory.getRemainingProgress() 
+				+ ", err.distance=" + current_pose.relativeTo(mSetpoint.poseMeters).getTranslation().getNorm()
+				+ ", err.angle=" + currPoseRotationDelta.getDegrees() 
+				+ ", lookahead=" + lookaheadTranslation.getNorm()
+//				+ ", OmegaRPS orig=" + mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond 
+//				+ ", OmegaRPS comp=" + deltaOmegaRadiansPerSecond
+				+ ", OmegaRPS =" + trueOmegaRadiansPerSecond
+				);
+		}				
+		
 /* 
 		// Use the PD-Controller for To Follow the Time-Parametrized Heading
 		final double kThetakP = 0.0; //TODO: TB restored, dc.12.7.24, turn off PD controller, citrus orignal value = 3.5;

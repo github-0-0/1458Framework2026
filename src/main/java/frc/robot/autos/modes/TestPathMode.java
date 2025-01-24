@@ -32,7 +32,7 @@ public class TestPathMode extends AutoModeBase {
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySmallLoop, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryZigzag, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySlowCurve, true));
-//		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryBackForth, true)); //not working in sim
+//		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryBackForth, true)); //bug: rotation at ending
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryOneCircle, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryTwoCircle, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryBeeDancing, true));
