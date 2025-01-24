@@ -17,8 +17,8 @@ public class TestPathMode extends AutoModeBase {
 	protected void routine() throws AutoModeEndedException {
 		System.out.println("TestPathMode: Running test mode auto!");
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryRotation90, true));
-		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryStraightForward, true));
-//		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySmallLoop, true)); //not working in sim
+//		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryStraightForward, true));
+		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySmallLoop, true)); //bug: rotation at ending
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryZigzag, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectorySlowCurve, true));
 //		runAction(new SwerveTrajectoryAction(trajectorySet.testTrajectoryBackForth, true)); //bug: rotation at ending
