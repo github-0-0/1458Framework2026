@@ -22,20 +22,20 @@ public class Cancoders {
 	private final CANcoder mFrontRight;
 	private final CANcoder mBackLeft;
 	private final CANcoder mBackRight;
-	private final CANcoder mElevatorLeft;
+/* 	private final CANcoder mElevatorLeft;
 	private final CANcoder mElevatorRight;
 	private final CANcoder mShooterLeft;
 	private final CANcoder mShooterRight;
-
+*/
 	private final CanTsObserver mFrontRightObserver;
 	private final CanTsObserver mFrontLeftObserver;
 	private final CanTsObserver mBackLeftObserver;
 	private final CanTsObserver mBackRightObserver;
-	private final CanTsObserver mElevatorLeftObserver;
+/* 	private final CanTsObserver mElevatorLeftObserver;
 	private final CanTsObserver mElevatorRightObserver;
 	private final CanTsObserver mShooterLeftObserver;
 	private final CanTsObserver mShooterRightObserver;
-
+*/
 	private static final double kBootUpErrorAllowanceTime = 10.0;
 
 	private static class CanTsObserver {
@@ -115,7 +115,7 @@ public class Cancoders {
 		mBackRight = build(Ports.BR_CANCODER);
 		mBackRightObserver = new CanTsObserver(mBackRight);
 		
-		mElevatorLeft = build(Ports.EL_CANCODER);
+/* 		mElevatorLeft = build(Ports.EL_CANCODER);
 		mElevatorLeftObserver = new CanTsObserver(mElevatorLeft);
 
 		mElevatorRight = build(Ports.ER_CANCODER);
@@ -126,18 +126,19 @@ public class Cancoders {
 
 		mShooterRight = build(Ports.ER_CANCODER);
 		mShooterRightObserver = new CanTsObserver(mShooterRight);
-
+*/
 	}
 
 	public boolean allHaveBeenInitialized() {
 		return mFrontLeftObserver.hasUpdate()
 				&& mFrontRightObserver.hasUpdate()
 				&& mBackLeftObserver.hasUpdate()
-				&& mBackRightObserver.hasUpdate()
-				&& mElevatorLeftObserver.hasUpdate()
+				&& mBackRightObserver.hasUpdate();
+/* 				&& mElevatorLeftObserver.hasUpdate()
 				&& mElevatorRightObserver.hasUpdate()
 				&& mShooterLeftObserver.hasUpdate()
 				&& mShooterRightObserver.hasUpdate();
+				*/
 	}
 
 	public CANcoder getFrontLeft() {
@@ -155,7 +156,7 @@ public class Cancoders {
 	public CANcoder getBackRight() {
 		return mBackRight;
 	}
-
+/* 
 	public CANcoder getElevatorLeft() {
 		return mElevatorLeft;
 	}
@@ -170,5 +171,5 @@ public class Cancoders {
 
 	public CANcoder getShooterRight() {
 		return mShooterRight;
-	}
+	}*/
 }

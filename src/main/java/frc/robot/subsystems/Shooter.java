@@ -25,8 +25,8 @@ public class Shooter extends Subsystem {
   private TalonFX mRightShooterMotor;
 
 
-  private CANcoder mLeftShooterEncoder;
-  private CANcoder mRightShooterEncoder;
+  //private CANcoder mLeftShooterEncoder;
+  //private CANcoder mRightShooterEncoder;
 
   private SlewRateLimiter mSpeedLimiter = new SlewRateLimiter(1000);
 
@@ -43,8 +43,8 @@ public class Shooter extends Subsystem {
     
     mLeftShooterMotor.getConfigurator().apply(Constants.Shooter.ShooterConfiguration(),Constants.kLongCANTimeoutMs);
     mRightShooterMotor.getConfigurator().apply(Constants.Shooter.ShooterConfiguration(),Constants.kLongCANTimeoutMs);
-    mLeftShooterEncoder = Cancoders.getInstance().getShooterLeft();
-    mRightShooterEncoder = Cancoders.getInstance().getShooterRight();
+//    mLeftShooterEncoder = Cancoders.getInstance().getShooterLeft();
+//    mRightShooterEncoder = Cancoders.getInstance().getShooterRight();
 
     mLeftShooterMotor.setNeutralMode(NeutralModeValue.Coast);
     mRightShooterMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -82,8 +82,8 @@ public class Shooter extends Subsystem {
   @Override
   public void outputTelemetry() {
     SmartDashboard.putNumber("Speed (RPM):", mPeriodicIO.shooter_rpm);
-    SmartDashboard.putNumber("Left speed:", mLeftShooterEncoder.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Right speed:", mRightShooterEncoder.getVelocity().getValueAsDouble());
+//    SmartDashboard.putNumber("Left speed:", mLeftShooterEncoder.getVelocity().getValueAsDouble());
+//    SmartDashboard.putNumber("Right speed:", mRightShooterEncoder.getVelocity().getValueAsDouble());
   }
 
   /*

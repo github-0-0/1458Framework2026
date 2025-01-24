@@ -30,8 +30,8 @@ public class Ports {
 //	public static final CanDeviceId BR_ROTATION = new CanDeviceId(7, "CV");
 	public static final CanDeviceId BR_CANCODER = new CanDeviceId(1, "CV");
 
-	public static final CanDeviceId EL_CANCODER = new CanDeviceId(13, "CV");
-	public static final CanDeviceId ER_CANCODER = new CanDeviceId(14, "CV");
+//	public static final CanDeviceId EL_CANCODER = new CanDeviceId(13, "CV");
+//	public static final CanDeviceId ER_CANCODER = new CanDeviceId(14, "CV");
 
 	
 	/* SUBSYSTEM CAN DEVICE IDS */
