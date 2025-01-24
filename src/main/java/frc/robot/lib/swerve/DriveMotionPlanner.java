@@ -2,8 +2,6 @@ package frc.robot.lib.swerve;
 
 import java.util.List;
 
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-
 //dc.10.21.2024, rewrite citrus code using wpilib Trajectory classes
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -95,16 +93,7 @@ public class DriveMotionPlanner {
 				mCurrentTrajectory.trajectory().getTotalTimeSeconds();	//dc.11.21.24, replace citrus code = .getLastPoint().state().t();
 		
 		//check if trajectory is reversed
-		List<PathPlannerTrajectoryState> stateList = trajectory.trajectory().getStates();
-		for (int i = 0; i < stateList.size(); ++i) {
-			if (stateList.get(i).linearVelocity > Util.kEpsilon) {
-				mIsReversed = false;
-				break; //dc.11.21.24, assume all states of the trajectory have the same direction
-			} else if (stateList.get(i).linearVelocity  < -Util.kEpsilon) {
-				mIsReversed = true;
-				break;
-			}
-		}
+		mIsReversed = mCurrentTrajectory.isReversed();
     }
 
 	public void reset() {

@@ -4,6 +4,8 @@ import java.util.List;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.*;
+import frc.robot.lib.util.Util;
+
 import com.pathplanner.lib.trajectory.*;
 //dc.10.21.2024, rewrite the TrajectoryIterator class based on wpilib Trajectory package, main functions as following
 //
@@ -66,5 +68,18 @@ public class TrajectoryIterator {
     public Trajectory.State fromPathPlannerTrajectoryState(PathPlannerTrajectoryState state) {
         Trajectory.State converted = new Trajectory.State(state.timeSeconds,state.linearVelocity,0,state.pose,state.fieldSpeeds.omegaRadiansPerSecond/state.linearVelocity);
         return converted;
+    }
+
+    //check if trajectory is reversed
+    public boolean isReversed(){
+		List<PathPlannerTrajectoryState> stateList = mCurrentTrajectory.getStates();
+		for (int i = 0; i < stateList.size(); ++i) {
+			if (stateList.get(i).linearVelocity > Util.kEpsilon) {
+				return false; //dc.11.21.24, assume all states of the trajectory have the same direction
+			} else if (stateList.get(i).linearVelocity  < -Util.kEpsilon) {
+				return true;
+			}		
+        }
+        return false;//this code shall never reach here. 
     }
 }
