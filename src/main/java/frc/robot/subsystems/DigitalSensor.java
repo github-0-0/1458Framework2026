@@ -14,8 +14,7 @@ public class DigitalSensor {
     
     
 
-    public DigitalSensor() {
-    }
+    public DigitalSensor() {}
 
     public static boolean getSensor(int channel) {
         switch (channel) {
