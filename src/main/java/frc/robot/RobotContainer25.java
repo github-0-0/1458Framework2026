@@ -155,18 +155,10 @@ public class RobotContainer25 {
     // init manual (teleop) mode
     public void initAutoMode (){
         try {
-            RobotState.getInstance().setIsInAuto(false);//let robot state apply stricter vision filtering
+//          RobotState.getInstance().setIsInAuto(false);
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
-            //select the auto_mode
-//            m_AutoModeSelector.reset();
-//            m_AutoModeSelector.updateModeCreator(false);
-            Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
-            if (autoMode.isPresent() && (autoMode.get() != m_AutoModeExecutor.getAutoMode())) {
-                m_AutoModeExecutor.setAutoMode(autoMode.get());
-            }else{
-                System.out.println("initAutoMode: auto-mode is NOT selected");
-            }
-            m_AutoModeExecutor.start();            
+            
+            m_AutoModeExecutor.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -176,22 +168,23 @@ public class RobotContainer25 {
 
     // init manual (teleop) mode
     public void initDisabledMode (){
-        //turn off the "EnabledLooper" and turn on the "DisabledLooper"
+        if (m_AutoModeExecutor != null) {
+			m_AutoModeExecutor.stop();
+		}
+		m_AutoModeSelector.reset();
+		m_AutoModeSelector.updateModeCreator(false);
+        Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
+
+		m_AutoModeExecutor = new AutoModeExecutor();
+        if (autoMode.isPresent() && (autoMode.get() != m_AutoModeExecutor.getAutoMode())) {
+            m_AutoModeExecutor.setAutoMode(autoMode.get());
+        }
         try {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
-		}        
-        //stop current autoMode executor if there is one active
-        if (m_AutoModeExecutor != null) {
-			m_AutoModeExecutor.stop();
 		}
-        //reset all auto mode state
-		m_AutoModeSelector.reset();
-		m_AutoModeSelector.updateModeCreator(false);
-		m_AutoModeExecutor = new AutoModeExecutor();
-        //limelight set pipleline code goes here. 
     }
 
     // init manual (teleop) mode
@@ -201,7 +194,7 @@ public class RobotContainer25 {
             if (m_AutoModeExecutor != null) {
 			    m_AutoModeExecutor.stop();
 		    }
-//            testChassisSpeedConvert();
+            testChassisSpeedConvert();
             //CrashTracker.logTest("Testing crashtracker - if you see this it works");
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -249,10 +242,10 @@ public class RobotContainer25 {
                 }
 */
                 if(xboxController.getYButtonPressed()) {
-                    m_Elevator.incTarget();
+                    m_Elevator.runElevator(0.1);
                 }
                 if(xboxController.getAButtonPressed()) {
-                    m_Elevator.decTarget();
+                    m_Elevator.runElevator(-0.1);
                 }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
@@ -267,7 +260,7 @@ public class RobotContainer25 {
 		}
 
     }
-/* 
+
     public void testChassisSpeedConvert (){
         double tV= 2;
         double sV=0.0;//1;
@@ -277,7 +270,7 @@ public class RobotContainer25 {
         System.out.println("DC: testChassisSpeedConvert robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
         System.out.println("DC: testChassisSpeedConvert swerveHeading: heading=" + m_SwerveDrive.getHeading() + ", field=" + sV + ", rVal=" + rV);
     }
-*/
+
     //dummy methods for now.
     public Command getAutonomousCommand() {
         return null;
