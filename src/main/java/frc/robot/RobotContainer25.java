@@ -20,6 +20,7 @@ import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
 import frc.robot.subsystems.Cancoders;
 import frc.robot.subsystems.DummySubsystem;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.SwerveDrive;
 import edu.wpi.first.wpilibj.Timer;
@@ -40,6 +41,8 @@ public class RobotContainer25 {
 
     /* Controllers */
     private final Joystick m_JoyStick = new Joystick(0);
+
+    private final XboxController xboxController = new XboxController(0);
     /* button key-value */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
@@ -55,6 +58,7 @@ public class RobotContainer25 {
     /* Subsystems instance */
     private DummySubsystem m_ExampleSubsystem;
     private SwerveDrive m_SwerveDrive;
+    private Elevator m_Elevator;
     private Cancoders m_Cancoders;
     
     public AutoModeExecutor m_AutoModeExecutor;
@@ -68,6 +72,7 @@ public class RobotContainer25 {
             m_ExampleSubsystem = DummySubsystem.getInstance();
             m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
             m_SwerveDrive = SwerveDrive.getInstance();
+            m_Elevator = Elevator.getInstance();
 
             // init cancoders
             if (Robot.isReal()) {
@@ -88,6 +93,7 @@ public class RobotContainer25 {
             //add subsystems to its manager
             m_SubsystemManager.setSubsystems(
                 m_SwerveDrive,
+                m_Elevator,
                 m_ExampleSubsystem
                 //Insert instances of additional subsystems here
             );
@@ -242,6 +248,12 @@ public class RobotContainer25 {
                     System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
                 }
 */
+                if(xboxController.getYButtonPressed()) {
+                    m_Elevator.incTarget();
+                }
+                if(xboxController.getAButtonPressed()) {
+                    m_Elevator.decTarget();
+                }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
