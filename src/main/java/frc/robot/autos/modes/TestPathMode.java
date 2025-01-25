@@ -20,7 +20,8 @@ public class TestPathMode extends AutoModeBase {
 	protected void routine() throws AutoModeEndedException {
 		System.out.println("TestPathMode: Running test mode auto!");
 
-	
+		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("S2-R1234"), ResetWheelTracker.SET_TO_STARTING_POS));
+/* 	
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("S1-R1"), ResetWheelTracker.SET_TO_STARTING_POS));
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("S1-R2"), ResetWheelTracker.SET_TO_STARTING_POS));
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("S1-R3"), ResetWheelTracker.SET_TO_STARTING_POS));
@@ -64,8 +65,8 @@ public class TestPathMode extends AutoModeBase {
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("CS2-R6"), ResetWheelTracker.SET_TO_STARTING_POS));
 
  		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R1-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
-		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R2-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
-		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R3-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
+ 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R2-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
+ 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R3-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R4-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R5-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("R6-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
@@ -88,7 +89,7 @@ public class TestPathMode extends AutoModeBase {
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("P1-CS1"), ResetWheelTracker.SET_TO_STARTING_POS));
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("P1-CS2"), ResetWheelTracker.SET_TO_STARTING_POS));
 		runAction(new SwerveTrajectoryAction(trajectorySet.set.get("P1-CS1b"), ResetWheelTracker.SET_TO_STARTING_POS));
-
+*/
 
 /*
 		for(String trajectory:trajectorySet.set.keySet()){
