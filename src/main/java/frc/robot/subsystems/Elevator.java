@@ -178,21 +178,21 @@ public class Elevator extends Subsystem {
     return mPeriodicIO.state;
   }
 
-  public ElevatorState getLevel() {
-    if (DigitalSensor.getSensor(4)) {
-      return ElevatorState.L4;
-    } else if (DigitalSensor.getSensor(3)) {
-      return ElevatorState.L3;
-    } else if (DigitalSensor.getSensor(2)) {
-      return ElevatorState.L2;
-    } else if (DigitalSensor.getSensor(1)) {
-      return ElevatorState.L1;
-    } else if (DigitalSensor.getSensor(0)) {
-      return ElevatorState.GROUND;
-    } else {
-      return ElevatorState.NONE;
-    }
-  }
+  // public ElevatorState getLevel() {
+  //   if (DigitalSensor.getSensor(4)) {
+  //     return ElevatorState.L4;
+  //   } else if (DigitalSensor.getSensor(3)) {
+  //     return ElevatorState.L3;
+  //   } else if (DigitalSensor.getSensor(2)) {
+  //     return ElevatorState.L2;
+  //   } else if (DigitalSensor.getSensor(1)) {
+  //     return ElevatorState.L1;
+  //   } else if (DigitalSensor.getSensor(0)) {
+  //     return ElevatorState.GROUND;
+  //   } else {
+  //     return ElevatorState.NONE;
+  //   }
+  // }
 
 public void updateLocation() {
   for(int i = 0; i < 5; i++) {
@@ -227,26 +227,27 @@ public void runElevator(double speed) {
   mRightMotor.set(speed);
 }
 
-public void goToTarget() {
+public boolean goToTarget() {
   updateLocation();
   if(targetState > 4 || targetState < 0) {
     targetState = 0;
   }
   if(Laser.inRangeIntake()) {
-    return;
+    return false;
   }
   else if(targetState == currentState) {
     stop();
-    return;
+    return true;
   }
   else if(targetState > currentState) {
     runElevator(0.05);
-    return;
+    return false;
   }
   else if(targetState < currentState) {
     runElevator(-0.05);
-    return;
+    return false;
   }
+  return false;
 }
 
 

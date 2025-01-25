@@ -26,6 +26,7 @@ import frc.robot.subsystems.SwerveDrive;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
+import frc.robot.subsystems.Shooter;
 import frc.robot.Loops.CrashTracker;
 /**
  * DC 10.28.2024
@@ -59,6 +60,7 @@ public class RobotContainer25 {
     private DummySubsystem m_ExampleSubsystem;
     private SwerveDrive m_SwerveDrive;
     private Elevator m_Elevator;
+    private Shooter m_Shooter;
     private Cancoders m_Cancoders;
     
     public AutoModeExecutor m_AutoModeExecutor;
@@ -73,6 +75,7 @@ public class RobotContainer25 {
             m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
             m_SwerveDrive = SwerveDrive.getInstance();
             m_Elevator = Elevator.getInstance();
+            m_Shooter = Shooter.getInstance();
 
             // init cancoders
             if (Robot.isReal()) {
@@ -246,6 +249,13 @@ public class RobotContainer25 {
                 }
                 if(xboxController.getAButtonPressed()) {
                     m_Elevator.runElevator(-0.1);
+                }
+
+                if(xboxController.getYButton()) {
+                    m_Shooter.spin();                   
+                }
+                else{
+                    m_Shooter.stop();
                 }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,

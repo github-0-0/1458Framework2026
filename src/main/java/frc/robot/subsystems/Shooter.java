@@ -59,7 +59,7 @@ public class Shooter extends Subsystem {
 
   @Override
   public void stop() {
-    stopShooter();
+    mRightShooterMotor.set(0);
   }
 
   @Override
@@ -79,10 +79,6 @@ public class Shooter extends Subsystem {
     mRightShooterMotor.set(0.05);
   }
 
-  public void stopShooter() {
-    mRightShooterMotor.set(0);
-  }
-
   public void checkSensor() {
     if(Laser.inRangeIntake()) {
       spin();
@@ -93,6 +89,5 @@ public class Shooter extends Subsystem {
       sensorTripped = false;
     }
   }
-
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 }
