@@ -1,0 +1,7 @@
+DC 1.24.2025, Major merge Tommy's branch , including 
+(1) integration of PathPlanner Trajectory APIs , 
+(2) 50+ paths, 
+(3). auto-mode framework major upgrade including auto routine synatax & parser, and additional actions, 
+(4) elevator, intaker and shooter subsystem code v0.1 
+(5) lots of bugfixes in PurePursuit(), WheelTracker, SwerveDrive, RobotState etc 
+(6) cleanup  initautomode & initDisable code in robotcontainer25
