@@ -25,9 +25,17 @@ public class DriveMotionPlanner {
 	// Pure Pursuit Constants
 	public static final double kPathLookaheadTime = 0.1; // From 1323 (2019)
 	public static final double kPathMinLookaheadDistance = 0.3; // From 1323 (2019), not used in team1458 code
-	public static final double kAdaptivePathMinLookaheadDistance = 0.15;
+	public static final double kAdaptivePathMinLookaheadDistance = 0.15;//0.15;
 	public static final double kAdaptivePathMaxLookaheadDistance = 0.61;
 	public static final double kAdaptiveErrorLookaheadCoefficient = 0.01;
+	/*
+	* dc.1.24.2025, bugfix: PurePursuit often stucks/oscilates around sharp turning point on trajectory
+	* optimize search algo to avoid oscilation (cause by reverse advancement on trajectory) 
+	* around sharp turning points of trajectory. Many methods have been tried. The most effective one is just to
+	* reduce max search radius (searchStepSize initial value) for closest point on trajectory. 
+	* Due to the significant impacts on PurePursuit bahavior, we introduce a constant value for it. 
+	*/
+	public static final double KPurePursuitMaxSearchRadius = 0.5;
 
     //follower type
 	public enum FollowerType {
@@ -178,17 +186,13 @@ public class DriveMotionPlanner {
 				mOutput = updatePIDChassis(chassis_speeds, pid_error);
 			} else if (mFollowerType == FollowerType.PURE_PURSUIT) {
 				//1. find the cloeset (optimal) point on trajectory to robot
-				double searchStepSize = 1.0;	// these search steps are temporal, in seconds 
+				double searchStepSize =KPurePursuitMaxSearchRadius; // bugfix: reduce search radius to 0.5 from citrus code value =1.0, which causes lots of bugs in trajectory with sharp turning 
 				double previewQuantity = 0.0;
 				double searchDirection = 1.0;
-				//dc.1.20.2025, try to bugfix for robot oscilation around sharp turning points of trajectory.  
-				//negative previewQuantity leads robot backward, take out "searchDirection" code for backward trajectory exploring
-				//TODO: above fixes backfires, further review; 
 				double forwardDistance = distanceToTrajectory(current_pose, previewQuantity + searchStepSize);
 				double reverseDistance = distanceToTrajectory(current_pose, previewQuantity - searchStepSize);
 				searchDirection = Math.signum(reverseDistance - forwardDistance);
 				while (searchStepSize > 0.001) {
-					SmartDashboard.putNumber("PurePursuit/PreviewDist(m)", distanceToTrajectory(current_pose, previewQuantity));
 					if (Util.epsilonEquals(distanceToTrajectory(current_pose, previewQuantity), 0.0, 0.0003937)) break; //break if robot is right on the preview-pose of the trajectory
 					while (distanceToTrajectory(current_pose, previewQuantity + searchStepSize * searchDirection) 
 							< distanceToTrajectory(current_pose, previewQuantity)) { 		/* continue search if next step trajectory point is closer to current_pose than current trajectory point */ 
@@ -196,19 +200,13 @@ public class DriveMotionPlanner {
 					}
 					searchStepSize /= 10.0;	//reduce search step size by one factor
 					searchDirection *= -1;	//reverse the search direction
-				}
-				
-				//2. get the trajectory sample that is closest to robot, from which purepursuit algo will search for next optimal look-ahead distance
-//				if (previewQuantity < 0.0){
-//					//dc.1.20.2025, bugfix for robot oscilation around sharp turning points of trajectory, see above comments for move detail.
-//					System.out.println("PurePursuit trajectory advance backwards = " + previewQuantity + " around time=" + mCurrentTrajectory.getProgress() + ", mError=" + mError.getTranslation().getNorm());
-//					previewQuantity=Constants.kLooperDt;	//use the loop cycle dt, TODO: add code to handle reverse trajectory
-//				}
+				}				
+				//2. advance trajectory sample, from which purepursuit algo will search for optimal look-ahead state
 				SmartDashboard.putNumber("PurePursuit/PreviewQuantity(s)", previewQuantity);
 				sample_point = mCurrentTrajectory.advance(previewQuantity);
-				
 				// RobotState.getInstance().setDisplaySetpointPose(Pose2d.fromTranslation(RobotState.getInstance().getFieldToOdom(timestamp)).transformBy(sample_point.state().state().getPose()));
 				mSetpoint = sample_point;
+
 				//3.calculate chassis speed for next movement via pure pursuit algo, 
 				mOutput = updatePurePursuit(current_pose, 0.0);
 			}
@@ -246,9 +244,6 @@ public class DriveMotionPlanner {
 		double actual_lookahead_distance = distance(mSetpoint.poseMeters, lookahead_state.poseMeters);
 		double adaptive_lookahead_distance = mSpeedLookahead.getLookaheadForSpeed(mSetpoint.velocityMetersPerSecond); // (lookahead_range) * (speed - min_speed) / (speed_range) + min_lookahead
 				//+ kAdaptiveErrorLookaheadCoefficient * mError.getTranslation().getNorm(); //TODO: TB restored, dc.12.7.24, turn off mError compensation
-//		SmartDashboard.putNumber("PurePursuit/Error.dx", mError.getTranslation().getX());
-//		SmartDashboard.putNumber("PurePursuit/Error.dy", mError.getTranslation().getY());
-//		SmartDashboard.putNumber("PurePursuit/Error.Radians", mError.getRotation().getRadians());
 		
 		// try Points on Trajectory to approach max lookahead_distance (adaptive_lookahead_distance)
 		while (actual_lookahead_distance < adaptive_lookahead_distance
@@ -278,7 +273,6 @@ public class DriveMotionPlanner {
 //		LogUtil.recordPose2d(
 //				"PurePursuit/LookaheadState", lookahead_state.state().getPose());
 		SmartDashboard.putNumber("PurePursuit/RemainingProgress(s)", mCurrentTrajectory.getRemainingProgress());
-//		SmartDashboard.putNumber("PurePursuit/PathVelocity(m/s)", lookahead_state.velocityMetersPerSecond);
 
 		//dc.1.19.2025, i believe this is a bug in citrus code, it causes path follower stop too earlier before the end of trajectory 
 		//even when lookahead_state.velocity is zero, i believe robot shall continue forward from its current position to lookahead_state
@@ -301,6 +295,9 @@ public class DriveMotionPlanner {
 
 		// Convert from field-relative steering direction to robot-relative = steeringDirection - current_pose.getRotation()
 		steeringDirection = steeringDirection.rotateBy(Util.inversePose2d(current_pose).getRotation());//.inverse().getRotation());
+		SmartDashboard.putNumber("PurePursuit/SteeringDirection",steeringDirection.getDegrees());
+		SmartDashboard.putNumber("PurePursuit/lookaheadTranslation.x",lookaheadTranslation.getX());
+		SmartDashboard.putNumber("PurePursuit/lookaheadTranslation.y",lookaheadTranslation.getY());
 
 		// Use the Velocity Feedforward of the Closest Point on the Trajectory
 		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond) / Constants.SwerveConstants.maxAutoSpeed; 

@@ -413,6 +413,10 @@ public class SwerveDrive extends Subsystem {
 	private void updateSetpoint() {
 		if (mControlState == DriveControlState.FORCE_ORIENT) return;
 
+		SmartDashboard.putNumber("Drive/ChassisSpeeds.vx", mPeriodicIO.des_chassis_speeds.vxMetersPerSecond);
+		SmartDashboard.putNumber("Drive/ChassisSpeeds.vy", mPeriodicIO.des_chassis_speeds.vyMetersPerSecond);
+		SmartDashboard.putNumber("Drive/ChassisSpeeds.omega", mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
+		
 		Pose2d robot_pose_vel = new Pose2d(
 				mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt * 4.0,
 				mPeriodicIO.des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt * 4.0,
