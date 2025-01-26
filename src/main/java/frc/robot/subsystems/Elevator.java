@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -10,161 +11,281 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
-//written with chatgpt (very useful)
+import frc.robot.subsystems.DigitalSensor;
+
 public class Elevator extends Subsystem {
 
-    private static Elevator mInstance;
+  /*-------------------------------- Private instance variables ---------------------------------*/
+  private static Elevator mInstance;
+  private PeriodicIO mPeriodicIO;
 
-    public enum ElevatorState {
-        NONE, 
-        GROUND, 
-        L1, 
-        L2, 
-        L3, 
-        L4
+  // private static final double kPivotCLRampRate = 0.5;
+  // private static final double kCLRampRate = 0.5;
+
+  public static Elevator getInstance() {
+    if (mInstance == null) {
+      mInstance = new Elevator();
     }
+    return mInstance;
+  }
 
-    private PeriodicIO mPeriodicIO;
+  private TalonFX mLeftMotor;
+  private TalonFX mRightMotor; //LEADER
 
-    private TalonFX mLeftMotor;
-    private TalonFX mRightMotor;
 
-    private DigitalInput magneticLimitSensor = new DigitalInput(0);
 
-    private int currentLevelIndex = 0;
-    private boolean lastMagnetState = false;
-    private boolean movingUp = false;
+  
+  private TrapezoidProfile mProfile;
+  private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
+  private TrapezoidProfile.State mGoalState = new TrapezoidProfile.State();
+  private PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+  private double prevUpdateTime = Timer.getFPGATimestamp();
 
-    private TrapezoidProfile mProfile;
-    private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
-    private TrapezoidProfile.State mGoalState = new TrapezoidProfile.State();
+  //private SlewRateLimiter mSpeedLimiter = new SlewRateLimiter(1000);
 
-    private PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
-    private double prevUpdateTime = Timer.getFPGATimestamp();
+  private void setUpElevatorMotor(TalonFX motor) {
+    motor.getConfigurator().apply(Constants.Elevator.ElevatorConfiguration(),Constants.kLongCANTimeoutMs);
+    
+    // Set the motor to brake mode (will hold its position when powered off)
+}
+  private Elevator() {
+    //super("Elevator");
+	//TODO:figure out what this does
 
-    public static Elevator getInstance() {
-        if (mInstance == null) {
-            mInstance = new Elevator();
-        }
-        return mInstance;
+    mPeriodicIO = new PeriodicIO();
+
+    // LEFT ELEVATOR MOTOR
+    mLeftMotor = new TalonFX(Constants.Elevator.kElevatorLeftMotorId);
+    // RIGHT ELEVATOR MOTOR
+    mRightMotor = new TalonFX(Constants.Elevator.kElevatorRightMotorId);
+    
+    mLeftMotor.setControl(new Follower(mRightMotor.getDeviceID(), true));
+    mLeftMotor.setNeutralMode(NeutralModeValue.Coast);
+    mRightMotor.setNeutralMode(NeutralModeValue.Brake);
+
+    // mRightMotor.setInverted(true);
+    mRightMotor.setControl(new DutyCycleOut(mLeftMotor.getDutyCycle().getValue()));
+
+    //mLeftMotor.burnFlash();
+    //mRightMotor.burnFlash();
+    //TODO: figure out burnflash equivalent
+    mProfile = new TrapezoidProfile(
+        new TrapezoidProfile.Constraints(Constants.Elevator.kMaxVelocity, Constants.Elevator.kMaxAcceleration));
+  }
+
+  public enum ElevatorState {
+    NONE,
+    GROUND,
+    L1,
+    L2,
+    L3,
+    L4,
+  }
+
+  public int currentState = 0;
+  public int targetState = 0;
+
+  private static class PeriodicIO {
+    double elevator_target = 0.0;
+    double elevator_power = 0.0;
+
+    boolean is_elevator_pos_control = false;
+
+    ElevatorState state = ElevatorState.GROUND;
+  }
+
+  /*-------------------------------- Generic Subsystem Functions --------------------------------*/
+
+  //@Override
+  //public void periodic() {
+    // TODO: Use this pattern to only drive slowly when we're really high up
+    // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
+    // mPeriodicIO.is_pivot_low = true;
+    // } else {
+    // mPeriodicIO.is_pivot_low = false;
+    // }
+  //}
+
+  @Override
+  public void writePeriodicOutputs() {
+    //goToTarget();
+
+
+
+    
+    // double curTime = Timer.getFPGATimestamp();
+    // double dt = curTime - prevUpdateTime;
+    // prevUpdateTime = curTime;
+    // if (mPeriodicIO.is_elevator_pos_control) {
+    //   // Update goal
+    //   mGoalState.position = mPeriodicIO.elevator_target;
+
+    //   // Calculate new state
+    //   prevUpdateTime = curTime;
+    //   mCurState = mProfile.calculate(dt, mCurState, mGoalState);
+
+    //   // Set PID controller to new state
+    //   /*mLeftPIDController.setReference(
+    //       mCurState.position,
+    //       CANSparkMax.ControlType.kPosition,
+    //       0,
+    //       Constants.Elevator.kG,
+    //       ArbFFUnits.kVoltage);*/ //TODO: verify if this patch works
+    //   mLeftMotor.setControl(m_request.withPosition(mCurState.position));
+    // } else {
+    //   //mCurState.position = mLeftEncoder.getPosition().getValueAsDouble();
+    //   mCurState.velocity = 0;
+    //   mLeftMotor.set(mPeriodicIO.elevator_power);
+    
+  }
+
+  @Override
+  public void stop() {
+    mPeriodicIO.is_elevator_pos_control = false;
+    mPeriodicIO.elevator_power = 0.0;
+
+    mRightMotor.set(0.0);
+  }
+
+  @Override
+  public void outputTelemetry() {
+    //SmartDashboard.putNumber("Position/Current", mLeftEncoder.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Position/Target", mPeriodicIO.elevator_target);
+    //SmartDashboard.putNumber("Velocity/Current", mLeftEncoder.getVelocity().getValueAsDouble());
+
+    SmartDashboard.putNumber("Position/Setpoint", mCurState.position);
+    SmartDashboard.putNumber("Velocity/Setpoint", mCurState.velocity);
+
+    SmartDashboard.putNumber("Current/Left", mLeftMotor.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Current/Right", mRightMotor.getSupplyCurrent().getValueAsDouble());
+
+    SmartDashboard.putNumber("Output/Left", mLeftMotor.getMotorOutputStatus().getValueAsDouble());
+    SmartDashboard.putNumber("Output/Right", mRightMotor.getMotorOutputStatus().getValueAsDouble());
+
+    //SmartDashboard.putNumber("State", mPeriodicIO.state);
+	//TODO: figure out how to put a state in smart dashbaord
+}
+
+  /*
+  public void reset() {
+    //mLeftEncoder.setPosition(0.0);
+  }
+  */
+
+  /*---------------------------------- Custom Public Functions ----------------------------------*/
+
+  public ElevatorState getState() {
+    return mPeriodicIO.state;
+  }
+
+  public ElevatorState getLevel() {
+    if (DigitalSensor.getSensor(4)) {
+      return ElevatorState.L4;
+    } else if (DigitalSensor.getSensor(3)) {
+      return ElevatorState.L3;
+    } else if (DigitalSensor.getSensor(2)) {
+      return ElevatorState.L2;
+    } else if (DigitalSensor.getSensor(1)) {
+      return ElevatorState.L1;
+    } else if (DigitalSensor.getSensor(0)) {
+      return ElevatorState.GROUND;
+    } else {
+      return ElevatorState.NONE;
     }
+  }
 
-    private Elevator() {
-        mPeriodicIO = new PeriodicIO();
-
-        mLeftMotor = new TalonFX(Constants.Elevator.kElevatorLeftMotorId);
-        setUpElevatorMotor(mLeftMotor);
-
-        mRightMotor = new TalonFX(Constants.Elevator.kElevatorRightMotorId);
-        setUpElevatorMotor(mRightMotor);
-        mRightMotor.setControl(new DutyCycleOut(mLeftMotor.getDutyCycle().getValue()));
-
-        mProfile = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(Constants.Elevator.kMaxVelocity, Constants.Elevator.kMaxAcceleration)
-        );
+public void updateLocation() {
+  for(int i = 0; i < 5; i++) {
+    if(DigitalSensor.getSensor(i)) {
+      currentState = i;
+      break;
     }
-
-    private void setUpElevatorMotor(TalonFX motor) {
-        motor.getConfigurator().apply(Constants.Elevator.ElevatorConfiguration(), Constants.kLongCANTimeoutMs);
-        motor.setNeutralMode(NeutralModeValue.Brake);
-    }
+  }
+}
 
 
-    private static class PeriodicIO {
-        double elevator_target = 0.0;
-        double elevator_power = 0.0;
-        boolean is_elevator_pos_control = false;
-        ElevatorState state = ElevatorState.GROUND;
-    }
 
-    @Override
-    public void writePeriodicOutputs() {
-        double curTime = Timer.getFPGATimestamp();
-        double dt = curTime - prevUpdateTime;
-        prevUpdateTime = curTime;
-        if (mPeriodicIO.is_elevator_pos_control) {
-            mGoalState.position = mPeriodicIO.elevator_target;
-            mCurState = mProfile.calculate(dt, mCurState, mGoalState);
-            mLeftMotor.setControl(m_request.withPosition(mCurState.position));
-        } else {
-            mCurState.velocity = 0;
-            mLeftMotor.set(mPeriodicIO.elevator_power);
-        }
-        movingUp = mPeriodicIO.elevator_power > 0;
-        updateLevel();
-        mLeftMotor.set(mPeriodicIO.elevator_power);
-    }
+public void setTargetLevel(int target) {
+  targetState = target;
+  if(targetState > 4) {
+    targetState = 0;
+  }
+  if(targetState < 0) {
+    targetState = 4;
+  }
+}
 
-    @Override
-    public void stop() {
-        mPeriodicIO.is_elevator_pos_control = false;
-        mPeriodicIO.elevator_power = 0.0;
-        mLeftMotor.set(0.0);
-    }
+public void incTarget() {
+ setTargetLevel(targetState + 1);
+}
 
-    @Override
-    public void outputTelemetry() {
-        SmartDashboard.putNumber("Elevator/Position/Target", mPeriodicIO.elevator_target);
-        SmartDashboard.putNumber("Elevator/Position/Setpoint", mCurState.position);
-        SmartDashboard.putNumber("Elevator/Velocity/Setpoint", mCurState.velocity);
-        SmartDashboard.putNumber("Elevator/Current/Left", mLeftMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Elevator/Current/Right", mRightMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putBoolean("Elevator/Magnet Detected", magneticLimitSensor.get());
-        SmartDashboard.putNumber("Elevator/Current Level Index", currentLevelIndex);
-        SmartDashboard.putString("Elevator/Current Level State", getLevel().toString());
-    }
+public void decTarget() {
+  setTargetLevel(targetState - 1);
+ }
 
-    private void updateLevel() {
-        boolean magnetDetected = magneticLimitSensor.get();
-        if (magnetDetected && !lastMagnetState) {
-            if (movingUp && currentLevelIndex < 4) {
-                currentLevelIndex++;
-            } else if (!movingUp && currentLevelIndex > 0) {
-                currentLevelIndex--;
-            }
-        }
-        lastMagnetState = magnetDetected;
-    }
+public void runElevator(double speed) {
+  mRightMotor.set(speed);
+}
 
-    public ElevatorState getLevel() {
-        switch (currentLevelIndex) {
-            case 0: return ElevatorState.GROUND;
-            case 1: return ElevatorState.L1;
-            case 2: return ElevatorState.L2;
-            case 3: return ElevatorState.L3;
-            case 4: return ElevatorState.L4;
-            default: return ElevatorState.NONE;
-        }
-    }
+public void goToTarget() {
+  updateLocation();
+  if(targetState > 4 || targetState < 0) {
+    targetState = 0;
+  }
+  if(Laser.inRangeIntake()) {
+    return;
+  }
+  else if(targetState == currentState) {
+    stop();
+    return;
+  }
+  else if(targetState > currentState) {
+    runElevator(0.05);
+    return;
+  }
+  else if(targetState < currentState) {
+    runElevator(-0.05);
+    return;
+  }
+}
 
-    public void setElevatorPower(double power) {
-        mPeriodicIO.is_elevator_pos_control = false;
-        mPeriodicIO.elevator_power = power;
-    }
 
-    public void goToElevatorGround() {
-        setElevatorTarget(Constants.Elevator.kGROUNDHeight, ElevatorState.GROUND);
-    }
 
-    public void goToElevatorL1() {
-        setElevatorTarget(Constants.Elevator.kL1Height, ElevatorState.L1);
-    }
+  // public void setElevatorPower(double power) {
+  //   SmartDashboard.putNumber("setElevatorPower", power);
+  //   mPeriodicIO.is_elevator_pos_control = false;
+  //   mPeriodicIO.elevator_power = power;
+  // }
 
-    public void goToElevatorL2() {
-        setElevatorTarget(Constants.Elevator.kL2Height, ElevatorState.L2);
-    }
+  // public void goToElevatorGround() {
+  //   mPeriodicIO.is_elevator_pos_control = true;
+  //   mPeriodicIO.elevator_target = Constants.Elevator.kGROUNDHeight;
+  //   mPeriodicIO.state = ElevatorState.GROUND;
+  // }
+  
+  // public void goToElevatorL1() {
+  //   mPeriodicIO.is_elevator_pos_control = true;
+  //   mPeriodicIO.elevator_target = Constants.Elevator.kL1Height;
+  //   mPeriodicIO.state = ElevatorState.L1;
+  // }
 
-    public void goToElevatorL3() {
-        setElevatorTarget(Constants.Elevator.kL3Height, ElevatorState.L3);
-    }
+  // public void goToElevatorL2() {
+  //   mPeriodicIO.is_elevator_pos_control = true;
+  //   mPeriodicIO.elevator_target = Constants.Elevator.kL2Height;
+  //   mPeriodicIO.state = ElevatorState.L2;
+  // }
 
-    public void goToElevatorL4() {
-        setElevatorTarget(Constants.Elevator.kL4Height, ElevatorState.L4);
-    }
+  // public void goToElevatorL3() {
+  //   mPeriodicIO.is_elevator_pos_control = true;
+  //   mPeriodicIO.elevator_target = Constants.Elevator.kL3Height;
+  //   mPeriodicIO.state = ElevatorState.L3;
+  // }
 
-    private void setElevatorTarget(double target, ElevatorState state) {
-        mPeriodicIO.is_elevator_pos_control = true;
-        mPeriodicIO.elevator_target = target;
-        mPeriodicIO.state = state;
-    }
+  // public void goToElevatorL4() {
+  //   mPeriodicIO.is_elevator_pos_control = true;
+  //   mPeriodicIO.elevator_target = Constants.Elevator.kL4Height;
+  //   mPeriodicIO.state = ElevatorState.L4;
+  // }
+
+  /*---------------------------------- Custom Private Functions ---------------------------------*/
 }

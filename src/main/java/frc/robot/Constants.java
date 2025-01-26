@@ -31,12 +31,12 @@ public final class Constants {
     public static final class Swerve {
         public static final int pigeonID = 20;
 
-        public static final COTSTalonFXSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
+        public static final COTSTalonFXSwerveConstants chosenModule =  
         COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(23.5); //TODO: This must be tuned to specific robot
-        public static final double wheelBase = Units.inchesToMeters(23.5); //TODO: This must be tuned to specific robot
+        public static final double trackWidth = Units.inchesToMeters(23.5); 
+        public static final double wheelBase = Units.inchesToMeters(23.5);
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -242,8 +242,7 @@ public final class Constants {
         public static final double maxAngularVelocity = Swerve.maxAngularVelocity;
         public static final double kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed); //TODO: need to finetune with the actual robot
         public static final double maxAutoSpeed = maxSpeed * 0.85;  // Max out at 85% to ensure attainable speeds, 
-                                                                    // This max_speed needs to be consistent with the max_velocity used by pathweaver 
-                                                                    // It will be used to normalize velocity on trajectory point
+        
         public static final double kCancoderBootAllowanceSeconds = 10.0;
 
         public static final KinematicLimits kUncappedLimits = new KinematicLimits();
@@ -353,7 +352,7 @@ public final class Constants {
             config.Slot0.kP = Constants.Elevator.kP;
             config.Slot0.kI = Constants.Elevator.kI;
             config.Slot0.kD = Constants.Elevator.kD;
-            config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+            config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
             return config;
         }
     }
@@ -366,8 +365,9 @@ public final class Constants {
         public static final int kPivotMotorId = 10;
     
         // DIO
-        public static final int k_pivotEncoderId = 0;
-        public static final int k_intakeLimitSwitchId = 2;
+        public static final int kIntakeLimitSwitchId = 30;
+        public static final int kShooterLimitSwitchId = 31;
+    
     
         // Absolute encoder offset
         public static final double k_pivotEncoderOffset = 0.166842; // Straight up, sketchy to reset to "up"
