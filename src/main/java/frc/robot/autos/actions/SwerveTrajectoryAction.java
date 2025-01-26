@@ -1,16 +1,20 @@
 package frc.robot.autos.actions;
 
 import frc.robot.subsystems.SwerveDrive;
+import pabeles.concurrency.ConcurrencyOps.Reset;
 import frc.robot.lib.trajectory.*;
+
+import java.util.HashMap;
 
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
 import edu.wpi.first.math.geometry.Pose2d;
-
+import frc.robot.lib.trajectory.TrajectoryGenerator.TrajectorySet;
 public class SwerveTrajectoryAction implements Action {
 	private SwerveDrive mDrive = null;
 	private final TrajectoryIterator mTrajectory;
 	private ResetWheelTracker mResetWheelTracker = ResetWheelTracker.NO;
+	String name = null;
 	public enum ResetWheelTracker {
 		SET_TO_STARTING_POS,
 		SET_TO_ZERO,
@@ -19,6 +23,11 @@ public class SwerveTrajectoryAction implements Action {
 
 	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory) {
 		this(trajectory, ResetWheelTracker.NO);
+	}
+
+	public SwerveTrajectoryAction(String key, ResetWheelTracker resetPose) {
+		this(TrajectoryGenerator.getInstance().getTrajectorySet().set.get(key),resetPose);
+		name = key;
 	}
 
 	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory, ResetWheelTracker resetPose) {
@@ -49,7 +58,7 @@ public class SwerveTrajectoryAction implements Action {
 			case NO:
 				break;
 		}
-		System.out.println("Swerve Trajectory Action Started!");
+		System.out.println("Swerve Trajectory Action Started! " + ((name != null) ? name : ""));
 		mDrive.setTrajectory(mTrajectory);
 	}
 

@@ -157,6 +157,14 @@ public class RobotContainer25 {
     }
     // init manual (teleop) mode
     public void initAutoMode (){
+		m_AutoModeSelector.reset();
+		m_AutoModeSelector.updateModeCreator(true);
+        Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
+
+		m_AutoModeExecutor = new AutoModeExecutor();
+        if (autoMode.isPresent() && (autoMode.get() != m_AutoModeExecutor.getAutoMode())) {
+            m_AutoModeExecutor.setAutoMode(autoMode.get());
+        }
         try {
 //          RobotState.getInstance().setIsInAuto(false);
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
@@ -174,14 +182,6 @@ public class RobotContainer25 {
         if (m_AutoModeExecutor != null) {
 			m_AutoModeExecutor.stop();
 		}
-		m_AutoModeSelector.reset();
-		m_AutoModeSelector.updateModeCreator(false);
-        Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
-
-		m_AutoModeExecutor = new AutoModeExecutor();
-        if (autoMode.isPresent() && (autoMode.get() != m_AutoModeExecutor.getAutoMode())) {
-            m_AutoModeExecutor.setAutoMode(autoMode.get());
-        }
         try {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
 		} catch (Throwable t) {

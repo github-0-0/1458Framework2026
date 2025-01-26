@@ -18,7 +18,7 @@ public class TestAutoMode3 extends AutoModeBase {
     private Boolean isFirstTrajectory = true;
 
     public TestAutoMode3() {
-        autoString = "S 1 [ ( Wait 1 Elevator 4 Shoot ) ( R 1 ) ] [ ( Wait 1 Elevator 0 Intake ) ( CS 1 ) ] [ ( Wait 1 Elevator 4 Shoot ) ( R 1 ) ] [ ( Wait 1 Elevator 0 Intake ) ( CS 1 ) ] [ ( Wait 1 Elevator 4 Shoot ) ( R 1 ) ] [ ( Wait 1 Elevator 0 Intake ) ( CS 1 ) ] Wait 2 R 1 P 1 CS 2 R 2 ";
+        autoString = "S 1 { [ ( Wait 1 Elevator 4 Shoot ) ( R 1 ) ] [ ( Wait 1 Elevator 0 Intake ) ( CS 1 ) ] } 4 Wait 2 R 1 P 1 CS 2 R 2 ";
     }
     //TODO: Fix Errors here
         
@@ -45,7 +45,7 @@ public class TestAutoMode3 extends AutoModeBase {
                     System.out.println("Trajectory Action: "+lastPoint+"-"+point);
                     if(lastPoint == null) {}
                     else {
-                        listOfActions.add(new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-"+point),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
+                        listOfActions.add(new SwerveTrajectoryAction(lastPoint+"-"+point,isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
                         lastPoint = point;
                         isFirstTrajectory = false;
                     }
@@ -55,7 +55,7 @@ public class TestAutoMode3 extends AutoModeBase {
                     System.out.println("Trajectory Action: "+lastPoint+"-"+point);
                     if(lastPoint == null) {lastPoint = point;}
                     else {
-                        listOfActions.add(new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-"+point),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
+                        listOfActions.add(new SwerveTrajectoryAction(lastPoint+"-"+point,isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
                         lastPoint = point;
                         isFirstTrajectory = false;
                     }
@@ -65,7 +65,7 @@ public class TestAutoMode3 extends AutoModeBase {
                     System.out.println("Trajectory Action: "+lastPoint+"-"+point);
                     if(lastPoint == null) {lastPoint = point;}
                     else {
-                        listOfActions.add(new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-"+point),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
+                        listOfActions.add(new SwerveTrajectoryAction(lastPoint+"-"+point,isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
                         lastPoint = point;
                         isFirstTrajectory = false;
                     }
@@ -75,7 +75,7 @@ public class TestAutoMode3 extends AutoModeBase {
                     System.out.println("Trajectory Action: "+lastPoint+"-"+point);
                     if(lastPoint == null) {lastPoint = point;}
                     else {
-                        listOfActions.add(new SwerveTrajectoryAction(trajectorySet.set.get(lastPoint+"-"+point),isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
+                        listOfActions.add(new SwerveTrajectoryAction(lastPoint+"-"+point,isFirstTrajectory?ResetWheelTracker.SET_TO_STARTING_POS:ResetWheelTracker.NO));
                         lastPoint = point;
                         isFirstTrajectory = false;
                     }
@@ -98,8 +98,24 @@ public class TestAutoMode3 extends AutoModeBase {
                     System.out.println("Series Action: "+subString);
                     listOfActions.add(new SeriesAction(parseAuto(subString)));
                     break;
+                case "{":
+                    subString = "";
+                    while(!actionStrings[i].equals("}")) {
+                        subString += actionStrings[++i] + " ";
+                    }
+                    int repeats = Integer.parseInt(actionStrings[++i]);
+                    subString = subString.substring(0,subString.length()-3);
+                    System.out.println("Repeat Action: " + subString);
+                    listOfActions.add(new RepeatAction(new SeriesAction(parseAuto(subString)),repeats));
+                    break;
                 case "Wait":
                     listOfActions.add(new WaitAction(Double.parseDouble(actionStrings[++i])));
+                    break; 
+                case "Shoot":
+                    listOfActions.add(new CoralShooterAction());
+                    break;
+                case "Elevator":
+                    listOfActions.add(new ElevatorAction(Integer.parseInt(actionStrings[++i])));
                     break;
                 default:
                     System.out.println("Unknown action: " + curString);

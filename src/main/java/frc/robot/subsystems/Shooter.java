@@ -1,21 +1,29 @@
 package frc.robot.subsystems;
 
+import java.util.zip.Checksum;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Loops.ILooper;
+import frc.robot.Loops.Loop;
+import frc.robot.subsystems.SwerveDrive.PeriodicIO;
 
 public class Shooter extends Subsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private static Shooter mInstance;
+  
+  private PeriodicIO mPeriodicIO = new PeriodicIO();
+
   private double minSpeed = 0;
   private double speed = 0;
-  private boolean sensorTripped = false;
 
   public static Shooter getInstance() {
     if (mInstance == null) {
@@ -24,42 +32,61 @@ public class Shooter extends Subsystem {
     return mInstance;
   }
 
+  private class PeriodicIO {
+    double speed = 0.0;
+    boolean on = false;
+  } 
+      
   private TalonFX mLeftShooterMotor;
   private TalonFX mRightShooterMotor;
-
-
-
 
   private SlewRateLimiter mSpeedLimiter = new SlewRateLimiter(1000);
 
   private Shooter() {
     //super("Shooter");
-
-
     mLeftShooterMotor = new TalonFX(Constants.Shooter.kShooterLeftMotorId);
     mRightShooterMotor = new TalonFX(Constants.Shooter.kShooterRightMotorId); //LEADER
     mLeftShooterMotor.setControl(new Follower(mRightShooterMotor.getDeviceID(), true));
     mRightShooterMotor.setNeutralMode(NeutralModeValue.Brake);
     mRightShooterMotor.setNeutralMode(NeutralModeValue.Brake);
   }
-  
-
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
-  /*
   @Override
-  public void periodic() {
+    public void registerEnabledLoops(ILooper enabledLooper) {
+      enabledLooper.register(new Loop() {
+      @Override
+      public void onStart(double timestamp) {
+
+      }
+
+      @Override
+      public void onLoop(double timestamp) {
+        if(mPeriodicIO.on) {
+          if(checkSensor()) {
+            spin();
+          }
+          else 
+          {
+            stop();
+          }
+        }
+        else
+        {
+          stop();
+        }
+      }
+
+      @Override
+      public void onStop(double timestamp) {
+        stop();
+      }
+    });
   }
-  */
 
   @Override
   public void writePeriodicOutputs() {
-
-  }
-
-  @Override
-  public void stop() {
-    mRightShooterMotor.set(0);
+    mRightShooterMotor.set(mPeriodicIO.speed);
   }
 
   @Override
@@ -76,17 +103,20 @@ public class Shooter extends Subsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public void spin() {
-    mRightShooterMotor.set(0.05);
+    mPeriodicIO.speed = 0.05;
+  }
+  
+  @Override
+  public void stop() {
+    mPeriodicIO.speed = 0.0;
   }
 
-  public void checkSensor() {
+  public boolean checkSensor() {
     if(Laser.inRangeIntake()) {
-      spin();
-      sensorTripped = true;
+      return true;
     }
-    else if(sensorTripped == true) {
-      stop();
-      sensorTripped = false;
+    else {
+      return false;
     }
   }
   /*---------------------------------- Custom Private Functions ---------------------------------*/

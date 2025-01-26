@@ -335,6 +335,8 @@ public class DriveMotionPlanner {
 
 		//output debug info as we get close to the end of path
 		if (actual_lookahead_distance < adaptive_lookahead_distance) {
+
+		/* Temporary removal
 			System.out.println("PurePursuit() remaining (s) =" + mCurrentTrajectory.getRemainingProgress() 
 				+ ", err.distance=" + current_pose.relativeTo(mSetpoint.poseMeters).getTranslation().getNorm()
 				+ ", err.angle=" + currPoseRotationDelta.getDegrees() 
@@ -343,7 +345,10 @@ public class DriveMotionPlanner {
 //				+ ", OmegaRPS comp=" + deltaOmegaRadiansPerSecond
 				+ ", OmegaRPS =" + trueOmegaRadiansPerSecond
 				);
-		}				
+
+		*/
+		}			
+		
 		
 /* 
 		// Use the PD-Controller for To Follow the Time-Parametrized Heading
