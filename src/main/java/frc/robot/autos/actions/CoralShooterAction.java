@@ -11,11 +11,11 @@ public class CoralShooterAction implements Action {
 	
 	public CoralShooterAction() {
 		mShooter = Shooter.getInstance();
-		System.out.println("Shooter shooting at phenomenally slow speeds!");
 	}
 	@Override
 	public void start() {
 		mShooter.spin();
+		System.out.println("Shooter shooting at phenomenally slow speeds!");
 	}
 
 	@Override

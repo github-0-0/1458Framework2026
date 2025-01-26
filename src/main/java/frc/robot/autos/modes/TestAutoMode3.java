@@ -18,7 +18,8 @@ public class TestAutoMode3 extends AutoModeBase {
     private Boolean isFirstTrajectory = true;
 
     public TestAutoMode3() {
-        autoString = "S 1 { [ ( Wait 1 Elevator 4 Shoot ) ( R 1 ) ] [ ( Wait 1 Elevator 0 Intake ) ( CS 1 ) ] } 4 Wait 2 R 1 P 1 CS 2 R 2 ";
+        autoString = "S 1 { ( Wait 1 R 2 ) ( Wait 1 CS 1 ) } 4";
+        //autoString = "S 1 { [ ( Wait 1 Elevator 4 Shoot ) ( R 1 ) ] [ ( Wait 1 Elevator 0 Intake ) ( CS 1 ) ] } 4 Wait 2 R 1 P 1 CS 2 R 2 ";
     }
     //TODO: Fix Errors here
         
@@ -106,7 +107,11 @@ public class TestAutoMode3 extends AutoModeBase {
                     int repeats = Integer.parseInt(actionStrings[++i]);
                     subString = subString.substring(0,subString.length()-3);
                     System.out.println("Repeat Action: " + subString);
-                    listOfActions.add(new RepeatAction(new SeriesAction(parseAuto(subString)),repeats));
+                    ArrayList<Action> repeatActions = new ArrayList<Action>();
+                    for (int j = 0; j < repeats; j++) {
+                        repeatActions.add(new SeriesAction(parseAuto(subString)));
+                    }
+                    listOfActions.add(new SeriesAction(repeatActions));
                     break;
                 case "Wait":
                     listOfActions.add(new WaitAction(Double.parseDouble(actionStrings[++i])));

@@ -12,7 +12,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.lib.trajectory.TrajectoryGenerator.TrajectorySet;
 public class SwerveTrajectoryAction implements Action {
 	private SwerveDrive mDrive = null;
-	private final TrajectoryIterator mTrajectory;
+	private TrajectoryIterator mTrajectory;
+	private final PathPlannerTrajectory kTrajectory;
 	private ResetWheelTracker mResetWheelTracker = ResetWheelTracker.NO;
 	String name = null;
 	public enum ResetWheelTracker {
@@ -31,6 +32,7 @@ public class SwerveTrajectoryAction implements Action {
 	}
 
 	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory, ResetWheelTracker resetPose) {
+		kTrajectory = trajectory;
 		mTrajectory = new TrajectoryIterator(trajectory);
 		mDrive = SwerveDrive.getInstance();
 		mResetWheelTracker = resetPose;
@@ -38,6 +40,7 @@ public class SwerveTrajectoryAction implements Action {
 
 	@Override
 	public void start() {
+		mTrajectory = new TrajectoryIterator(kTrajectory);
 		switch(mResetWheelTracker){
 			case SET_TO_ZERO:
 				System.out.println("Reset to 0");

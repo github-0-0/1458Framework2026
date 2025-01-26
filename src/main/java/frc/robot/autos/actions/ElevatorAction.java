@@ -8,13 +8,13 @@ public class ElevatorAction implements Action {
 	private int kLevel;
     public ElevatorAction(int level) {
 		kLevel = level;
-		System.out.println("Elevator going to " + level);
     }
 
 	@Override
 	public void start() {
 		mElevator = Elevator.getInstance();
 		mElevator.setTargetLevel(kLevel);
+		System.out.println("Elevator going to " + kLevel);
 	}
 
 	@Override
