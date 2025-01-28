@@ -1,20 +1,17 @@
 package frc.robot.autos.actions;
-
-
 import frc.robot.Robot;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Laser;
 import frc.robot.subsystems.Shooter;
 
-public class CoralShooterAction implements Action {
+public class CoralIntakeAction implements Action {
     private Shooter mShooter = Shooter.getInstance();
 	
-	public CoralShooterAction() {
+	public CoralIntakeAction() {
 		mShooter = Shooter.getInstance();
 	}
 	@Override
 	public void start() {
-		mShooter.shoot();
+		mShooter.intake();
 		System.out.println("Shooter shooting at phenomenally slow speeds!");
 	}
 
@@ -24,11 +21,11 @@ public class CoralShooterAction implements Action {
 	@Override
 	public boolean isFinished() {
 		if (Robot.isSimulation()) return true;
-        return !Laser.inRangeShooter();
+        return !Laser.inRangeIntake();
 	}
 
 	@Override
 	public void done() {
-		mShooter.stopShooter();;
+		mShooter.stopShooter();
 	}
 }

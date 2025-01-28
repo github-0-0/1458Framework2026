@@ -6,8 +6,8 @@ import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import frc.robot.Constants;
 
 public class Laser {
-    public static LaserCan intakeLaser = new LaserCan(Constants.Intake.kIntakeLimitSwitchId);
-    public static LaserCan shooterLaser = new LaserCan(Constants.Intake.kShooterLimitSwitchId);
+    public static LaserCan intakeLaser = new LaserCan(Constants.Shooter.kIntakeLimitSwitchId);
+    public static LaserCan shooterLaser = new LaserCan(Constants.Shooter.kShooterLimitSwitchId);
 
     public Laser() {}
 
@@ -20,13 +20,12 @@ public class Laser {
     }
 
     public static boolean inRangeIntake() {
-        return false;
-        //LaserCan.Measurement measurement = intakeLaser.getMeasurement();
-        //return (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        LaserCan.Measurement measurement = intakeLaser.getMeasurement();
+        return (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
 
     public static boolean inRangeShooter() {
-        LaserCan.Measurement measurement = intakeLaser.getMeasurement();
+        LaserCan.Measurement measurement = shooterLaser.getMeasurement();
         return (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
 

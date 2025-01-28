@@ -116,7 +116,10 @@ public class TestAutoMode3 extends AutoModeBase {
                 case "Wait":
                     listOfActions.add(new WaitAction(Double.parseDouble(actionStrings[++i])));
                     break; 
-                case "Shoot":
+                case "CIntake":
+                    listOfActions.add(new CoralIntakeAction());
+                    break;
+                case "CShoot":
                     listOfActions.add(new CoralShooterAction());
                     break;
                 case "Elevator":
