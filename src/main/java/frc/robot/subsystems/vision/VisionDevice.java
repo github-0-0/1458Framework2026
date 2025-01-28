@@ -213,7 +213,8 @@ public class VisionDevice extends Subsystem {
 						camera_pose.getTranslation(),
 						mConstants.kRobotToCamera.getTranslation(),
 						xyStdDev
-					)
+					),
+					camera_pose.getRotation()
 				);
 
 			double rotation_degrees = camera_pose
