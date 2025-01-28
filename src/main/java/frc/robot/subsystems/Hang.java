@@ -34,7 +34,8 @@ public class Hang {
     private enum HangState {
         HANG,
         UNHANG,
-        STOP
+        STOP,
+        HOLD
     }
 
     private TalonFX mHangMotor;
@@ -57,6 +58,9 @@ public class Hang {
                         break;
                     case UNHANG:
                         unhang();
+                        break;
+                    case HOLD:
+                        hold();
                         break;
                     case STOP:
                         stop();
@@ -89,10 +93,12 @@ public class Hang {
     }*/
 
     public void hang() {
+        mPeriodicIO.speed = Constants.Hang.kHangSpeed;
         mPeriodicIO.state = HangState.HANG;
     }
 
     public void unhang() {
+        mPeriodicIO.speed = -Constants.Hang.kHangSpeed;
         mPeriodicIO.state = HangState.UNHANG;
     }
 
@@ -103,5 +109,10 @@ public class Hang {
     public void stop() {
         mPeriodicIO.speed = 0.0;
         mPeriodicIO.state = HangState.STOP;
+    }
+
+    public void hold() {
+        mPeriodicIO.speed = Constants.Hang.kHoldSpeed;
+        mPeriodicIO.state = HangState.HOLD;
     }
 }
