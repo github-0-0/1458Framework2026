@@ -15,41 +15,41 @@ import frc.robot.Loops.ILooper;
 import frc.robot.Loops.Loop;
 import frc.robot.subsystems.SwerveDrive.PeriodicIO;
 
-public class Shooter extends Subsystem {
+public class AlgaeShooter extends Subsystem {
 
 	/*-------------------------------- Private instance variables ---------------------------------*/
-	private static Shooter mInstance;
+	private static AlgaeShooter mInstance;
 	
 	private PeriodicIO mPeriodicIO = new PeriodicIO();
 
-	public static Shooter getInstance() {
+	public static AlgaeShooter getInstance() {
 		if (mInstance == null) {
-		mInstance = new Shooter();
+		mInstance = new AlgaeShooter();
 		}
 		return mInstance;
 	}
 
 	private class PeriodicIO {
 		double speed = 0.0;
-		ShooterState state = ShooterState.STOP;
+		AlgaeShooterState state = AlgaeShooterState.STOP;
 	} 
 	
-	private enum ShooterState {
+	private enum AlgaeShooterState {
 		INTAKE,
 		SHOOT,
 		STOP
 	}
 
-	private TalonFX mLeftShooterMotor;
-	private TalonFX mRightShooterMotor;
+	private TalonFX mLeftAlgaeShooterMotor;
+	private TalonFX mRightAlgaeShooterMotor;
 
-	private Shooter() {
-		//super("Shooter");
-		mLeftShooterMotor = new TalonFX(Constants.Shooter.kShooterLeftMotorId);
-		mRightShooterMotor = new TalonFX(Constants.Shooter.kShooterRightMotorId); //LEADER
-		mLeftShooterMotor.setControl(new Follower(mRightShooterMotor.getDeviceID(), true));
-		mLeftShooterMotor.setNeutralMode(NeutralModeValue.Brake);
-		mRightShooterMotor.setNeutralMode(NeutralModeValue.Brake);
+	private AlgaeShooter() {
+		//super("AlgaeShooter");
+		mLeftAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterLeftMotorId);
+		mRightAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterRightMotorId); //LEADER
+		mLeftAlgaeShooterMotor.setControl(new Follower(mRightAlgaeShooterMotor.getDeviceID(), true));
+		mLeftAlgaeShooterMotor.setNeutralMode(NeutralModeValue.Brake);
+        mRightAlgaeShooterMotor.setNeutralMode(NeutralModeValue.Brake);
 	}
 
 	/*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -65,14 +65,14 @@ public class Shooter extends Subsystem {
 				switch (mPeriodicIO.state) {
 					case INTAKE:
 						if (checkIntakeSensor()) {
-							spin();
+							spinIn();
 						} else {
 							stop();
 						}
 						break;
 					case SHOOT:
 						if (checkShootSensor()) {
-							spin();
+							spinOut();
 						} else {
 							stop();
 						}
@@ -95,7 +95,7 @@ public class Shooter extends Subsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
-		mRightShooterMotor.set(mPeriodicIO.speed);
+		mRightAlgaeShooterMotor.set(mPeriodicIO.speed);
 	}
 
 	@Override
@@ -112,15 +112,15 @@ public class Shooter extends Subsystem {
 	/*---------------------------------- Custom Public Functions ----------------------------------*/
 
 	public void intake() {
-		mPeriodicIO.state = ShooterState.INTAKE;
+		mPeriodicIO.state = AlgaeShooterState.INTAKE;
 	}
 
 	public void shoot() {
-		mPeriodicIO.state = ShooterState.SHOOT;
+		mPeriodicIO.state = AlgaeShooterState.SHOOT;
 	}
 
-	public void stopShooter() {
-		mPeriodicIO.state = ShooterState.STOP;
+	public void stopAlgaeShooter() {
+		mPeriodicIO.state = AlgaeShooterState.STOP;
 	}
 
 	public boolean checkIntakeSensor() {
@@ -132,7 +132,7 @@ public class Shooter extends Subsystem {
 	}
 
 	public boolean checkShootSensor() {
-		if(Laser.inRangeShooter()) {
+		if(Laser.inRangeAlgaeShooter()) {
 			return true;
 		} else {
 			return false;
@@ -140,13 +140,17 @@ public class Shooter extends Subsystem {
 	}
 	/*---------------------------------- Custom Private Functions ---------------------------------*/
 
-	public void spin() {
-		mPeriodicIO.speed = Constants.Shooter.kShooterSpeed;
+	public void spinOut() {
+		mPeriodicIO.speed = Constants.AlgaeShooter.kAlgaeShooterSpeed;
 	}
+
+    public void spinIn() {
+        mPeriodicIO.speed = -Constants.AlgaeShooter.kAlgaeShooterSpeed;
+    }
 	
 	@Override
 	public void stop() {
 		mPeriodicIO.speed = 0.0;
-		mPeriodicIO.state = ShooterState.STOP;
+		mPeriodicIO.state = AlgaeShooterState.STOP;
 	}
 }
