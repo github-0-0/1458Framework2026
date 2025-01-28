@@ -352,6 +352,13 @@ public final class Constants {
             }
         }
     }
+
+    public static final class AlgaeShooter {
+        public static final int kAlgaeShooterLeftMotorId = 200;
+        public static final int kAlgaeShooterRightMotorId = 2000;
+        public static final int kAlgaeShooterLimitSwitchId = 20000;
+        public static final double kAlgaeShooterSpeed = 0.05;
+    }
     
 
     /* dc.10.21.2024 extra constants needed during porting of citrus SwerveModule.java code */
