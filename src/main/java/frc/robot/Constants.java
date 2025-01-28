@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import frc.robot.lib.util.COTSTalonFXSwerveConstants;
 import frc.robot.lib.util.SwerveModuleConstants;
 import frc.robot.subsystems.SwerveDrive.KinematicLimits;
@@ -322,6 +323,23 @@ public final class Constants {
         public static final double kElevatorHoldAlgaeVoltage = 0.002; //TODO:measure
         public static final double kElevatorHoldCoralVoltage = 0.001; //TODO:measure
         public static final double gearRatio = 1.0;
+        public static TalonFXConfiguration motorConfigs() {
+            TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
+            var slot0Configs = talonFXConfigs.Slot0;
+            slot0Configs.kG = 0.2; // overcome gravity
+            slot0Configs.kS = 0.25; // output to overcome static friction (output)
+            slot0Configs.kV = 0.12; // output per unit of target velocity (output/rps)
+            slot0Configs.kA = 0.01; // output per unit of target acceleration (output/(rps/s))
+            slot0Configs.kP = 4.8;
+            slot0Configs.kI = 0;
+            slot0Configs.kD = 0.1; 
+            // set Motion Magic settings
+            var motionMagicConfigs = talonFXConfigs.MotionMagic;
+            motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+            motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
+            motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
+            return talonFXConfigs;
+        }
     }
     
     public static class Intake {

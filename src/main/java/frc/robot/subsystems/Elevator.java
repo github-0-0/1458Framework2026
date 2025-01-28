@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -39,6 +42,9 @@ public class Elevator extends Subsystem {
 		mLeftMotor = new TalonFX(Constants.Elevator.kElevatorLeftMotorId);
 		// RIGHT ELEVATOR MOTOR
 		mRightMotor = new TalonFX(Constants.Elevator.kElevatorRightMotorId);
+		// in init function
+		mRightMotor.getConfigurator().apply(Constants.Elevator.motorConfigs());
+		mLeftMotor.getConfigurator().apply(Constants.Elevator.motorConfigs());
 		mLeftMotor.setControl(new Follower(mRightMotor.getDeviceID(), true));
 		mLeftMotor.setNeutralMode(NeutralModeValue.Brake);
 		mRightMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -48,7 +54,7 @@ public class Elevator extends Subsystem {
 	private static class PeriodicIO {
 		public int currentState = 0;
 		public int targetState = 0;
-		public VelocityVoltage demand;
+		public MotionMagicVoltage demand;
 	}
 
 	/*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -59,8 +65,7 @@ public class Elevator extends Subsystem {
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {
-			}
+			public void onStart(double timestamp) {}
 
 			@Override
 			public void onLoop(double timestamp) {
@@ -68,8 +73,7 @@ public class Elevator extends Subsystem {
 			}
 
 			@Override
-			public void onStop(double timestamp) {
-			}
+			public void onStop(double timestamp) {}
 		});
 	}
 	
@@ -127,7 +131,7 @@ public class Elevator extends Subsystem {
 	}
 
 	public void runElevator(double speed) {
-		setVelocity(speed);
+		mRightMotor.set(speed);
 	}
 
 	public boolean goToTarget() {
@@ -151,20 +155,22 @@ public class Elevator extends Subsystem {
 		}
 		return false;
 	}
-	/*---------------------------------- Custom Private Functions ---------------------------------*/
 
-	public void setVelocity(double speed) {
-		double rotorSpeed = Conversions.MPSToRPS(
-				speed,
-				Constants.Elevator.gearRatio);
+	/*---------------------------------- Custom Private Functions ---------------------------------*/
+	/**
+	 * Sets position of the elevator, in rotations.
+	 * @param position
+	 */
+	public void setPosition(double position) {
+		double rotorSpeed = mRightMotor.getVelocity().getValueAsDouble();
 
 		if (Math.abs(rotorSpeed) < 0.002) {
-			mPeriodicIO.demand = new VelocityVoltage(
+			mPeriodicIO.demand = new MotionMagicVoltage(
 				((Laser.inRangeShooter() || Laser.inRangeIntake()) ? Constants.Elevator.kElevatorHoldCoralVoltage : 0.0) +
 				(Laser.inRangeAlgaeShooter() ? Constants.Elevator.kElevatorHoldAlgaeVoltage : 0.0)
 			);
 		} else {
-			mPeriodicIO.demand = new VelocityVoltage(rotorSpeed);
+			mPeriodicIO.demand = new MotionMagicVoltage(rotorSpeed);
 		}
 	}
 }
