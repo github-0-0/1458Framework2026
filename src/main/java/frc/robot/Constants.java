@@ -319,17 +319,18 @@ public final class Constants {
         public static final int kElevatorLeftMotorId = 2000000;
         public static final int kElevatorRightMotorId = 20000000;
         public static final double kElevatorSpeed = 0.05;
+        public static final double kElevatorHoldAlgaeVoltage = 0.002;
+        public static final double kElevatorHoldCoralVoltage = 0.001;
+        public static double gearRatio;
     }
     
     public static class Intake {
         //TODO: Tune intake constants to bot
-
-        // Motors
         public static final int kIntakeMotorId = 2000000000;
         public static final int kPivotMotorId = 2000000001;
         public static final double k_pivotStartAngle = 0.0;
-        public static double k_pivotEndAngle = 75.0;
-        public static double k_pivotEncoderOffset = 0.0;
+        public static final double k_pivotEndAngle = 75.0;
+        public static final double k_pivotEncoderOffset = 0.0;
     }
 
     public static class Shooter {
@@ -342,7 +343,6 @@ public final class Constants {
     
     public static final class PathPlannerRobotConfig {
         public static RobotConfig config = null;
-        //ok java
         static {
             try {
                 config = RobotConfig.fromGUISettings();

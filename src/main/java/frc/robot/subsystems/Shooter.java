@@ -124,7 +124,7 @@ public class Shooter extends Subsystem {
 	}
 
 	public boolean checkIntakeSensor() {
-		if(Laser.inRangeIntake()) {
+		if (Laser.inRangeIntake()) {
 			return true;
 		} else {
 			return false;
@@ -132,7 +132,7 @@ public class Shooter extends Subsystem {
 	}
 
 	public boolean checkShootSensor() {
-		if(Laser.inRangeShooter()) {
+		if (Laser.inRangeShooter()) {
 			return true;
 		} else {
 			return false;
