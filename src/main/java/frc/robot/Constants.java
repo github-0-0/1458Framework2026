@@ -363,7 +363,7 @@ public final class Constants {
     public static final class Hang { //TODO: make constants correct
         public static final int kHangMotorId = 200;
         public static final double kHangSpeed = 0.05;
-        public static final double kHoldSpeed = 0.05;
+        public static final double kHoldSpeed = 0.02;
     }
     
 
