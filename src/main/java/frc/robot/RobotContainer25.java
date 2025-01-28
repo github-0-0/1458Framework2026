@@ -18,16 +18,10 @@ import frc.robot.Loops.Looper;
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
-import frc.robot.subsystems.Cancoders;
-import frc.robot.subsystems.DummySubsystem;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Funnel;
-import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
-import frc.robot.subsystems.Shooter;
 import frc.robot.Loops.CrashTracker;
 /**
  * DC 10.28.2024
@@ -64,6 +58,8 @@ public class RobotContainer25 {
     private Elevator m_Elevator;
     private Shooter m_Shooter;
     private Cancoders m_Cancoders;
+    private AlgaeShooter m_AlgaeShooter;
+    private Hang m_Hang;
     
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
@@ -79,6 +75,8 @@ public class RobotContainer25 {
             m_Elevator = Elevator.getInstance();
             m_Shooter = Shooter.getInstance();
             m_Funnel = Funnel.getInstance();
+            m_AlgaeShooter = AlgaeShooter.getInstance();
+            m_Hang = Hang.getInstance();
 
             // init cancoders
             if (Robot.isReal()) {
@@ -102,7 +100,9 @@ public class RobotContainer25 {
                 m_Elevator,
                 m_ExampleSubsystem,
                 m_Funnel,
-                m_Shooter
+                m_Shooter,
+                m_AlgaeShooter,
+                m_Hang
                 //Insert instances of additional subsystems here
             );
             //register subsystems to loopers

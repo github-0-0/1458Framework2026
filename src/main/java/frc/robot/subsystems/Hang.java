@@ -15,7 +15,7 @@ import frc.robot.Loops.ILooper;
 import frc.robot.Loops.Loop;
 import frc.robot.subsystems.SwerveDrive.PeriodicIO;
 
-public class Hang {
+public class Hang extends Subsystem {
     private static Hang mInstance;
     private PeriodicIO mPeriodicIO = new PeriodicIO();
 
