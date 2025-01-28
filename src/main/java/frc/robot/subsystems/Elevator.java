@@ -1,13 +1,20 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Loops.ILooper;
 import frc.robot.Loops.Loop;
+import frc.robot.lib.util.Conversions;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.DigitalSensor;
 public class Elevator extends Subsystem {
@@ -41,6 +48,7 @@ public class Elevator extends Subsystem {
 	private static class PeriodicIO {
 		public int currentState = 0;
 		public int targetState = 0;
+		public VelocityVoltage demand;
 	}
 
 	/*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -49,20 +57,21 @@ public class Elevator extends Subsystem {
 
 	@Override
 	public void registerEnabledLoops(ILooper enabledLooper) {
-        enabledLooper.register(new Loop() {
+		enabledLooper.register(new Loop() {
 			@Override
 			public void onStart(double timestamp) {
 			}
 
 			@Override
 			public void onLoop(double timestamp) {
+				mRightMotor.setControl(mPeriodicIO.demand);
 			}
 
 			@Override
 			public void onStop(double timestamp) {
-            }
+			}
 		});
-    }
+	}
 	
 	@Override
 	public void writePeriodicOutputs() {}
@@ -99,8 +108,6 @@ public class Elevator extends Subsystem {
 		}
 	}
 
-
-
 	public void setTargetLevel(int target) {
 		mPeriodicIO.targetState = target;
 		if (mPeriodicIO.targetState > 4) {
@@ -120,7 +127,7 @@ public class Elevator extends Subsystem {
 	}
 
 	public void runElevator(double speed) {
-		mRightMotor.set(speed);
+		setVelocity(speed);
 	}
 
 	public boolean goToTarget() {
@@ -145,4 +152,19 @@ public class Elevator extends Subsystem {
 		return false;
 	}
 	/*---------------------------------- Custom Private Functions ---------------------------------*/
+
+	public void setVelocity(double speed) {
+		double rotorSpeed = Conversions.MPSToRPS(
+				speed,
+				Constants.Elevator.gearRatio);
+
+		if (Math.abs(rotorSpeed) < 0.002) {
+			mPeriodicIO.demand = new VelocityVoltage(
+				((Laser.inRangeShooter() || Laser.inRangeIntake()) ? Constants.Elevator.kElevatorHoldCoralVoltage : 0.0) +
+				(Laser.inRangeAlgaeShooter() ? Constants.Elevator.kElevatorHoldAlgaeVoltage : 0.0)
+			);
+		} else {
+			mPeriodicIO.demand = new VelocityVoltage(rotorSpeed);
+		}
+	}
 }
