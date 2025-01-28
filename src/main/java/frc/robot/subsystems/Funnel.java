@@ -15,7 +15,7 @@ import frc.robot.Loops.ILooper;
 import frc.robot.Loops.Loop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Intake extends Subsystem {
+public class Funnel extends Subsystem {
 	private static final double k_pivotMotorP = 0.12;
 	private static final double k_pivotMotorI = 0.0;
 	private static final double k_pivotMotorD = 0.001;
@@ -28,19 +28,19 @@ public class Intake extends Subsystem {
 	//public final LEDs m_leds = LEDs.getInstance();
 
 	/*-------------------------------- Private instance variables ---------------------------------*/
-	private static Intake mInstance;
+	private static Funnel mInstance;
 	private PeriodicIO m_periodicIO;
 
-	public static Intake getInstance() {
+	public static Funnel getInstance() {
 		if (mInstance == null) {
-		mInstance = new Intake();
+		mInstance = new Funnel();
 		}
 		return mInstance;
 	}
 
 	private TalonFX mPivotMotor;
 
-	private Intake() {
+	private Funnel() {
 		//super("Intake");
 		mPivotMotor = new TalonFX(Constants.Intake.kPivotMotorId/*  MotorType.kBrushless*/);
 		mPivotMotor.setNeutralMode(NeutralModeValue.Brake);

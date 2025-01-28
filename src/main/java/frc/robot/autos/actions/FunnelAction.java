@@ -2,12 +2,12 @@ package frc.robot.autos.actions;
 
 import frc.robot.Robot;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Funnel;
 
 //NOTE: UNUSED
 
 public class FunnelAction implements Action {
-	private Intake mIntake = null;
+	private Funnel mIntake = null;
 	private boolean kStart = true;
     public FunnelAction(boolean start) {
 		kStart = start;
@@ -15,7 +15,7 @@ public class FunnelAction implements Action {
 
 	@Override
 	public void start() {
-		mIntake = Intake.getInstance();
+		mIntake = Funnel.getInstance();
 		if (kStart) {
 			mIntake.goToStart();
 		} else {

@@ -21,6 +21,7 @@ import frc.robot.autos.AutoModeSelector;
 import frc.robot.subsystems.Cancoders;
 import frc.robot.subsystems.DummySubsystem;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Funnel;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.SwerveDrive;
 import edu.wpi.first.wpilibj.Timer;
@@ -59,6 +60,7 @@ public class RobotContainer25 {
     /* Subsystems instance */
     private DummySubsystem m_ExampleSubsystem;
     private SwerveDrive m_SwerveDrive;
+    private Funnel m_Funnel;
     private Elevator m_Elevator;
     private Shooter m_Shooter;
     private Cancoders m_Cancoders;
@@ -76,6 +78,7 @@ public class RobotContainer25 {
             m_SwerveDrive = SwerveDrive.getInstance();
             m_Elevator = Elevator.getInstance();
             m_Shooter = Shooter.getInstance();
+            m_Funnel = Funnel.getInstance();
 
             // init cancoders
             if (Robot.isReal()) {
@@ -97,7 +100,9 @@ public class RobotContainer25 {
             m_SubsystemManager.setSubsystems(
                 m_SwerveDrive,
                 m_Elevator,
-                m_ExampleSubsystem
+                m_ExampleSubsystem,
+                m_Funnel,
+                m_Shooter
                 //Insert instances of additional subsystems here
             );
             //register subsystems to loopers
