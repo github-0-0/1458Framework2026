@@ -109,7 +109,7 @@ public class RobotState {
 
 	public synchronized void addOdometryUpdate(
 			double now, InterpolatingPose2d odometry_pose, Twist2d measured_velocity, Twist2d predicted_velocity) {
-		odometry_to_vehicle.put(new InterpolatingDouble(now), odometry_pose);
+		odometry_to_vehicle.put(new InterpolatingDouble(now), odometry_pose.rotateBy(rotZero);
 		//mKalmanFilter.predict(
 		//		VecBuilder.fill(0.0, 0.0), Constants.kLooperDt); // Propagate error of current vision prediction
 		vehicle_velocity_measured = measured_velocity;
