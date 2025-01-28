@@ -319,9 +319,9 @@ public final class Constants {
         public static final int kElevatorLeftMotorId = 2000000;
         public static final int kElevatorRightMotorId = 20000000;
         public static final double kElevatorSpeed = 0.05;
-        public static final double kElevatorHoldAlgaeVoltage = 0.002;
-        public static final double kElevatorHoldCoralVoltage = 0.001;
-        public static double gearRatio;
+        public static final double kElevatorHoldAlgaeVoltage = 0.002; //TODO:measure
+        public static final double kElevatorHoldCoralVoltage = 0.001; //TODO:measure
+        public static final double gearRatio = 1.0;
     }
     
     public static class Intake {
@@ -334,6 +334,7 @@ public final class Constants {
     }
 
     public static class Shooter {
+        //TODO: Tune shooter
         public static final int kShooterLeftMotorId = 200;
         public static final int kShooterRightMotorId = 2000;
         public static final int kShooterLimitSwitchId = 20000;
