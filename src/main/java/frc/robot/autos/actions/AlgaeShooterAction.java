@@ -4,13 +4,13 @@ package frc.robot.autos.actions;
 import frc.robot.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Laser;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.AlgaeShooter;
 
-public class CoralShooterAction implements Action {
-    private Shooter mShooter = Shooter.getInstance();
+public class AlgaeShooterAction implements Action {
+    private AlgaeShooter mShooter = AlgaeShooter.getInstance();
 	
-	public CoralShooterAction() {
-		mShooter = Shooter.getInstance();
+	public AlgaeShooterAction() {
+		mShooter = AlgaeShooter.getInstance();
 	}
 	@Override
 	public void start() {
@@ -29,6 +29,6 @@ public class CoralShooterAction implements Action {
 
 	@Override
 	public void done() {
-		mShooter.stopShooter();
+		mShooter.stopAlgaeShooter();
 	}
 }

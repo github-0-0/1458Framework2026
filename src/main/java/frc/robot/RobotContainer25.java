@@ -64,6 +64,7 @@ public class RobotContainer25 {
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
 	
+    public TeleopActionExecutor m_TeleopActionExecutor;
 
     //contructor
     public RobotContainer25 (){
@@ -77,6 +78,7 @@ public class RobotContainer25 {
             m_Funnel = Funnel.getInstance();
             m_AlgaeShooter = AlgaeShooter.getInstance();
             m_Hang = Hang.getInstance();
+            
 
             // init cancoders
             if (Robot.isReal()) {
@@ -149,8 +151,9 @@ public class RobotContainer25 {
         if (m_AutoModeExecutor != null) {
 			m_AutoModeExecutor.stop();
 		}
+        m_TeleopActionExecutor = TeleopActionExecutor.getInstance();
    		try {
-//          RobotState.getInstance().setIsInAuto(false);
+            //RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
  			m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
@@ -171,9 +174,8 @@ public class RobotContainer25 {
             m_AutoModeExecutor.setAutoMode(autoMode.get());
         }
         try {
-//          RobotState.getInstance().setIsInAuto(false);
+            //RobotState.getInstance().setIsInAuto(false);
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
-            
             m_AutoModeExecutor.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -198,7 +200,7 @@ public class RobotContainer25 {
     // init manual (teleop) mode
     public void initTestMode (){
         try {
-//          RobotState.getInstance().setIsInAuto(false);
+            //RobotState.getInstance().setIsInAuto(false);
             if (m_AutoModeExecutor != null) {
 			    m_AutoModeExecutor.stop();
 		    }
@@ -208,26 +210,12 @@ public class RobotContainer25 {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}
-        /*try {
-            System.out.println("InitTestMode called");
-//            m_SwerveDrive.straightenAllWheels();
-//            try{Thread.sleep(3000);}catch(Exception e){}
-//            m_SwerveDrive.testSwerve();
-            if (m_AutoModeExecutor != null) {
-			    m_AutoModeExecutor.stop();
-		    }
-            m_DisabledLooper.stop();
-            m_EnabledLooper.stop();
-		} catch (Throwable t) {
-//			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}*/
     }
 
     // manual mode periodic callback
     public void manualModePeriodic (){
 		try {
-//			mControlBoard.update();
+            //mControlBoard.update();
 
 			/* Drive */
 			if (m_JoyStick.getRawButton(XboxController.Button.kStart.value)) {

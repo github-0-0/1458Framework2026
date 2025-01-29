@@ -14,7 +14,7 @@ import frc.robot.Constants;
 import frc.robot.Loops.ILooper;
 import frc.robot.Loops.Loop;
 import frc.robot.subsystems.SwerveDrive.PeriodicIO;
-
+//both shooter and intake for coral
 public class Shooter extends Subsystem {
 
 	/*-------------------------------- Private instance variables ---------------------------------*/
@@ -75,6 +75,7 @@ public class Shooter extends Subsystem {
 							spin();
 						} else {
 							stop();
+							intake();
 						}
 						break;
 					case STOP:
@@ -147,6 +148,5 @@ public class Shooter extends Subsystem {
 	@Override
 	public void stop() {
 		mPeriodicIO.speed = 0.0;
-		mPeriodicIO.state = ShooterState.STOP;
 	}
 }
