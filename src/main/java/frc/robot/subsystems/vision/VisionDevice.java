@@ -3,10 +3,10 @@ package frc.robot.subsystems.vision;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import frc.robot.FieldLayout;
-import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.VisionUpdate;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.SwerveDrive;
 import frc.robot.lib.util.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,11 +43,15 @@ public class VisionDevice extends Subsystem {
 	private DoubleArraySubscriber mObservations;
 	private IntegerSubscriber mFPS;
 
+	private boolean initial;
+
 	public VisionDevice(VisionDeviceConstants constants) {
 		mConstants = constants;
 		mConfigTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName + "/configs");
 		mCalibTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName + "/calibration");
 		mOutputTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName + "/output");
+
+		initial = true;
 
 		mObservations = mOutputTable
 				.getDoubleArrayTopic("observations")
@@ -187,9 +192,18 @@ public class VisionDevice extends Subsystem {
 			// LogUtil.recordPose2d(
 			// "Vision " + mConstants.kTableName + "/Relevant Odometry Pose",
 			// RobotState.getInstance().getFieldToVehicle(timestamp));
+			
+			Field2d robotField = new Field2d();
+			robotField.setRobotPose(camera_pose.transformBy(mConstants.kRobotToCamera));
+			SmartDashboard.putData("Pure Vision", robotField);
 
 			if (VisionDeviceManager.visionDisabled()) {
 				continue;
+			}	
+			
+			if (initial) {
+				SwerveDrive.getInstance().setWheelTrackerPose(camera_pose.transformBy(mConstants.kRobotToCamera));
+				initial = false;
 			}
 
 			RobotState.getInstance()
@@ -199,7 +213,8 @@ public class VisionDevice extends Subsystem {
 						camera_pose.getTranslation(),
 						mConstants.kRobotToCamera.getTranslation(),
 						xyStdDev
-					)
+					),
+					camera_pose.getRotation()
 				);
 
 			double rotation_degrees = camera_pose

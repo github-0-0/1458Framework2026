@@ -19,6 +19,7 @@ import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.vision.VisionDeviceManager;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
@@ -53,7 +54,7 @@ public class RobotContainer25 {
     public final SubsystemManager m_SubsystemManager = SubsystemManager.getInstance();
     /* Subsystems instance */
     private DummySubsystem m_ExampleSubsystem;
-    private SwerveDrive m_SwerveDrive;
+    public SwerveDrive m_SwerveDrive;
     private Funnel m_Funnel;
     private Elevator m_Elevator;
     private Shooter m_Shooter;
@@ -63,9 +64,10 @@ public class RobotContainer25 {
     
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
-	
-    public TeleopActionExecutor m_TeleopActionExecutor;
 
+    public TeleopActionExecutor m_TeleopActionExecutor;
+    private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
+	
     //contructor
     public RobotContainer25 (){
         try{
@@ -101,6 +103,7 @@ public class RobotContainer25 {
                 m_SwerveDrive,
                 m_Elevator,
                 m_ExampleSubsystem,
+                m_VisionDevices,
                 m_Funnel,
                 m_Shooter,
                 m_AlgaeShooter,
