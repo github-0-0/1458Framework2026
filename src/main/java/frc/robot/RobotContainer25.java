@@ -55,7 +55,7 @@ public class RobotContainer25 {
     public final SubsystemManager m_SubsystemManager = SubsystemManager.getInstance();
     /* Subsystems instance */
     private DummySubsystem m_ExampleSubsystem;
-    public SwerveDrive m_SwerveDrive;
+    public SwerveDrive m_SwerveDrive=null;
     private Cancoders m_Cancoders;
     
     public AutoModeExecutor m_AutoModeExecutor;
@@ -68,11 +68,13 @@ public class RobotContainer25 {
         try{
             //get instance of subsystems
             m_ExampleSubsystem = DummySubsystem.getInstance();
-            m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
-            m_SwerveDrive = SwerveDrive.getInstance();
+            if (!Constants.isBareboneRobot) {//dc.1.29.2025 disable swervedrive initialization on the barebone code
+                m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
+                m_SwerveDrive = SwerveDrive.getInstance();
+            }    
 
             // init cancoders
-            if (Robot.isReal()) {
+            if (Robot.isReal() && !Constants.isBareboneRobot) {
                 m_Cancoders = Cancoders.getInstance();
                 double startInitTs = Timer.getFPGATimestamp();
                 System.out.println("* Starting to init Cancoders at ts " + startInitTs);
@@ -85,11 +87,12 @@ public class RobotContainer25 {
             }
 
             // reset swerve modules
-            m_SwerveDrive.resetModulesToAbsolute();
+            if (m_SwerveDrive != null)             
+                m_SwerveDrive.resetModulesToAbsolute();
 
             //add subsystems to its manager
             m_SubsystemManager.setSubsystems(
-                m_SwerveDrive,
+//                m_SwerveDrive,//dc.1.29.2025 disable swervedrive initialization on the barebone code
                 m_ExampleSubsystem,
                 m_VisionDevices
                 //Insert instances of additional subsystems here
@@ -104,7 +107,8 @@ public class RobotContainer25 {
             RobotState.getInstance().resetKalman(); //TODO: complete RobotState classes
             */
             //set robot to neutral brake
-            m_SwerveDrive.setNeutralBrake(true);
+            if (m_SwerveDrive != null)             
+                m_SwerveDrive.setNeutralBrake(true);
 
             //binds single-button events
 //            bindSingleButtonCmds ();
@@ -141,7 +145,8 @@ public class RobotContainer25 {
    		try {
 //          RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
- 			m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
+            if (m_SwerveDrive != null)             
+     			m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
 		} catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -220,17 +225,19 @@ public class RobotContainer25 {
 			/* Drive */
 			if (m_JoyStick.getRawButton(XboxController.Button.kStart.value)) {
 				System.out.println("keyY is pressed, zero the wheels!");
-                m_SwerveDrive.zeroGyro(0);
+                if (m_SwerveDrive != null)             
+                    m_SwerveDrive.zeroGyro(0);
 			}
 
-                //dc.11.9.24, to scale up joystick input to max-speed
-                double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
-                double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
-                double rotationVal = MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
-    //                System.out.println("DC: manualModePeriodc() translationVal=" + translationVal + ", StrafeVal=" + strafeVal + ", rotationVal=" + rotationVal);
-                    m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-                        translationVal, strafeVal, rotationVal,
-                        Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
+            //dc.11.9.24, to scale up joystick input to max-speed
+            double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
+            double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
+            double rotationVal = MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
+//                System.out.println("DC: manualModePeriodc() translationVal=" + translationVal + ", StrafeVal=" + strafeVal + ", rotationVal=" + rotationVal);
+            if (m_SwerveDrive != null)             
+                m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    translationVal, strafeVal, rotationVal,
+                    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
 
 
 //			mDriverControls.oneControllerMode();

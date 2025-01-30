@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    m_robotStatePose = m_robotContainer.m_SwerveDrive.getPose();
+    m_robotStatePose = RobotState.getInstance().getLatestFieldToVehicle();
     m_robotStateField.setRobotPose(m_robotStatePose);
 
     SmartDashboard.putData("Robot State", m_robotStateField);

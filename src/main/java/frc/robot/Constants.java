@@ -21,6 +21,7 @@ import frc.robot.subsystems.vision.VisionDeviceConstants;
 public final class Constants {
     public static final double stickDeadband = 0.07;
     public static boolean isEpsilon;
+    public static boolean isBareboneRobot=true; //dc.10.29.2024, set to true for barebone robot, false for full robot//
 
     // robot loop time
 	public static final double kLooperDt = 0.02;
