@@ -1,10 +1,13 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.util.HashMap;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -87,5 +90,18 @@ public class FieldLayout {
 			return kFieldLength - x_coordinate;
 		}
 		return x_coordinate;
+	}
+
+	public static Pose3d getClosestTagPos(Translation2d robot_position) {
+		Pose3d closest_tag = new Pose3d();
+		double closest_distance = Double.MAX_VALUE;
+		for (AprilTag tag : kTagMap.getTags()) {
+			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
+			if (distance < closest_distance) {
+				closest_tag = tag.pose;
+				closest_distance = distance;
+			}
+		}
+		return closest_tag;
 	}
 }

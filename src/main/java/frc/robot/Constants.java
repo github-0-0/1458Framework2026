@@ -155,6 +155,8 @@ public final class Constants {
             public static final SwerveModuleConstants constants =
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
+
+        public static double kMaxAngularAcceleration = 720.0; //TODO: set this to tuned value in future
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
