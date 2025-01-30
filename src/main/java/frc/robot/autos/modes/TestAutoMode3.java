@@ -122,6 +122,12 @@ public class TestAutoMode3 extends AutoModeBase {
                 case "CShoot":
                     listOfActions.add(new CoralShooterAction());
                     break;
+                case "AShoot":
+                    listOfActions.add(new AlgaeShooterAction());
+                    break;
+                case "AIntake":
+                    listOfActions.add(new AlgaeIntakeAction());
+                    break;
                 case "Elevator":
                     listOfActions.add(new ElevatorAction(Integer.parseInt(actionStrings[++i])));
                     break;
