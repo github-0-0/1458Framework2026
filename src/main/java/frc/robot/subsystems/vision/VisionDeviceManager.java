@@ -41,6 +41,7 @@ public class VisionDeviceManager extends Subsystem {
 
 	@Override
 	public void readPeriodicInputs() {
+		//System.out.println("VisionDevice.readPeriodic()");
 		mAllCameras.forEach(VisionDevice::readPeriodicInputs);
 		mMovingAvgRead = mHeadingAvg.getAverage();
 	}

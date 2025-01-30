@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.StateSpaceUtil;
@@ -25,11 +26,15 @@ import frc.robot.lib.util.Interpolable;
 import frc.robot.lib.util.InterpolatingDouble;
 import frc.robot.lib.util.MovingAverageTwist2d;
 import frc.robot.lib.util.Util;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
 
 //dc.10.25.2024 TODO: a dummy RobotState class to pass compilation, placeholder for actual implementation
 //priority level 2, for presentation purpose
 public class RobotState {
 	private static RobotState mInstance;
+	//dc.1.29.25, debug code for display pose from vision
+	Field2d field_=new Field2d(); 
 
 	public static RobotState getInstance() {
 		if (mInstance == null) {
@@ -125,6 +130,10 @@ public class RobotState {
 	 * @param update Info about vision update.
 	 */
 	public synchronized void addVisionUpdate(VisionUpdate update, Rotation2d rotZero) {
+		//dc. 1.29.2025 plugin some debug code to display pose from vision 
+		field_.setRobotPose(new Pose2d(update.field_to_camera,new Rotation2d() ));
+		SmartDashboard.putData("RobotState/addVisionUpdate/field2Cam", field_);
+		
 		// If it's the first update don't do filtering
 		if (!mLatestVisionUpdate.isPresent() || initial_field_to_odom.isEmpty()) {
 			rotationZero = rotZero;

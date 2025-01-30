@@ -99,6 +99,7 @@ public class VisionDevice extends Subsystem {
 
 	private void processFrames() {
 		if (mPeriodicIO.frames.size() == 0) {
+			//System.out.println("VisionDevice.readPeriodicInputs.no frames found");
 			return;
 		}
 		for (int frame_idx = 0; frame_idx < mPeriodicIO.frames.size(); frame_idx++) {
@@ -262,6 +263,8 @@ public class VisionDevice extends Subsystem {
 		if (updates.length > 0) {
 			mPeriodicIO.latest_timestamp = updates[updates.length - 1].timestamp;
 		}
+//		System.out.println("VisionDevice.readPeriodicInputs.before processFrames()");
+
 		processFrames();
 	}
 
