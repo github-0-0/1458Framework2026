@@ -11,7 +11,8 @@ public class AutoModeSelector {
 		TESTPATHMODE,
 		TESTAUTOMODE,
 		TESTAUTOMODE2,
-		TESTAUTOMODE3
+		TESTAUTOMODE3,
+		LEFTCORAL
 	}
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -26,6 +27,7 @@ public class AutoModeSelector {
 		mModeChooser.addOption("non working 1", DesiredMode.TESTAUTOMODE);
 		mModeChooser.addOption("non working 2", DesiredMode.TESTAUTOMODE2);
 		mModeChooser.addOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
+		mModeChooser.addOption("legit!!!", DesiredMode.LEFTCORAL);
 		mModeChooser.setDefaultOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
 	}
@@ -76,6 +78,9 @@ public class AutoModeSelector {
 				
 			case TESTAUTOMODE3:
 				return Optional.of(new TestAutoMode3());
+
+			case LEFTCORAL:
+				return Optional.of(new LeftCoralScoreAutoMode());
 				
 			default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
