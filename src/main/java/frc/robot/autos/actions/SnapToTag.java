@@ -83,9 +83,17 @@ public class SnapToTag implements Action {
 	}
 	
 	private void getTagPosition() {
-		Rotation2d aprilTagRotation = FieldLayout.getClosestTagPos(initialPosition).getRotation().toRotation2d();//TODO: check if flipped 180 deg
-		finalRotation = aprilTagRotation.minus(new Rotation2d(Math.PI));
-		finalPosition = FieldLayout.getClosestTagPos(initialPosition).getTranslation().toTranslation2d().plus(offset.rotateBy(aprilTagRotation));
+		boolean shouldFlip = false;
 		tag = FieldLayout.getClosestTag(initialPosition);
+		for (int num : new int[] {1, 2, 12, 13}) {
+			if (num == tag) {
+				shouldFlip = true;
+				break;
+			}
+		}
+		Rotation2d aprilTagRotation = FieldLayout.getClosestTagPos(initialPosition).getRotation().toRotation2d();//TODO: check if flipped 180 deg
+		finalRotation = aprilTagRotation.minus(new Rotation2d(shouldFlip?0.0:Math.PI));
+		finalPosition = FieldLayout.getClosestTagPos(initialPosition).getTranslation().toTranslation2d().plus(offset.rotateBy(aprilTagRotation));
+		
 	}
 }

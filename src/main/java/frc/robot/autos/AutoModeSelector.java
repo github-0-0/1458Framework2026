@@ -22,12 +22,12 @@ public class AutoModeSelector {
 
 	public AutoModeSelector() {
 		mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
-		mModeChooser.addOption("Test Path Mode", DesiredMode.TESTPATHMODE);
-		mModeChooser.addOption("Test Auto Mode", DesiredMode.TESTAUTOMODE);
-		mModeChooser.setDefaultOption("Test Path Mode", DesiredMode.TESTPATHMODE);
+		mModeChooser.addOption("mode to test paths", DesiredMode.TESTPATHMODE);
+		mModeChooser.addOption("non working 1", DesiredMode.TESTAUTOMODE);
+		mModeChooser.addOption("non working 2", DesiredMode.TESTAUTOMODE2);
+		mModeChooser.addOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
+		mModeChooser.setDefaultOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
-		mModeChooser.addOption("Test Path Auto Mode 2", DesiredMode.TESTAUTOMODE2);
-		mModeChooser.addOption("Test Path Auto Mode 3", DesiredMode.TESTAUTOMODE3);
 	}
 
 	public void updateModeCreator(boolean force_regen) {

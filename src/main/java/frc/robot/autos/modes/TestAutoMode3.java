@@ -38,9 +38,7 @@ public class TestAutoMode3 extends AutoModeBase {
      */
     public TestAutoMode3() {
         autoString = "S 1 { ( Wait 1 R 2 Snap 0 ) ( Wait 1 CS 1 ) } 4";
-        //autoString = "S 1 { [ ( Wait 1 Elevator 4 Shoot ) ( R 1 ) ] [ ( Wait 1 Elevator 0 Intake ) ( CS 1 ) ] } 4 Wait 2 R 1 P 1 CS 2 R 2 ";
     }
-    //TODO: Fix Errors here
         
     @Override
     protected void routine() throws AutoModeEndedException {

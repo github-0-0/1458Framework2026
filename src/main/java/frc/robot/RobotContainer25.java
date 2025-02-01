@@ -18,6 +18,7 @@ import frc.robot.Loops.Looper;
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
+import frc.robot.autos.actions.SnapToTag;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
@@ -249,6 +250,10 @@ public class RobotContainer25 {
                 }
                 else{
                     m_Shooter.stop();
+                }
+
+                if(xboxController.getBButtonPressed()) {
+                    m_TeleopActionExecutor.runAction(new SnapToTag(true));
                 }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,

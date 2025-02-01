@@ -29,7 +29,7 @@ public class TeleopActionExecutor {
 		return Timer.getFPGATimestamp() - startTime;
 	}
 
-	public void runAction(Action action) throws AutoModeEndedException {
+	public void runAction(Action action) {
 		action.start();
 		while (!action.isFinished()) {
 			action.update();
