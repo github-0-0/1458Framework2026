@@ -178,6 +178,13 @@ public final class Constants {
     public static VisionDeviceConstants kBackVisionDevice = new VisionDeviceConstants();
 
     static {
+        //dc.2.1.2025, turn off 4 limelights, turn on the test one for barebone robot
+        kLeftVisionDevice.kTableName = "limelight-frihigh";
+        kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
+                new Translation2d(Units.inchesToMeters(0.0), Units.inchesToMeters(0.0)),
+                Rotation2d.fromDegrees(-27));
+
+    /* 
         kLeftVisionDevice.kTableName = "limelight-left";
         kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325)),
@@ -197,7 +204,8 @@ public final class Constants {
         kBackVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
                 Rotation2d.fromDegrees(27.0));
-    }
+    */
+}
 
     //dc.10.21.2024, citrus code constants
     public static final class SwerveConstants {
