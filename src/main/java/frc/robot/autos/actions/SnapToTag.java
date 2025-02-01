@@ -41,7 +41,12 @@ public class SnapToTag implements Action {
 	}
 
 
-	@Override
+	public SnapToTag(boolean b) {
+        //TODO Auto-generated constructor stub
+    }
+
+
+    @Override
 	public void start() {
 		getInitialState();
 		getTagPosition();
