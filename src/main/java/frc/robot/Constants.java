@@ -312,6 +312,9 @@ public final class Constants {
         public static final double kElevatorHoldAlgaeVoltage = 0.002; //TODO:measure
         public static final double kElevatorHoldCoralVoltage = 0.001; //TODO:measure
         public static final double gearRatio = 1.0;
+        public static final double kCircumferenceInches = 3.14;
+        public static final double[] kPositions = {0.0, 1.0, 2.0, 3.0, 4.0};//TODO: tune
+        public static final double kElevatorTolerance = 0.1;
         public static TalonFXConfiguration motorConfigs() {
             TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
             var slot0Configs = talonFXConfigs.Slot0;

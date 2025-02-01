@@ -1,5 +1,7 @@
 package frc.robot.lib.util;
 
+import frc.robot.Constants;
+
 //dc.10.21.2024, ported from citrus package com.team1678.lib; copy & paste
 
 public class Conversions {
@@ -160,5 +162,9 @@ public class Conversions {
     public static double metersToRotations(double wheelMeters, double circumference){
         double wheelRotations = wheelMeters / circumference;
         return wheelRotations;
+    }
+
+    public static double elevatorRotationsToInches(double position) {
+		return position * Constants.Elevator.kCircumferenceInches;
     }
 }

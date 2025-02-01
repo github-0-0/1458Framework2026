@@ -34,6 +34,13 @@ public class Elevator extends Subsystem {
 	private TalonFX mLeftMotor;
 	private TalonFX mRightMotor; //LEADER
 
+	private enum ElevatorMode {
+		MOTION_MAGIC,
+		MANUAL
+	}
+
+	private ElevatorMode mMode = ElevatorMode.MOTION_MAGIC;
+
 	private Elevator() {
 		//super("Elevator");
 		mPeriodicIO = new PeriodicIO();
@@ -53,13 +60,25 @@ public class Elevator extends Subsystem {
 
 	private static class PeriodicIO {
 		public int currentState = 0;
+		public int prevState = 0;
 		public int targetState = 0;
-		public MotionMagicVoltage demand;
+		public MotionMagicVoltage demand = new MotionMagicVoltage(0.0);
+		public double targetPositionInches = 0.0;
+		public double currentPositionInches = 0.0;
+		public boolean isAtTarget = false;
 	}
 
 	/*-------------------------------- Generic Subsystem Functions --------------------------------*/
 	@Override
-	public void readPeriodicInputs() {}
+	public void readPeriodicInputs() {
+		updateLocation();
+		mPeriodicIO.currentPositionInches = getPositionInches();
+		if (mPeriodicIO.targetPositionInches - mPeriodicIO.currentPositionInches < Constants.Elevator.kElevatorTolerance) {
+			mPeriodicIO.isAtTarget = true;
+		} else {
+			mPeriodicIO.isAtTarget = false;
+		}
+	}
 
 	@Override
 	public void registerEnabledLoops(ILooper enabledLooper) {
@@ -69,7 +88,7 @@ public class Elevator extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
-				mRightMotor.setControl(mPeriodicIO.demand);
+				setPosition(Constants.Elevator.kPositions[mPeriodicIO.targetState]);
 			}
 
 			@Override
@@ -78,7 +97,25 @@ public class Elevator extends Subsystem {
 	}
 	
 	@Override
-	public void writePeriodicOutputs() {}
+	public void writePeriodicOutputs() {
+		switch (mMode) {
+			case MOTION_MAGIC:
+				if (mPeriodicIO.isAtTarget && mPeriodicIO.currentState != mPeriodicIO.targetState) {
+					if(mPeriodicIO.prevState < mPeriodicIO.currentState) {
+						runElevator(Constants.Elevator.kElevatorSpeed);
+					} else {
+						runElevator(-Constants.Elevator.kElevatorSpeed);
+					}
+					System.err.println("THIS SHOULD NOT HAPPEN !! !! !!");
+				} else {
+					mRightMotor.setControl(mPeriodicIO.demand);
+				}
+				break;
+
+			case MANUAL:
+				break;
+		}
+	}
 
 	@Override
 	public void stop() {
@@ -106,6 +143,7 @@ public class Elevator extends Subsystem {
 	public void updateLocation() {
 		for (int i = 0; i < 5; i++) {
 			if (DigitalSensor.getSensor(i)) {
+				mPeriodicIO.prevState = mPeriodicIO.currentState;
 				mPeriodicIO.currentState = i;
 				break;
 			}
@@ -162,15 +200,29 @@ public class Elevator extends Subsystem {
 	 * @param position
 	 */
 	public void setPosition(double position) {
-		double rotorSpeed = mRightMotor.getVelocity().getValueAsDouble();
+		double rotationsToInches = Conversions.elevatorRotationsToInches(position);
+		//if (Math.abs(rotorSpeed) < 0.002) {
+		//	mPeriodicIO.demand = new MotionMagicVoltage(
+		//		((Laser.inRangeShooter() || Laser.inRangeIntake()) ? Constants.Elevator.kElevatorHoldCoralVoltage : 0.0) +
+		//		(Laser.inRangeAlgaeShooter() ? Constants.Elevator.kElevatorHoldAlgaeVoltage : 0.0)
+		//	);
+		//} else {
+		mPeriodicIO.targetPositionInches = rotationsToInches;
+		mPeriodicIO.demand = new MotionMagicVoltage(rotationsToInches);
+		//}
+	}
+	/**
+	 * Gets the position of the elevator, in rotations.
+	 * @return the position of the elevator, in rotations
+	 */
+	public double getPositionRotations() {
+		return mRightMotor.getPosition().getValueAsDouble();
+	}
+	public double getPositionInches() {
+		return Conversions.elevatorRotationsToInches(getPositionRotations());
+	}
 
-		if (Math.abs(rotorSpeed) < 0.002) {
-			mPeriodicIO.demand = new MotionMagicVoltage(
-				((Laser.inRangeShooter() || Laser.inRangeIntake()) ? Constants.Elevator.kElevatorHoldCoralVoltage : 0.0) +
-				(Laser.inRangeAlgaeShooter() ? Constants.Elevator.kElevatorHoldAlgaeVoltage : 0.0)
-			);
-		} else {
-			mPeriodicIO.demand = new MotionMagicVoltage(rotorSpeed);
-		}
+	public boolean getIsAtTarget() {
+		return mPeriodicIO.isAtTarget && mPeriodicIO.currentState != mPeriodicIO.targetState;
 	}
 }

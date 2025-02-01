@@ -25,7 +25,7 @@ public class ElevatorAction implements Action {
 	@Override
 	public boolean isFinished() {
 		if (Robot.isSimulation()) return true;
-		return mElevator.goToTarget();
+		return mElevator.getIsAtTarget();
 	}
 
 	@Override
