@@ -253,7 +253,7 @@ public class RobotContainer25 {
                 }
 
                 if(xboxController.getBButtonPressed()) {
-                    m_TeleopActionExecutor.runAction(new SnapToTag(true));
+                    m_TeleopActionExecutor.runAction(new SnapToTag(0));
                 }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,

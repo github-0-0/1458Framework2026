@@ -10,7 +10,7 @@ import frc.robot.lib.trajectory.TrajectoryGenerator;
 import frc.robot.lib.trajectory.TrajectoryGenerator.TrajectorySet;
 import frc.robot.autos.actions.*;
 
-public class TestAutoMode3 extends AutoModeBase {
+public class AutoStringAuto extends AutoModeBase {
     private TrajectoryGenerator trajectoryGenerator = TrajectoryGenerator.getInstance();
     private TrajectorySet trajectorySet = trajectoryGenerator.getTrajectorySet();
     public String autoString;
@@ -37,8 +37,8 @@ public class TestAutoMode3 extends AutoModeBase {
      * Snap and the follwing number denotes a snap to nearest apriltag, where the number is 1 if we are aiming for the right reef and 0 if we are aiming for the left reef.
      */
     
-    public TestAutoMode3() {
-        autoString = "S 1 [ ( R 1 Snap 0 ) ( Elevator 4 ) ] CShoot CS 1 CIntake ";
+    public AutoStringAuto(String string) {
+        autoString = string;
     }
         
     @Override

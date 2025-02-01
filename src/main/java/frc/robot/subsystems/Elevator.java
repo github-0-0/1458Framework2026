@@ -113,6 +113,7 @@ public class Elevator extends Subsystem {
 				break;
 
 			case MANUAL:
+				goToTarget();
 				break;
 		}
 	}

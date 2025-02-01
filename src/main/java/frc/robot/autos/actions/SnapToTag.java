@@ -30,14 +30,14 @@ public class SnapToTag implements Action {
 
 	private PathPlannerTrajectory mTrajectory = null;
 	private Action mAction = null;
-	private Translation2d offset = new Translation2d(0.0,0.0);
+	private Translation2d[] offset = new Translation2d[]{new Translation2d(-0.18,0.85/2), new Translation2d(0.18,0.85/2), new Translation2d(0.18,0.85/2), new Translation2d(0.18,0.85/2), new Translation2d(0,0)};
 	private int tag = 0;
-	private boolean mIsLeft = false;
+	private int mNum = 0;
 	/**
 	 * @param isLeft - if the robot is on the left side of the field
 	 */
-	public SnapToTag(boolean isLeft) {
-		mIsLeft = isLeft;
+	public SnapToTag(int num) {
+		mNum = num;
 	}
 
 
@@ -93,7 +93,7 @@ public class SnapToTag implements Action {
 		}
 		Rotation2d aprilTagRotation = FieldLayout.getClosestTagPos(initialPosition).getRotation().toRotation2d();//TODO: check if flipped 180 deg
 		finalRotation = aprilTagRotation.minus(new Rotation2d(shouldFlip?0.0:Math.PI));
-		finalPosition = FieldLayout.getClosestTagPos(initialPosition).getTranslation().toTranslation2d().plus(offset.rotateBy(aprilTagRotation));
+		finalPosition = FieldLayout.getClosestTagPos(initialPosition).getTranslation().toTranslation2d().plus(offset[mNum].rotateBy(aprilTagRotation));
 		
 	}
 }
