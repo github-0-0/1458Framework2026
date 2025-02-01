@@ -30,11 +30,19 @@ public class SnapToTag implements Action {
 
 	private PathPlannerTrajectory mTrajectory = null;
 	private Action mAction = null;
-	private Translation2d offset;
+	private Translation2d offset = new Translation2d(0.0,0.0);
+	private int tag = 0;
+	private boolean mIsLeft = false;
 	/**
 	 * @param isLeft - if the robot is on the left side of the field
 	 */
 	public SnapToTag(boolean isLeft) {
+		mIsLeft = isLeft;
+	}
+
+
+	@Override
+	public void start() {
 		getInitialState();
 		getTagPosition();
 		generatedPath = new PathPlannerPath(
@@ -48,11 +56,8 @@ public class SnapToTag implements Action {
 		);
 		mTrajectory = generatedPath.getIdealTrajectory(Constants.PathPlannerRobotConfig.config).get();
 		mAction = new SwerveTrajectoryAction(mTrajectory);
-	}
-
-
-	@Override
-	public void start() {
+		System.out.println("Snap to tag "+new Pose2d(initialPosition,initialRotation).toString()+ " -> " + new Pose2d(finalPosition,finalRotation).toString());
+	
 		mAction.start();
 	}
 
@@ -81,5 +86,6 @@ public class SnapToTag implements Action {
 		Rotation2d aprilTagRotation = FieldLayout.getClosestTagPos(initialPosition).getRotation().toRotation2d();//TODO: check if flipped 180 deg
 		finalRotation = aprilTagRotation.minus(new Rotation2d(Math.PI));
 		finalPosition = FieldLayout.getClosestTagPos(initialPosition).getTranslation().toTranslation2d().plus(offset.rotateBy(aprilTagRotation));
+		tag = FieldLayout.getClosestTag(initialPosition);
 	}
 }
