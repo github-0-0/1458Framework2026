@@ -12,7 +12,8 @@ public class AutoModeSelector {
 		TESTAUTOMODE,
 		TESTAUTOMODE2,
 		TESTAUTOMODE3,
-		LEFTCORAL
+		LEFTCORAL,
+		LMIDDLECORAL
 	}
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -81,6 +82,8 @@ public class AutoModeSelector {
 
 			case LEFTCORAL:
 				return Optional.of(new LeftCoralScoreAutoMode());
+			case LMIDDLECORAL:
+				return Optional.of(new LMiddleCoralScoreAutoMode());	
 				
 			default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
