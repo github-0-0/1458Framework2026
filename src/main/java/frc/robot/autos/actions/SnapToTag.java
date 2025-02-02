@@ -30,7 +30,6 @@ public class SnapToTag implements Action {
 
 	private PathPlannerTrajectory mTrajectory = null;
 	private Action mAction = null;
-	private Translation2d[] offset = new Translation2d[]{new Translation2d(-0.18,0.85/2), new Translation2d(0.18,0.85/2), new Translation2d(0.18,0.85/2), new Translation2d(0.18,0.85/2), new Translation2d(0,0)};
 	private int tag = 0;
 	private int mNum = 0;
 	/**
@@ -39,12 +38,6 @@ public class SnapToTag implements Action {
 	public SnapToTag(int num) {
 		mNum = num;
 	}
-
-
-	public SnapToTag(boolean b) {
-        //TODO Auto-generated constructor stub
-    }
-
 
     @Override
 	public void start() {
@@ -98,7 +91,7 @@ public class SnapToTag implements Action {
 		}
 		Rotation2d aprilTagRotation = FieldLayout.getClosestTagPos(initialPosition).getRotation().toRotation2d();//TODO: check if flipped 180 deg
 		finalRotation = aprilTagRotation.minus(new Rotation2d(shouldFlip?0.0:Math.PI));
-		finalPosition = FieldLayout.getClosestTagPos(initialPosition).getTranslation().toTranslation2d().plus(offset[mNum].rotateBy(aprilTagRotation));
+		finalPosition = FieldLayout.getClosestTagPos(initialPosition).getTranslation().toTranslation2d().plus(FieldLayout.offsets[mNum].rotateBy(aprilTagRotation));
 		
 	}
 }

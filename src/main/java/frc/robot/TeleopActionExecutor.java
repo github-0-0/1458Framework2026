@@ -15,7 +15,7 @@ public class TeleopActionExecutor {
 	protected double m_update_rate = 1.0 / 50.0;
 	protected boolean m_active = false;
 	protected double startTime = 0.0;
-
+	public List<Action> m_runningActions = new ArrayList<Action>();
 	private static TeleopActionExecutor mInstance;
 
 	public static TeleopActionExecutor getInstance() {
@@ -30,6 +30,7 @@ public class TeleopActionExecutor {
 	}
 
 	public void runAction(Action action) {
+		m_runningActions.add(action);
 		action.start();
 		while (!action.isFinished()) {
 			action.update();
@@ -41,5 +42,20 @@ public class TeleopActionExecutor {
 			}
 		}
 		action.done();
+	}
+		public void abort() {
+		if (m_runningActions.isEmpty()) {
+			System.out.println("No running actions to abort");
+			return;
+		}
+		for (Action action : m_runningActions) {
+			action.done();
+		}
+		String actionNames = "";
+		for (Action action : m_runningActions) {
+			actionNames += action.getClass().toString() + " ";
+		}
+		m_runningActions.clear();
+		System.out.println("Aborted "+actionNames+"at time "+Timer.getFPGATimestamp());
 	}
 }

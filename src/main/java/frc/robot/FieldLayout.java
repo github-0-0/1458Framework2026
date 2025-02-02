@@ -30,6 +30,15 @@ import edu.wpi.first.math.util.Units;
 public class FieldLayout {
 	public static double kFieldLength = Units.inchesToMeters(651.223);
 	public static double kFieldWidth = Units.inchesToMeters(323.277);
+	public static int closestTag = -1;
+    public static Translation2d[] offsets = {
+		new Translation2d(-0.18, -0.85/2),
+		new Translation2d(0.18, -0.85/2),
+		new Translation2d(0, -0.85/2),
+		new Translation2d(-0.18, 0.85/2),
+		new Translation2d(0, 0.85/2),
+		new Translation2d(0.18, 0.85/2),
+	};
 
 	public static final double kApriltagWidth = Units.inchesToMeters(6.50);
 	public static final AprilTagFieldLayout kTagMap;
@@ -96,6 +105,7 @@ public class FieldLayout {
 				closest_distance = distance;
 			}
 		}
+		closestTag = closest_tag;
 		return closest_tag;
 	}
 }
