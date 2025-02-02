@@ -39,9 +39,9 @@ public class RightAroundTheReefL4 extends AutoModeBase {
     
     public RightAroundTheReefL4() {
         autoString = "S 1 R 1 Snap 0 Elevator 4 CShoot Elevator 0"
-                   + "( CS 1 CIntake R 2 Snap 0 Elevator 4 CShoot Elevator 0) "
-                   + "( CS 1 CIntake R 3 Snap 0 Elevator 4 CShoot Elevator 0) "
-                   + "( CS 2 CIntake R 4 Snap 0 Elevator 4 CShoot Elevator 0)";
+                   + "( CS 1 CIntake R 2 Snap 0 Elevator 4 CShoot Elevator 0 ) "
+                   + "( CS 1 CIntake R 3 Snap 0 Elevator 4 CShoot Elevator 0 ) "
+                   + "( CS 2 CIntake R 4 Snap 0 Elevator 4 CShoot Elevator 0 )";
     }
         
     @Override
