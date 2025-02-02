@@ -10,7 +10,7 @@ import frc.robot.lib.trajectory.TrajectoryGenerator;
 import frc.robot.lib.trajectory.TrajectoryGenerator.TrajectorySet;
 import frc.robot.autos.actions.*;
 
-public class Start4ReefAndProcessor extends AutoModeBase {
+public class Start4ReefL3L4R4R5 extends AutoModeBase {
     private TrajectoryGenerator trajectoryGenerator = TrajectoryGenerator.getInstance();
     private TrajectorySet trajectorySet = trajectoryGenerator.getTrajectorySet();
     public String autoString;
@@ -37,10 +37,10 @@ public class Start4ReefAndProcessor extends AutoModeBase {
      * Snap and the follwing number denotes a snap to nearest apriltag, where the number is 1 if we are aiming for the right reef and 0 if we are aiming for the left reef.
      */
     
-    public Start4ReefAndProcessor() {
+    public Start4ReefL3L4R4R5() {
         autoString = "S 4 R 5 Snap 0 Elevator 4 CShoot Elevator 0"
-                   + "( CS 2 CIntake R 4 Snap 0 Elevator 4 CShoot ) "
-                   + "( Elevator 2 AIntake P 1 Snap 0 Elevator 0 AShoot ) "
+                   + "( CS 2 CIntake R 4 Snap 0 Elevator 4 CShoot Elevator 0 ) "
+                   + "( CS 2 CIntake R 5 Snap 0 Elevator 3 CShoot Elevator 0 ) "
                    + "( CS 2 CIntake R 4 Snap 0 Elevator 3 CShoot Elevator 0 )";
     }
         
