@@ -103,9 +103,9 @@ public class RobotContainer25 {
 
             //load all predefined trajectories  
             TrajectoryGenerator.getInstance().generateTrajectories();
-			/*
+			
             RobotState.getInstance().resetKalman(); //TODO: complete RobotState classes
-            */
+            
             //set robot to neutral brake
             if (m_SwerveDrive != null)             
                 m_SwerveDrive.setNeutralBrake(true);

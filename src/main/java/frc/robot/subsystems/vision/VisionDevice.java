@@ -6,33 +6,24 @@ import frc.robot.FieldLayout;
 import frc.robot.RobotState;
 import frc.robot.RobotState.VisionUpdate;
 import frc.robot.subsystems.Subsystem;
-import frc.robot.subsystems.SwerveDrive;
-import frc.robot.lib.util.Util;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Quaternion;
+import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
-import edu.wpi.first.networktables.TimestampedDoubleArray;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.text.NumberFormat.Style;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import edu.wpi.first.math.Vector;
 
 public class VisionDevice extends Subsystem {
 	private final VisionDeviceConstants mConstants;
@@ -42,18 +33,10 @@ public class VisionDevice extends Subsystem {
 	private NetworkTable mOutputTable;
 	private NetworkTable mCalibTable;
 
+	private IntegerSubscriber mVisible;
 	private DoubleArraySubscriber mObservations;
-	private DoubleArraySubscriber mObservations2;
 	private DoubleArraySubscriber mStdDevs;
 	private IntegerSubscriber mFPS;
-
-	private TimestampedDoubleArray mObservationsUnused;
-	private TimestampedDoubleArray mStdDevUnused;
-
-	private double avgAngle;
-	private int angles;
-
-	private boolean initial;
 
 	public Field2d robotField;
 
@@ -61,24 +44,18 @@ public class VisionDevice extends Subsystem {
 		robotField = new Field2d();
 		SmartDashboard.putData("Pure Vision", robotField);
 
-		avgAngle = 0;
-		angles = 0;
-
 		mConstants = constants;
 		mConfigTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName + "/configs");
 		mCalibTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName + "/calibration");
 		mOutputTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName);
 
-		initial = true;
+		mVisible = mOutputTable
+				.getIntegerTopic("tv")
+				.subscribe(0, PubSubOption.keepDuplicates(true), PubSubOption.sendAll(true));
 
 		mObservations = mOutputTable
 				.getDoubleArrayTopic("botpose_orb_wpiblue")
 				.subscribe(new double[] {}, PubSubOption.keepDuplicates(true), PubSubOption.sendAll(true));
-
-		mObservations2 = mOutputTable
-				.getDoubleArrayTopic("botpose_wpiblue")
-				.subscribe(new double[] {}, PubSubOption.keepDuplicates(true), PubSubOption.sendAll(true));
-
 
 		mStdDevs = mOutputTable
 				.getDoubleArrayTopic("stddevs")
@@ -124,172 +101,34 @@ public class VisionDevice extends Subsystem {
 				rotation_inverted);
 	}
 
-	// private void processFrames() {
-	// 	if (mPeriodicIO.frames.size() == 0) {
-	// 		System.out.println("VisionDevice.readPeriodicInputs.no frames found");
-	// 		return;
-	// 	}
-	// 	for (int frame_idx = 0; frame_idx < mPeriodicIO.frames.size(); frame_idx++) {
-	// 		VisionFrame frame = mPeriodicIO.frames.get(frame_idx);
-	// 		double[] data = frame.frame_data;
-	// 		if (data.length == 0 || data[0] == 0)
-	// 			continue;
-	// 		double timestamp = frame.timestamp - VisionDeviceManager.getTimestampOffset();
-	// 		double[] botpose = mObservations.get();
-	// 		Pose2d camera_pose = new Pose2d(botpose[0], botpose[1], new Rotation2d(botpose[5]*Math.PI/180));
+	private void processFrames() {
+		if (mVisible.get() == 0) {
+			return;
+		}
 
-	// 		List<Pose3d> tagPoses = new ArrayList<>();
-	// 		// Iterate through all remaining data to find tags involved in calculation
-	// 		for (int tag_idx = (data[0] == 1 ? 9 : 17); tag_idx < data.length; tag_idx++) {
-	// 			int tagId = (int) data[tag_idx];
-	// 			Optional<Pose3d> tagPose = FieldLayout.kTagMap.getTagPose((int) tagId);
-	// 			tagPose.ifPresent(tagPoses::add);
-	// 		}
-	// 		if (tagPoses.size() == 0) {
-	// 			continue;
-	// 		}
+		double[] mt2Pose = mObservations.get();
+		double[] stdDevs = mStdDevs.get();
+		double timestamp = Timer.getFPGATimestamp() * Math.pow(10, 6) - VisionDeviceManager.getTimestampOffset();
+		Pose2d botPose = new Pose2d(mt2Pose[0], mt2Pose[1], new Rotation2d(mt2Pose[5] * Math.PI / 180));
+		Vector<N2> stdDevsVec = VecBuilder.fill(stdDevs[6], stdDevs[7]);
 
-	// 		double total_tag_dist = 0.0;
-	// 		double lowest_dist = Double.POSITIVE_INFINITY;
-	// 		for (Pose3d pose3d : tagPoses) {
-	// 			Pose2d pose2 = pose3d.toPose2d();
-	// 			final Pose2d inverse = inverse(pose2.getTranslation(), pose2.getRotation());
-	// 			final Twist2d logTwist = log(new Pose2d(
-	// 					inverse.getTranslation().plus(camera_pose.getTranslation().rotateBy(inverse.getRotation())),
-	// 					inverse.getRotation().rotateBy(camera_pose.getRotation())));
-	// 			double dist = logTwist.dy == 0
-	// 					? Math.abs(logTwist.dx)
-	// 					: Math.hypot(logTwist.dx, logTwist.dy);
-	// 			total_tag_dist += dist;
-	// 			lowest_dist = Math.min(dist, lowest_dist);
-	// 		}
-	// 		double avg_dist = total_tag_dist / tagPoses.size();
+		robotField.setRobotPose(botPose);
 
-	// 		double[] stddevs = NetworkTableInstance.getDefault().getTable("limelight").getEntry("stddevs").getDoubleArray(new double[6]);
-
-	// 		// Estimate standard deviation of vision measurement
-	// 		double xyStdDev = Math.max(0.0127, Math.sqrt(Math.pow(stddevs[6],2) + Math.pow(stddevs[7],2)));
-
-	// 		// LogUtil.recordPose3d("Vision " + mConstants.kTableName + "/Tag Poses",
-	// 		tagPoses.toArray(new Pose3d[0]);
-	// 		SmartDashboard.putNumber("Vision " + mConstants.kTableName + "/N Tags Seen", tagPoses.size());
-	// 		SmartDashboard.putNumber("Vision " + mConstants.kTableName + "/Calculated STDev", xyStdDev);
-	// 		// LogUtil.recordPose2d("Vision " + mConstants.kTableName + "/Camera Pose",
-	// 		// camera_pose);
-	// 		// LogUtil.recordPose2d(
-	// 		// "Vision " + mConstants.kTableName + "/Robot Pose",
-	// 		// camera_pose.transformBy(mConstants.kRobotToCamera));
-	// 		// LogUtil.recordPose2d(
-	// 		// "Vision " + mConstants.kTableName + "/Relevant Odometry Pose",
-	// 		// RobotState.getInstance().getFieldToVehicle(timestamp));
-			
-	// 		Field2d robotField = new Field2d();
-	// 		robotField.setRobotPose(camera_pose.transformBy(mConstants.kRobotToCamera));
-	// 		SmartDashboard.putData("Pure Vision", robotField);
-
-	// 		if (VisionDeviceManager.visionDisabled()) {
-	// 			continue;
-	// 		}	
-			
-	// 		if (initial) {
-	// 			SwerveDrive.getInstance().setWheelTrackerPose(camera_pose.transformBy(mConstants.kRobotToCamera));
-	// 			initial = false;
-	// 		}
-
-	// 		RobotState.getInstance()
-	// 			.addVisionUpdate(
-	// 				new VisionUpdate(
-	// 					timestamp,
-	// 					camera_pose.getTranslation(),
-	// 					mConstants.kRobotToCamera.getTranslation(),
-	// 					xyStdDev
-	// 				),
-	// 				camera_pose.getRotation()
-	// 			);
-
-	// 		double rotation_degrees = camera_pose
-	// 				.transformBy(mConstants.kRobotToCamera)
-	// 				.getRotation()
-	// 				.getDegrees()
-	// 				+ 180.0;
-
-	// 		// Avoid angle wrapping issues
-	// 		if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() != Alliance.Red) {
-	// 			rotation_degrees = Util.boundAngleNeg180to180Degrees(rotation_degrees);
-	// 		} else {
-	// 			rotation_degrees = Util.boundAngle0to360Degrees(rotation_degrees);
-	// 		}
-
-	// 		SmartDashboard.putNumber("Vision Heading/" + mConstants.kTableName, rotation_degrees);
-	// 		VisionDeviceManager.getInstance().getMovingAverage().addNumber(rotation_degrees);
-	// 	}
-	// }
-
-	private void processFrames () {
-		// for (int frame_idx = 0; frame_idx < mPeriodicIO.frames.size(); frame_idx++) {
-		// 	VisionFrame frame = mPeriodicIO.frames.get(frame_idx);
-		// 	double[] data = frame.frame_data;
-		// 	if (data.length == 0 || data[0] == 0)
-		// 		continue;
-		// 	double timestamp = frame.timestamp - VisionDeviceManager.getTimestampOffset();
-		// 	Pose2d camera_pose = new Pose2d(frame.frame_data[0], frame.frame_data[1], new Rotation2d(frame.frame_data[5]*Math.PI/180));
-			
-		// 	// Estimate standard deviation of vision measurement
-		// 	double xyStdDev = Math.max(0.0127, Math.sqrt(Math.pow(frame.stdDevs[6],2) + Math.pow(frame.stdDevs[7],2)));
-
-		// 	// RobotState.getInstance()
-		// 	// 	.addVisionUpdate(
-		// 	// 		new VisionUpdate(
-		// 	// 			timestamp,
-		// 	// 			camera_pose.getTranslation(),
-		// 	// 			mConstants.kRobotToCamera.getTranslation(),
-		// 	// 			xyStdDev
-		// 	// 		),
-		// 	// 		camera_pose.getRotation()
-		// 	// 	);
-			
-		// 	Field2d robotField = new Field2d();
-		// 	robotField.setRobotPose(camera_pose.transformBy(mConstants.kRobotToCamera));
-		// 	SmartDashboard.putData("Pure Vision", robotField);
-		// }
-
-		double[] ntPose = mObservations.get();
-		double[] megatag1Pose = mObservations2.get();
-		Pose2d camera_pose = new Pose2d(megatag1Pose[0], megatag1Pose[1], new Rotation2d(megatag1Pose[5]*Math.PI/180));
-
-		robotField.setRobotPose(camera_pose);
+		RobotState.getInstance()
+				.addVisionUpdate(
+						new VisionUpdate(
+								timestamp,
+								botPose.getTranslation(),
+								new Translation2d(0, 0),
+								stdDevsVec),
+						botPose.getRotation());
 	}
 
 	@Override
 	public void readPeriodicInputs() {
 		mPeriodicIO.fps = mFPS.get();
 
-		// TimestampedDoubleArray[] queue = mObservations.readQueue();
-		// TimestampedDoubleArray[] stdQueue = mStdDevs.readQueue();
-		// VisionFrame[] updates = new VisionFrame[queue.length];
-		// for (int i = 0; i < queue.length; i++) {
-		// 	updates[i] = new VisionFrame();
-		// 	updates[i].timestamp = queue[i].timestamp / 1000000.0;
-		// 	updates[i].frame_data = queue[i].value;
-		// 	updates[i].stdDevs = stdQueue[i].value;
-		// }
-		// Arrays.sort(updates, Comparator.comparingDouble(VisionFrame::getTimestamp));
-		// mPeriodicIO.frames = Arrays.asList(updates);
-		// try {
-		// 	if (mPeriodicIO.frames.size() >= 6) {
-		// 		mPeriodicIO.frames = mPeriodicIO.frames.subList(mPeriodicIO.frames.size() - 6,
-		// 				mPeriodicIO.frames.size() - 1);
-		// 	}
-		// } catch (Exception e) {
-		// 	System.out.println(e.getStackTrace());
-		// }
-
 		mPeriodicIO.is_connected = !(Timer.getFPGATimestamp() - mPeriodicIO.latest_timestamp > 1.0);
-
-		// if (updates.length > 0) {
-		// 	mPeriodicIO.latest_timestamp = updates[updates.length - 1].timestamp;
-		// }
-//		System.out.println("VisionDevice.readPeriodicInputs.before processFrames()");
 
 		processFrames();
 	}
