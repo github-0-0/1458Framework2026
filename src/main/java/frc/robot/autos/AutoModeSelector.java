@@ -13,7 +13,12 @@ public class AutoModeSelector {
 		TESTAUTOMODE2,
 		TESTAUTOMODE3,
 		LEFTCORAL,
-		LMIDDLECORAL
+		LMIDDLECORAL,
+		RLMIDDLE,
+		RRMIDDLE,
+		LRMIDDLE,
+		LLMIDDLE,
+		L4AROUND
 	}
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -67,24 +72,28 @@ public class AutoModeSelector {
 			switch (mode) {
 			case DO_NOTHING:
 				return Optional.of(new DoNothingMode());
-			
 			case TESTPATHMODE:
 				return Optional.of(new TestPathMode());
-
 			case TESTAUTOMODE:
 				return Optional.of(new TestAutoMode());
-				
 			case TESTAUTOMODE2:
 				return Optional.of(new TestAutoMode2());
-				
 			case TESTAUTOMODE3:
 				return Optional.of(new TestAutoMode3());
-
 			case LEFTCORAL:
 				return Optional.of(new LeftCoralScoreAutoMode());
 			case LMIDDLECORAL:
 				return Optional.of(new LMiddleCoralScoreAutoMode());	
-				
+			case RLMIDDLE:
+				return Optional.of(new Start2LeftSideCoral());
+			case RRMIDDLE:
+				return Optional.of(new Start2RightSideCoral());
+			case LRMIDDLE:
+				return Optional.of(new Start3RightSideCoral());
+			case LLMIDDLE:
+				return Optional.of(new Start3LeftSideCoral());
+			case L4AROUND:
+				return Optional.of(new RightAroundTheReefL4());
 			default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
 				break;
