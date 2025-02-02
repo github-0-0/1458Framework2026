@@ -9,6 +9,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
 import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
@@ -32,6 +33,7 @@ public class SnapToTag implements Action {
 	private Action mAction = null;
 	private int tag = 0;
 	private int mNum = 0;
+	protected static boolean isRunning = false;
 	/**
 	 * @param isLeft - if the robot is on the left side of the field
 	 */
@@ -52,6 +54,11 @@ public class SnapToTag implements Action {
 			new IdealStartingState(initialSpeed,initialRotation),
 			new GoalEndState(kFinalSpeed,finalRotation)
 		);
+		if(generatedPath.getAllPathPoints().size() == 1) {
+			mAction = null;
+			System.out.println("Something goofy happened!");
+			return;
+		}
 		mTrajectory = generatedPath.getIdealTrajectory(Constants.PathPlannerRobotConfig.config).get();
 		mAction = new SwerveTrajectoryAction(mTrajectory);
 		System.out.println("Snap to tag "+new Pose2d(initialPosition,initialRotation).toString()+ " -> " + new Pose2d(finalPosition,finalRotation).toString());
@@ -66,11 +73,17 @@ public class SnapToTag implements Action {
 
 	@Override
 	public boolean isFinished() {
+		if (mAction == null) {
+			return true;
+		}
 		return mAction.isFinished();
 	}
 
 	@Override
 	public void done() {
+		if (mAction == null) {
+			return;
+		}
 		mAction.done();
 	}
 

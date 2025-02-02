@@ -33,7 +33,13 @@ public class AutoModeSelector {
 		mModeChooser.addOption("non working 1", DesiredMode.TESTAUTOMODE);
 		mModeChooser.addOption("non working 2", DesiredMode.TESTAUTOMODE2);
 		mModeChooser.addOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
-		mModeChooser.addOption("legit!!!", DesiredMode.LEFTCORAL);
+		mModeChooser.addOption("Left Coral", DesiredMode.LEFTCORAL);
+		mModeChooser.addOption("LMiddle Coral", DesiredMode.LMIDDLECORAL);
+		mModeChooser.addOption("RLMiddle", DesiredMode.RLMIDDLE);
+		mModeChooser.addOption("RRMiddle!", DesiredMode.RRMIDDLE);
+		mModeChooser.addOption("LRMiddle", DesiredMode.LRMIDDLE);
+		mModeChooser.addOption("L4Around", DesiredMode.L4AROUND);
+
 		mModeChooser.setDefaultOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
 	}

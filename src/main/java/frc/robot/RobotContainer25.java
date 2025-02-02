@@ -245,18 +245,23 @@ public class RobotContainer25 {
                     System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
                 }
 */
-                if (xboxController.getYButtonPressed()) {
+                
+                if(xboxController.getPOV() == 180) {
                     m_TeleopActionExecutor.runAction(new ElevatorAction(0));
                 }
-                if (xboxController.getAButtonPressed()) {
+                if (xboxController.getYButtonPressed()) {
                     m_TeleopActionExecutor.runAction(new ElevatorAction(1));
                 }
-                if (xboxController.getBButtonPressed()) {
+                if (xboxController.getAButtonPressed()) {
                     m_TeleopActionExecutor.runAction(new ElevatorAction(2));
                 }
-                if (xboxController.getXButtonPressed()) {
+                if (xboxController.getBButtonPressed()) {
                     m_TeleopActionExecutor.runAction(new ElevatorAction(3));
                 }
+                if (xboxController.getXButtonPressed()) {
+                    m_TeleopActionExecutor.runAction(new ElevatorAction(4));
+                }
+
                 if (xboxController.getLeftTriggerAxis()>0.5) {
                     m_TeleopActionExecutor.runAction(new AlgaeShooterAction());
                 }                
@@ -264,21 +269,35 @@ public class RobotContainer25 {
                     m_TeleopActionExecutor.runAction(new CoralShooterAction());
                 }
                 if (xboxController.getLeftBumperButtonPressed()) {
+                    int tag = FieldLayout.getClosestTag(RobotState.getInstance().getLatestFieldToVehicle().getTranslation());
+                    boolean isL3 = false;
+                    for (int num : new int[] {18, 20, 22, 7, 9, 11}) {
+                        if (num == tag) {
+                            isL3 = true;
+                        }
+                    }
                     m_TeleopActionExecutor.runAction(new SeriesAction(
-                        new SnapToTag(3),
+                        new ElevatorAction(isL3 ? 3 : 2),
+                        new SnapToTag(2),
                         new AlgaeIntakeAction()
                     ));
                 }
                 if (xboxController.getRightBumperButtonPressed()) {
                     m_TeleopActionExecutor.runAction(new SeriesAction(
-                        new SnapToTag(3),
+                        new SnapToTag(2),
                         new CoralIntakeAction()
-                    ));}
+                    ));
+                }if (xboxController.getPOV() == 0) {
+                    m_TeleopActionExecutor.runAction(new SnapToTag(2));
+                }
                 if (xboxController.getPOV() == 90) {
-                    m_TeleopActionExecutor.runAction(new SnapToTag(0));
+                    m_TeleopActionExecutor.runAction(new SnapToTag(1));
                 }
                 if (xboxController.getPOV() == 270) {
-                    m_TeleopActionExecutor.runAction(new SnapToTag(1));
+                    m_TeleopActionExecutor.runAction(new SnapToTag(0));
+                }
+                if (xboxController.getLeftStickButtonPressed()) {
+                    m_TeleopActionExecutor.abort();
                 }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
