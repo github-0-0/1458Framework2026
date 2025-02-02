@@ -173,9 +173,9 @@ public final class Constants {
     }
 
     public static VisionDeviceConstants kLeftVisionDevice = new VisionDeviceConstants(); // dot 13
-    public static VisionDeviceConstants kRightVisionDevice = new VisionDeviceConstants(); // dot 12
-    public static VisionDeviceConstants kFrontVisionDevice = new VisionDeviceConstants();
-    public static VisionDeviceConstants kBackVisionDevice = new VisionDeviceConstants();
+    // public static VisionDeviceConstants kRightVisionDevice = new VisionDeviceConstants(); // dot 12
+    // public static VisionDeviceConstants kFrontVisionDevice = new VisionDeviceConstants();
+    // public static VisionDeviceConstants kBackVisionDevice = new VisionDeviceConstants();
 
     static {
         //dc.2.1.2025, turn off 4 limelights, turn on the test one for barebone robot
