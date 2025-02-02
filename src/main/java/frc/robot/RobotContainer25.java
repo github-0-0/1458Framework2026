@@ -250,6 +250,9 @@ public class RobotContainer25 {
                 if(xboxController.getAButtonPressed()) {
                     m_Elevator.runElevator(-0.1);
                 }
+                if (Robot.isSimulation()) {
+                    m_Elevator.updateSimPeriodic();
+                }
 
                 if(xboxController.getYButton()) {
                     m_Shooter.spin();                   

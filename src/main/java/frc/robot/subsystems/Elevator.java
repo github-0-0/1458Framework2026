@@ -1,16 +1,33 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants;
+import frc.robot.lib.drivers.Phoenix6Util;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.DigitalSensor;
 
 public class Elevator extends Subsystem {
@@ -32,20 +49,41 @@ public class Elevator extends Subsystem {
   private TalonFX mLeftMotor;
   private TalonFX mRightMotor; //LEADER
 
-
-
-  
   private TrapezoidProfile mProfile;
   private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
   private TrapezoidProfile.State mGoalState = new TrapezoidProfile.State();
   private PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
   private double prevUpdateTime = Timer.getFPGATimestamp();
 
+  // Simulation
+  private TalonFXSimState mRightMotorSim;
+
+  // Simulation classes help us simulate the elevator.
+  private final ElevatorSim elevatorSim =
+      new ElevatorSim(
+        LinearSystemId.createElevatorSystem(
+          DCMotor.getKrakenX60Foc(1), 1.0, 0.5, 1.0),
+				DCMotor.getKrakenX60Foc(1),
+        1.0,
+        1.5,
+        true,
+        1.0);
+
+  // Create a Mechanism2d visualization of the elevator
+  private final Mechanism2d mech = new Mechanism2d(1.0, 1.0);
+  private final MechanismRoot2d elevator = mech.getRoot("Elevator", 0.5, 0);
+  private final MechanismLigament2d elevatorViz =
+      elevator.append(
+          new MechanismLigament2d(
+            "Shaft", 0.5, 90, 50.0, new Color8Bit(Color.kYellow)
+        )
+      );
+
   //private SlewRateLimiter mSpeedLimiter = new SlewRateLimiter(1000);
 
   private void setUpElevatorMotor(TalonFX motor) {
     motor.getConfigurator().apply(Constants.Elevator.ElevatorConfiguration(),Constants.kLongCANTimeoutMs);
-    
+
     // Set the motor to brake mode (will hold its position when powered off)
 }
   private Elevator() {
@@ -58,7 +96,10 @@ public class Elevator extends Subsystem {
     mLeftMotor = new TalonFX(Constants.Elevator.kElevatorLeftMotorId);
     // RIGHT ELEVATOR MOTOR
     mRightMotor = new TalonFX(Constants.Elevator.kElevatorRightMotorId);
-    
+    Phoenix6Util.checkErrorAndRetry(() ->
+      mRightMotor.getConfigurator().apply(Constants.Elevator.ElevatorConfiguration(), Constants.kLongCANTimeoutMs));
+
+
     mLeftMotor.setControl(new Follower(mRightMotor.getDeviceID(), true));
     mLeftMotor.setNeutralMode(NeutralModeValue.Coast);
     mRightMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -71,6 +112,9 @@ public class Elevator extends Subsystem {
     //TODO: figure out burnflash equivalent
     mProfile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(Constants.Elevator.kMaxVelocity, Constants.Elevator.kMaxAcceleration));
+
+    mRightMotorSim = mRightMotor.getSimState();
+    SmartDashboard.putData("Elevator", mech);
   }
 
   public enum ElevatorState {
@@ -110,9 +154,6 @@ public class Elevator extends Subsystem {
   public void writePeriodicOutputs() {
     //goToTarget();
 
-
-
-    
     // double curTime = Timer.getFPGATimestamp();
     // double dt = curTime - prevUpdateTime;
     // prevUpdateTime = curTime;
@@ -136,7 +177,7 @@ public class Elevator extends Subsystem {
     //   //mCurState.position = mLeftEncoder.getPosition().getValueAsDouble();
     //   mCurState.velocity = 0;
     //   mLeftMotor.set(mPeriodicIO.elevator_power);
-    
+
   }
 
   @Override
@@ -164,7 +205,7 @@ public class Elevator extends Subsystem {
 
     //SmartDashboard.putNumber("State", mPeriodicIO.state);
 	//TODO: figure out how to put a state in smart dashbaord
-}
+  }
 
   /*
   public void reset() {
@@ -250,8 +291,6 @@ public boolean goToTarget() {
   return false;
 }
 
-
-
   // public void setElevatorPower(double power) {
   //   SmartDashboard.putNumber("setElevatorPower", power);
   //   mPeriodicIO.is_elevator_pos_control = false;
@@ -263,7 +302,7 @@ public boolean goToTarget() {
   //   mPeriodicIO.elevator_target = Constants.Elevator.kGROUNDHeight;
   //   mPeriodicIO.state = ElevatorState.GROUND;
   // }
-  
+
   // public void goToElevatorL1() {
   //   mPeriodicIO.is_elevator_pos_control = true;
   //   mPeriodicIO.elevator_target = Constants.Elevator.kL1Height;
@@ -289,4 +328,29 @@ public boolean goToTarget() {
   // }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
+
+  // /** Advance the simulation of the elevator. */
+  public void updateSimPeriodic() {
+    // In this method, we update our simulation of what our elevator is doing
+    mRightMotorSim = mRightMotor.getSimState();
+    mRightMotorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+    // First, we set our "inputs" (voltages)
+    elevatorSim.setInputVoltage(mRightMotorSim.getMotorVoltageMeasure().in(Volts) * 10);
+
+    // Next, we update it for the standard loop time
+    elevatorSim.update(TimedRobot.kDefaultPeriod);
+
+    // Finally, we set our simulated encoder's readings and simulated battery voltage
+    // encoderSim.setDistance(elevatorSim.getPositionMeters());
+    mRightMotorSim.setRawRotorPosition(elevatorSim.getPositionMeters());
+    mRightMotorSim.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond());
+
+    // SimBattery estimates loaded battery voltages
+    RoboRioSim.setVInVoltage(
+      BatterySim.calculateDefaultBatteryLoadedVoltage(elevatorSim.getCurrentDrawAmps()));
+
+    elevatorViz.setLength(elevatorViz.getLength()
+      + elevatorSim.getVelocityMetersPerSecond() * TimedRobot.kDefaultPeriod);
+  }
 }
