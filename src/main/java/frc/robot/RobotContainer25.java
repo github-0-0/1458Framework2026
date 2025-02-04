@@ -74,6 +74,9 @@ public class RobotContainer25 {
 	
     public TeleopActionExecutor m_TeleopActionExecutor;
 
+    public boolean prev_left_trigger = false;
+    public boolean prev_right_trigger = false;
+
     //contructor
     public RobotContainer25 (){
         try{
@@ -263,11 +266,14 @@ public class RobotContainer25 {
                 }
 
                 if (xboxController.getLeftTriggerAxis()>0.5) {
-                    m_TeleopActionExecutor.runAction(new AlgaeShooterAction());
-                }                
+                    if (!prev_left_trigger){
+                    prev_left_trigger = true;
+                    m_TeleopActionExecutor.runAction(new AlgaeShooterAction());}
+                }else{prev_left_trigger = false;}
                 if (xboxController.getRightTriggerAxis()>0.5) {
-                    m_TeleopActionExecutor.runAction(new CoralShooterAction());
-                }
+                    if (!prev_right_trigger){
+                    m_TeleopActionExecutor.runAction(new CoralShooterAction());}
+                }else{prev_right_trigger = false;}
                 if (xboxController.getLeftBumperButtonPressed()) {
                     int tag = FieldLayout.getClosestTag(RobotState.getInstance().getLatestFieldToVehicle().getTranslation());
                     boolean isL3 = false;
