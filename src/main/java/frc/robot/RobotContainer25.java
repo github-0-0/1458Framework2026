@@ -244,14 +244,17 @@ public class RobotContainer25 {
                     System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
                 }
 */
-                if(xboxController.getYButtonPressed()) {
-                    m_Elevator.runElevator(0.1);
-                }
-                if(xboxController.getAButtonPressed()) {
+                if(xboxController.getYButton()) {
                     m_Elevator.runElevator(-0.1);
                 }
+                else if(xboxController.getAButton()) {
+                    m_Elevator.runElevator(0.1);
+                }
+                else{
+                    m_Elevator.runElevator(-0.02);
+                }
 
-                if(xboxController.getYButton()) {
+                if(xboxController.getXButton()) {
                     m_Shooter.spin();                   
                 }
                 else{
