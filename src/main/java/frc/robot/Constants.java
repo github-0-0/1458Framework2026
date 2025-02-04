@@ -319,8 +319,8 @@ public final class Constants {
 
     public static class Elevator {
         //TODO: tune elevator constants to bot
-        public static final int kElevatorLeftMotorId = 2000000;
-        public static final int kElevatorRightMotorId = 20000000;
+        public static final int kElevatorLeftMotorId = 20;
+        public static final int kElevatorRightMotorId = 21;
         public static final double kElevatorSpeed = 0.05;
         public static final double kElevatorHoldAlgaeVoltage = 0.002; //TODO:measure
         public static final double kElevatorHoldCoralVoltage = 0.001; //TODO:measure
@@ -347,10 +347,9 @@ public final class Constants {
         }
     }
     
-    public static class Intake {
+    public static class Funnel {
         //TODO: Tune intake constants to bot
-        public static final int kIntakeMotorId = 2000000000;
-        public static final int kPivotMotorId = 2000000001;
+        public static final int kPivotMotorId = 23;
         public static final double k_pivotStartAngle = 0.0;
         public static final double k_pivotEndAngle = 75.0;
         public static final double k_pivotEncoderOffset = 0.0;
@@ -358,8 +357,8 @@ public final class Constants {
 
     public static class Shooter {
         //TODO: Tune shooter
-        public static final int kShooterLeftMotorId = 200;
-        public static final int kShooterRightMotorId = 2000;
+        public static final int kShooterLeftMotorId = 22;
+        public static final int kShooterRightMotorId = 23;
         public static final int kShooterLimitSwitchId = 20000;
         public static final int kIntakeLimitSwitchId = 200000;
         public static final double kShooterSpeed = 0.05;
@@ -378,14 +377,14 @@ public final class Constants {
     }
 
     public static final class AlgaeShooter { //TODO: make constants correct
-        public static final int kAlgaeShooterLeftMotorId = 200;
-        public static final int kAlgaeShooterRightMotorId = 2000;
+        public static final int kAlgaeShooterLeftMotorId = 26;
+        public static final int kAlgaeShooterRightMotorId = 27;
         public static final int kAlgaeShooterLimitSwitchId = 20000;
         public static final double kAlgaeShooterSpeed = 0.05;
     }
 
     public static final class Hang { //TODO: make constants correct
-        public static final int kHangMotorId = 200;
+        public static final int kHangMotorId = 28;
         public static final double kHangSpeed = 0.05;
         public static final double kHoldSpeed = 0.02;
     }

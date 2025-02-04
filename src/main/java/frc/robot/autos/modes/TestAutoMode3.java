@@ -38,7 +38,7 @@ public class TestAutoMode3 extends AutoModeBase {
      */
     
     public TestAutoMode3() {
-        autoString = "S 1 [ ( R 1 Snap 0 ) ( Elevator 4 ) ] CShoot CS 1 CIntake ";
+        autoString = "S 1 R 1 S 1";
     }
         
     @Override

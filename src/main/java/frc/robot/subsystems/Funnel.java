@@ -42,7 +42,7 @@ public class Funnel extends Subsystem {
 
 	private Funnel() {
 		//super("Intake");
-		mPivotMotor = new TalonFX(Constants.Intake.kPivotMotorId/*  MotorType.kBrushless*/);
+		mPivotMotor = new TalonFX(Constants.Funnel.kPivotMotorId/*  MotorType.kBrushless*/);
 		mPivotMotor.setNeutralMode(NeutralModeValue.Brake);
 		m_periodicIO = new PeriodicIO();
 	}
@@ -102,9 +102,9 @@ public class Funnel extends Subsystem {
 	public double pivotTargetToAngle(PivotTarget target) {
 		switch (target) {
 		case START:
-			return Constants.Intake.k_pivotStartAngle;
+			return Constants.Funnel.k_pivotStartAngle;
 		case END:
-			return Constants.Intake.k_pivotEndAngle;
+			return Constants.Funnel.k_pivotEndAngle;
 		default:
 			// "Safe" default
 			return 0.0;
@@ -115,7 +115,7 @@ public class Funnel extends Subsystem {
 
 	public double getPivotAngleDegrees() {
 		double value = m_pivotEncoder.getAbsolutePosition().getValueAsDouble() -
-			Constants.Intake.k_pivotEncoderOffset + 0.5;
+			Constants.Funnel.k_pivotEncoderOffset + 0.5;
 		return Units.rotationsToDegrees(modRotations(value));
 	}
 
