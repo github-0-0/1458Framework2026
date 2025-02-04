@@ -349,7 +349,7 @@ public final class Constants {
     
     public static class Funnel {
         //TODO: Tune intake constants to bot
-        public static final int kPivotMotorId = 23;
+        public static final int kPivotMotorId = 50;
         public static final double k_pivotStartAngle = 0.0;
         public static final double k_pivotEndAngle = 75.0;
         public static final double k_pivotEncoderOffset = 0.0;
@@ -359,8 +359,8 @@ public final class Constants {
         //TODO: Tune shooter
         public static final int kShooterLeftMotorId = 22;
         public static final int kShooterRightMotorId = 23;
-        public static final int kShooterLimitSwitchId = 20000;
-        public static final int kIntakeLimitSwitchId = 200000;
+        public static final int kShooterLimitSwitchId = 30;
+        public static final int kIntakeLimitSwitchId = 31;
         public static final double kShooterSpeed = 0.05;
     }
     
@@ -379,12 +379,12 @@ public final class Constants {
     public static final class AlgaeShooter { //TODO: make constants correct
         public static final int kAlgaeShooterLeftMotorId = 26;
         public static final int kAlgaeShooterRightMotorId = 27;
-        public static final int kAlgaeShooterLimitSwitchId = 20000;
+        public static final int kAlgaeShooterLimitSwitchId = 32;
         public static final double kAlgaeShooterSpeed = 0.05;
     }
 
     public static final class Hang { //TODO: make constants correct
-        public static final int kHangMotorId = 28;
+        public static final int kHangMotorId = 51;
         public static final double kHangSpeed = 0.05;
         public static final double kHoldSpeed = 0.02;
     }
