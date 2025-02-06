@@ -98,6 +98,7 @@ public class Elevator extends Subsystem {
 	
 	@Override
 	public void writePeriodicOutputs() {
+		/*
 		switch (mMode) {
 			case MOTION_MAGIC:
 				if (mPeriodicIO.isAtTarget && mPeriodicIO.currentState != mPeriodicIO.targetState) {
@@ -115,7 +116,9 @@ public class Elevator extends Subsystem {
 			case MANUAL:
 				goToTarget();
 				break;
+			 
 		}
+				*/
 	}
 
 	@Override

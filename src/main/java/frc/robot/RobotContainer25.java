@@ -63,7 +63,7 @@ public class RobotContainer25 {
     private DummySubsystem m_ExampleSubsystem;
     private SwerveDrive m_SwerveDrive;
     private Funnel m_Funnel;
-    private Elevator m_Elevator;
+    //private Elevator m_Elevator;
     private Shooter m_Shooter;
     private Cancoders m_Cancoders;
     private AlgaeShooter m_AlgaeShooter;
@@ -84,11 +84,11 @@ public class RobotContainer25 {
             m_ExampleSubsystem = DummySubsystem.getInstance();
             m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
             m_SwerveDrive = SwerveDrive.getInstance();
-            m_Elevator = Elevator.getInstance();
-            m_Shooter = Shooter.getInstance();
-            m_Funnel = Funnel.getInstance();
+            //m_Elevator = Elevator.getInstance();
+            //m_Shooter = Shooter.getInstance();
+            //m_Funnel = Funnel.getInstance();
             m_AlgaeShooter = AlgaeShooter.getInstance();
-            m_Hang = Hang.getInstance();
+            //m_Hang = Hang.getInstance();
             
 
             // init cancoders
@@ -110,12 +110,12 @@ public class RobotContainer25 {
             //add subsystems to its manager
             m_SubsystemManager.setSubsystems(
                 m_SwerveDrive,
-                m_Elevator,
+                //m_Elevator,
                 m_ExampleSubsystem,
-                m_Funnel,
-                m_Shooter,
-                m_AlgaeShooter,
-                m_Hang
+                //m_Funnel,
+                //m_Shooter,
+                m_AlgaeShooter//,
+                //m_Hang
                 //Insert instances of additional subsystems here
             );
             //register subsystems to loopers
@@ -249,17 +249,28 @@ public class RobotContainer25 {
                 }
 */
                 if(xboxController.getYButtonPressed()) {
-                    m_Elevator.runElevator(0.1);
+                    //m_Elevator.runElevator(-0.1);
                 }
-                if(xboxController.getAButtonPressed()) {
-                    m_Elevator.runElevator(-0.1);
+                else if(xboxController.getAButtonPressed()) {
+                    //m_Elevator.runElevator(0.1);
+                }
+                else {
+                    //m_Elevator.runElevator(-0.02);
                 }
 
+
                 if(xboxController.getYButton()) {
-                    m_Shooter.spin();                   
+//                    m_Shooter.spin();                   
                 }
                 else{
-                    m_Shooter.stop();
+//                    m_Shooter.stop();
+                }
+                if(xboxController.getXButtonPressed()) {
+                    m_AlgaeShooter.spinOut();                   
+                } else if (xboxController.getBButtonPressed()) {
+                    m_AlgaeShooter.spinIn();
+                } else {
+                    m_AlgaeShooter.stop();
                 }
                 /*
                 if(xboxController.getPOV() == 180) {

@@ -64,18 +64,18 @@ public class AlgaeShooter extends Subsystem {
 			public void onLoop(double timestamp) {
 				switch (mPeriodicIO.state) {
 					case INTAKE:
-						if (checkIntakeSensor()) {
+//						if (checkIntakeSensor()) {
 							spinIn();
-						} else {
-							stop();
-						}
+//						} else {
+//							stop();
+//						}
 						break;
 					case SHOOT:
-						if (checkShootSensor()) {
+//						if (checkShootSensor()) {
 							spinOut();
-						} else {
-							stop();
-						}
+//						} else {
+//							stop();
+//						}
 						break;
 					case STOP:
 						stop();
