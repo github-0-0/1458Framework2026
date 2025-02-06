@@ -365,8 +365,8 @@ public final class Constants {
         public static final int kPivotMotorId = 10;
     
         // DIO
-        public static final int kIntakeLimitSwitchId = 30;
-        public static final int kShooterLimitSwitchId = 31;
+        public static final int kIntakeLimitSwitchId = 70;
+        public static final int kShooterLimitSwitchId = 71;
     
     
         // Absolute encoder offset

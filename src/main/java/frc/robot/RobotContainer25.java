@@ -257,6 +257,9 @@ public class RobotContainer25 {
                 if(xboxController.getXButton()) {
                     m_Shooter.spin();                   
                 }
+                else if(xboxController.getBButton()) {
+                    m_Shooter.reverse();
+                }
                 else{
                     m_Shooter.stop();
                 }

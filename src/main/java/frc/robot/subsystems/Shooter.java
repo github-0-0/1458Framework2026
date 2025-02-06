@@ -79,6 +79,10 @@ public class Shooter extends Subsystem {
     mRightShooterMotor.set(-0.075);
   }
 
+  public void reverse() {
+    mRightShooterMotor.set(0.075);
+  }
+
   public void checkSensor() {
     if(Laser.inRangeIntake()) {
       spin();

@@ -8,6 +8,7 @@ import frc.robot.Constants;
 public class Laser {
     public static LaserCan intakeLaser = new LaserCan(Constants.Intake.kIntakeLimitSwitchId);
     public static LaserCan shooterLaser = new LaserCan(Constants.Intake.kShooterLimitSwitchId);
+    
 
     public Laser() {}
 
