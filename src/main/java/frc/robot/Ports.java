@@ -56,9 +56,9 @@ public class Ports {
 	public static final CanDeviceId CLIMBER_MAIN = new CanDeviceId(18, "CV");
 	public static final CanDeviceId CLIMBER_FOLLOWER = new CanDeviceId(19, "CV");
  */
-	public static final int PIGEON = 20;
+	public static final int PIGEON = 60;//20
 	
-	public static final CanDeviceId LEDS = new CanDeviceId(21, "rio");
+	public static final CanDeviceId LEDS = new CanDeviceId(21, "CV");
 
 	/* BEAM BREAK DIO CHANNELS*/
 	public static final int SERIALIZER_BREAK = Constants.isEpsilon ? 7 : 8;

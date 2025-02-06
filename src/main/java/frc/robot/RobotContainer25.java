@@ -248,7 +248,20 @@ public class RobotContainer25 {
                     System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
                 }
 */
-                
+                if(xboxController.getYButtonPressed()) {
+                    m_Elevator.runElevator(0.1);
+                }
+                if(xboxController.getAButtonPressed()) {
+                    m_Elevator.runElevator(-0.1);
+                }
+
+                if(xboxController.getYButton()) {
+                    m_Shooter.spin();                   
+                }
+                else{
+                    m_Shooter.stop();
+                }
+                /*
                 if(xboxController.getPOV() == 180) {
                     m_TeleopActionExecutor.runAction(new ElevatorAction(0));
                 }
@@ -305,6 +318,7 @@ public class RobotContainer25 {
                 if (xboxController.getLeftStickButtonPressed()) {
                     m_TeleopActionExecutor.abort();
                 }
+*/
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
