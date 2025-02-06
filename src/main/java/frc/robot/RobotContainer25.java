@@ -262,9 +262,9 @@ public class RobotContainer25 {
                 else{
                     m_Shooter.stop();
                 }
-                if(xboxController.getBButton()) {
+                if(xboxController.getRightBumperButton()) {
                     m_AlgaeShooter.intake();
-                }else if(xboxController.getXButton()){
+                }else if(xboxController.getLeftBumperButton()){
                     m_AlgaeShooter.shoot();
                 }
                 else{
