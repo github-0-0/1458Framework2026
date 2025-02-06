@@ -414,6 +414,11 @@ public final class Constants {
             return config;
         }
       }
+      public static class AlgaeShooter {
+        public static final int kAlgaeShooterLeftMotorId = 26;
+        public static final int kAlgaeShooterRightMotorId = 27;
+        public static final double kAlgaeShooterSpeed = 0.5;
+      }
     
     public static final class PathPlannerRobotConfig {
         public static RobotConfig config = null;
