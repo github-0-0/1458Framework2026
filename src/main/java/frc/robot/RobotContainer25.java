@@ -18,11 +18,7 @@ import frc.robot.Loops.Looper;
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
-import frc.robot.subsystems.Cancoders;
-import frc.robot.subsystems.DummySubsystem;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
@@ -62,6 +58,7 @@ public class RobotContainer25 {
     private Elevator m_Elevator;
     private Shooter m_Shooter;
     private Cancoders m_Cancoders;
+    private AlgaeShooter m_AlgaeShooter;
     
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
@@ -76,6 +73,7 @@ public class RobotContainer25 {
             m_SwerveDrive = SwerveDrive.getInstance();
             m_Elevator = Elevator.getInstance();
             m_Shooter = Shooter.getInstance();
+            m_AlgaeShooter = AlgaeShooter.getInstance();
 
             // init cancoders
             if (Robot.isReal()) {
@@ -97,7 +95,8 @@ public class RobotContainer25 {
             m_SubsystemManager.setSubsystems(
                 m_SwerveDrive,
                 m_Elevator,
-                m_ExampleSubsystem
+                m_ExampleSubsystem,
+                m_AlgaeShooter
                 //Insert instances of additional subsystems here
             );
             //register subsystems to loopers
@@ -262,6 +261,14 @@ public class RobotContainer25 {
                 }
                 else{
                     m_Shooter.stop();
+                }
+                if(xboxController.getBButton()) {
+                    m_AlgaeShooter.intake();
+                }else if(xboxController.getXButton()){
+                    m_AlgaeShooter.shoot();
+                }
+                else{
+                    m_AlgaeShooter.stopAlgaeShooter();
                 }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
