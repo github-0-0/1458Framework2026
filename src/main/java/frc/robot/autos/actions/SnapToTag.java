@@ -9,7 +9,6 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPoint;
 import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 

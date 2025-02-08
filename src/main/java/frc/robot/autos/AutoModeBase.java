@@ -1,11 +1,7 @@
 package frc.robot.autos;
 
 import frc.robot.autos.actions.Action;
-import frc.robot.lib.trajectory.TrajectoryGenerator.TrajectorySet;
-import edu.wpi.first.math.proto.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An abstract class that is the basis of the robot's autonomous routines. This
@@ -18,7 +14,6 @@ public abstract class AutoModeBase {
 
 	protected double startTime = 0.0;
 
-	protected TrajectorySet trajectories;
 
 	protected double currentTime() {
 		return Timer.getFPGATimestamp() - startTime;
@@ -73,15 +68,5 @@ public abstract class AutoModeBase {
 		}
 
 		action.done();
-	}
-
-	/*protected Trajectory logTrajectory(
-			Trajectory trajectory) {
-		trajectories.add(trajectory);
-		return trajectory;
-	}*/
-
-	public TrajectorySet getPaths() {
-		return trajectories;
 	}
 }

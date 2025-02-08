@@ -6,13 +6,9 @@ import java.util.List;
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeEndedException;
 import frc.robot.autos.actions.SwerveTrajectoryAction.ResetWheelTracker;
-import frc.robot.lib.trajectory.TrajectoryGenerator;
-import frc.robot.lib.trajectory.TrajectoryGenerator.TrajectorySet;
 import frc.robot.autos.actions.*;
 
 public class TestAutoMode3 extends AutoModeBase {
-    private TrajectoryGenerator trajectoryGenerator = TrajectoryGenerator.getInstance();
-    private TrajectorySet trajectorySet = trajectoryGenerator.getTrajectorySet();
     public String autoString;
     private String lastPoint = null;
     private Boolean isFirstTrajectory = true;
@@ -38,7 +34,7 @@ public class TestAutoMode3 extends AutoModeBase {
      */
     
     public TestAutoMode3() {
-        autoString = "S 1 R 1 CS 2 R 1 S 1";
+        autoString = "S 1 R 1 S 1 R 1 S 1";
     }
         
     @Override

@@ -21,7 +21,6 @@ import edu.wpi.first.math.StateSpaceUtil;
 import frc.robot.lib.util.InterpolatingTreeMap;
 import frc.robot.lib.util.InterpolatingPose2d;
 import frc.robot.lib.util.InterpolatingTranslation2d;
-import frc.robot.lib.util.Interpolable;
 import frc.robot.lib.util.InterpolatingDouble;
 import frc.robot.lib.util.MovingAverageTwist2d;
 import frc.robot.lib.util.Util;

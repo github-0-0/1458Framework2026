@@ -1,15 +1,11 @@
 package frc.robot.autos.actions;
 
 import frc.robot.subsystems.SwerveDrive;
-import pabeles.concurrency.ConcurrencyOps.Reset;
 import frc.robot.lib.trajectory.*;
-
-import java.util.HashMap;
 
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.lib.trajectory.TrajectoryGenerator.TrajectorySet;
 public class SwerveTrajectoryAction implements Action {
 	private SwerveDrive mDrive = null;
 	private TrajectoryIterator mTrajectory;
