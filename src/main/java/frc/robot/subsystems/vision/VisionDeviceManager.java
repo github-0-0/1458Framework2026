@@ -18,9 +18,9 @@ public class VisionDeviceManager extends Subsystem {
 	}
 
 	private VisionDevice mLeftCamera;
-	// private VisionDevice mRightCamera;
-	// private VisionDevice mFrontCamera;
-	// private VisionDevice mBackCamera;
+	private VisionDevice mRightCamera;
+	private VisionDevice mFrontCamera;
+	private VisionDevice mBackCamera;
 
 	private List<VisionDevice> mAllCameras;
 
@@ -33,11 +33,10 @@ public class VisionDeviceManager extends Subsystem {
 
 	private VisionDeviceManager() {
 		mLeftCamera = new VisionDevice(Constants.kLeftVisionDevice);
-		// mRightCamera = new VisionDevice(Constants.kRightVisionDevice);
-		// mFrontCamera = new VisionDevice(Constants.kFrontVisionDevice);
-		// mBackCamera = new VisionDevice(Constants.kBackVisionDevice);
-		// mAllCameras = List.of(mLeftCamera, mRightCamera, mFrontCamera, mBackCamera);
-		mAllCameras = List.of(mLeftCamera);
+		mRightCamera = new VisionDevice(Constants.kRightVisionDevice);
+		mFrontCamera = new VisionDevice(Constants.kFrontVisionDevice);
+		mBackCamera = new VisionDevice(Constants.kBackVisionDevice);
+		mAllCameras = List.of(mLeftCamera, mRightCamera, mFrontCamera, mBackCamera);
 	}
 
 	@Override
@@ -78,17 +77,17 @@ public class VisionDeviceManager extends Subsystem {
 		return mLeftCamera;
 	}
 
-	// public synchronized VisionDevice getRightVision() {
-	// 	return mRightCamera;
-	// }
+	public synchronized VisionDevice getRightVision() {
+		return mRightCamera;
+	}
 
-	// public synchronized VisionDevice getFrontVision() {
-	// 	return mFrontCamera;
-	// }
+	public synchronized VisionDevice getFrontVision() {
+		return mFrontCamera;
+	}
 
-	// public synchronized VisionDevice getBackVision() {
-	// 	return mBackCamera;
-	// }
+	public synchronized VisionDevice getBackVision() {
+		return mBackCamera;
+	}
 
 	public static double getTimestampOffset() {
 		return timestampOffset.get();
