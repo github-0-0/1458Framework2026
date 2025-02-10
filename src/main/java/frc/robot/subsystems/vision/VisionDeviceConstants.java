@@ -3,7 +3,7 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Transform2d;
 
 public class VisionDeviceConstants {
-	public String kTableName = "limelight-c";
+	public String kTableName = "limelight-frihigh";//"limelight-c";
 	public Transform2d kRobotToCamera = new Transform2d();
 	public int kCameraId = 0;
 	public int kCameraResolutionWidth = 1600;

@@ -19,6 +19,7 @@ import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.vision.*;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
@@ -62,8 +63,9 @@ public class RobotContainer25 {
     
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
-	
 
+    private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
+	
     //contructor
     public RobotContainer25 (){
         try{
@@ -76,7 +78,7 @@ public class RobotContainer25 {
             m_AlgaeShooter = AlgaeShooter.getInstance();
 
             // init cancoders
-            if (Robot.isReal()) {
+            if (Robot.isReal() && !Constants.isBareboneRobot) {
                 m_Cancoders = Cancoders.getInstance();
                 double startInitTs = Timer.getFPGATimestamp();
                 System.out.println("* Starting to init Cancoders at ts " + startInitTs);
@@ -89,14 +91,16 @@ public class RobotContainer25 {
             }
 
             // reset swerve modules
-            m_SwerveDrive.resetModulesToAbsolute();
+            if (m_SwerveDrive != null)             
+                m_SwerveDrive.resetModulesToAbsolute();
 
             //add subsystems to its manager
             m_SubsystemManager.setSubsystems(
                 m_SwerveDrive,
                 m_Elevator,
                 m_ExampleSubsystem,
-                m_AlgaeShooter
+                m_AlgaeShooter,
+                m_VisionDevices
                 //Insert instances of additional subsystems here
             );
             //register subsystems to loopers
@@ -105,11 +109,12 @@ public class RobotContainer25 {
 
             //load all predefined trajectories  
             TrajectoryGenerator.getInstance().generateTrajectories();
-			/*
+			
             RobotState.getInstance().resetKalman(); //TODO: complete RobotState classes
-            */
+            
             //set robot to neutral brake
-            m_SwerveDrive.setNeutralBrake(true);
+            if (m_SwerveDrive != null)             
+                m_SwerveDrive.setNeutralBrake(true);
 
             //binds single-button events
 //            bindSingleButtonCmds ();
@@ -146,7 +151,8 @@ public class RobotContainer25 {
    		try {
 //          RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
- 			m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
+            if (m_SwerveDrive != null)             
+     			m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
 		} catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -226,7 +232,8 @@ public class RobotContainer25 {
 			/* Drive */
 			if (m_JoyStick.getRawButton(XboxController.Button.kStart.value)) {
 				System.out.println("keyY is pressed, zero the wheels!");
-                m_SwerveDrive.zeroGyro(0);
+                if (m_SwerveDrive != null)             
+                    m_SwerveDrive.zeroGyro(0);
 			}
 
                 //dc.11.9.24, to scale up joystick input to max-speed
