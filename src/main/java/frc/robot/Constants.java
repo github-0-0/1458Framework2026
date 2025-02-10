@@ -178,13 +178,13 @@ public final class Constants {
     public static VisionDeviceConstants kFrontVisionDevice = new VisionDeviceConstants();
     public static VisionDeviceConstants kBackVisionDevice = new VisionDeviceConstants();
 
-    static {
-        kLeftVisionDevice.kTableName = "limelight-left";
+        static {//dc.2.10.25, TODO: update camera setting according to robot h/w config
+        kLeftVisionDevice.kTableName = "limelight-left";    
         kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325)),
                 Rotation2d.fromDegrees(-27));
 
-        kRightVisionDevice.kTableName = "limelight-right";
+        kRightVisionDevice.kTableName = "limelight-right";  
         kRightVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
                 Rotation2d.fromDegrees(27.0));
