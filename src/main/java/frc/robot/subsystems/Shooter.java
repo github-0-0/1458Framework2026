@@ -62,6 +62,7 @@ public class Shooter extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
+/* dc.2.10.25, commented out to compile so that we can merge GIT
 				switch (mPeriodicIO.state) {
 					case INTAKE:
 						if (checkIntakeSensor()) {
@@ -85,6 +86,7 @@ public class Shooter extends Subsystem {
 						System.err.println("How did this happen?");
 						break;
 				}
+*/
 			}
 
 			@Override
@@ -142,11 +144,12 @@ public class Shooter extends Subsystem {
 	/*---------------------------------- Custom Private Functions ---------------------------------*/
 
 	public void spin() {
-		mPeriodicIO.speed = Constants.Shooter.kShooterSpeed;
+		mPeriodicIO.speed = 0.1; //Constants.Shooter.kShooterSpeed;
 	}
 	
 	@Override
 	public void stop() {
 		mPeriodicIO.speed = 0.0;
 	}
+  /*---------------------------------- Custom Private Functions ---------------------------------*/
 }

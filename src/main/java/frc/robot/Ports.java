@@ -60,6 +60,10 @@ public class Ports {
 	
 	public static final CanDeviceId LEDS = new CanDeviceId(21, "CV");
 
+	public static final CanDeviceId LaserCanIDCoralBack = new CanDeviceId(30, "CV");
+	public static final CanDeviceId LaserCanIDCoralFront = new CanDeviceId(31, "CV");
+	public static final CanDeviceId LaserCanIDAlgae = new CanDeviceId(32, "CV");
+
 	/* BEAM BREAK DIO CHANNELS*/
 	public static final int SERIALIZER_BREAK = Constants.isEpsilon ? 7 : 8;
 	public static final int FEEDER_BREAK = Constants.isEpsilon ? 8 : 7;

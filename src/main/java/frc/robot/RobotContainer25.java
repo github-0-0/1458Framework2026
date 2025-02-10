@@ -19,13 +19,6 @@ import frc.robot.Loops.Looper;
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
-import frc.robot.autos.actions.AlgaeIntakeAction;
-import frc.robot.autos.actions.AlgaeShooterAction;
-import frc.robot.autos.actions.CoralIntakeAction;
-import frc.robot.autos.actions.CoralShooterAction;
-import frc.robot.autos.actions.ElevatorAction;
-import frc.robot.autos.actions.SeriesAction;
-import frc.robot.autos.actions.SnapToTag;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
@@ -72,98 +65,90 @@ public class RobotContainer25 {
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
 	
-    public TeleopActionExecutor m_TeleopActionExecutor;
-    
-        private Controller m_Controller;
-    
-    
-        //contructor
-        public RobotContainer25 (){
-            try{
-                //get instance of subsystems
-                m_ExampleSubsystem = DummySubsystem.getInstance();
-                m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
-                m_SwerveDrive = SwerveDrive.getInstance();
-                //m_Elevator = Elevator.getInstance();
-                //m_Shooter = Shooter.getInstance();
-                //m_Funnel = Funnel.getInstance();
-                m_AlgaeShooter = AlgaeShooter.getInstance();
-                //m_Hang = Hang.getInstance();
-                
-    
-                // init cancoders
-                if (Robot.isReal()) {
-                    m_Cancoders = Cancoders.getInstance();
-                    double startInitTs = Timer.getFPGATimestamp();
-                    System.out.println("* Starting to init Cancoders at ts " + startInitTs);
-                    while (Timer.getFPGATimestamp() - startInitTs < Constants.SwerveConstants.kCancoderBootAllowanceSeconds
-                            && !m_Cancoders.allHaveBeenInitialized()) {
-                        Timer.delay(0.1);
-                    }
-                    System.out.println(
-                            "* Cancoders all initialized: Took " + (Timer.getFPGATimestamp() - startInitTs) + " seconds");
+
+    //contructor
+    public RobotContainer25 (){
+        try{
+            //get instance of subsystems
+            m_ExampleSubsystem = DummySubsystem.getInstance();
+            m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
+            m_SwerveDrive = SwerveDrive.getInstance();
+            m_Elevator = Elevator.getInstance();
+            m_Shooter = Shooter.getInstance();
+            m_AlgaeShooter = AlgaeShooter.getInstance();
+            m_Hang = Hang.getInstance();
+
+            // init cancoders
+            if (Robot.isReal()) {
+                m_Cancoders = Cancoders.getInstance();
+                double startInitTs = Timer.getFPGATimestamp();
+                System.out.println("* Starting to init Cancoders at ts " + startInitTs);
+                while (Timer.getFPGATimestamp() - startInitTs < Constants.SwerveConstants.kCancoderBootAllowanceSeconds
+                        && !m_Cancoders.allHaveBeenInitialized()) {
+                    Timer.delay(0.1);
                 }
-    
-                // reset swerve modules
-                m_SwerveDrive.resetModulesToAbsolute();
-    
-                //add subsystems to its manager
-                m_SubsystemManager.setSubsystems(
-                    m_SwerveDrive,
-                    //m_Elevator,
-                    m_ExampleSubsystem,
-                    //m_Funnel,
-                    //m_Shooter,
-                    m_AlgaeShooter//,
-                    //m_Hang
-                    //Insert instances of additional subsystems here
-                );
-                //register subsystems to loopers
-                m_SubsystemManager.registerEnabledLoops(m_EnabledLooper);
-                m_SubsystemManager.registerDisabledLoops(m_DisabledLooper);
-    
-                //load all predefined trajectories  
-                TrajectoryGenerator.getInstance().generateTrajectories();
-                /*
-                RobotState.getInstance().resetKalman(); //TODO: complete RobotState classes
-                */
-                //set robot to neutral brake
-                m_SwerveDrive.setNeutralBrake(true);
-    
-                //binds single-button events
-    //            bindSingleButtonCmds ();
-            } catch (Throwable t) {
-                CrashTracker.logThrowableCrash(t);    //TODO: CrashTracker needs to be ported. to log crash/exception
-                throw t;
+                System.out.println(
+                        "* Cancoders all initialized: Took " + (Timer.getFPGATimestamp() - startInitTs) + " seconds");
             }
-        }
-    
-        /**
-         * Use this method to define your button->command mappings for single-button events. Buttons can be created by
-         * instantiating a {@link GenericHID} or one of its subclasses ({@link
-         * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-         * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-         */
-        private void bindSingleButtonCmds() {
-            System.out.println("-->binding single button commands");
-    //        m_btnZeroGyro.onTrue(new InstantCommand(() -> m_SwerveDrive.resetModulesToAbsolute())); //TODO: zeroGyro() vs zeroHeading()? check with victor
-            // additional command bindings for single-event buttons
-        }
-    
-    
-        // switch between two loopers
-        public void switchOnLooper (Looper onLooper, Looper offLooper){
-            offLooper.stop();
-            onLooper.start();
-        }
-    
-        // init manual (teleop) mode
-        public void initManualMode (){
-            if (m_AutoModeExecutor != null) {
-                m_AutoModeExecutor.stop();
-            }
-            m_TeleopActionExecutor = TeleopActionExecutor.getInstance();
-            m_Controller = new Controller(xboxController, m_ExampleSubsystem, m_SwerveDrive, m_Funnel, m_Elevator, m_Shooter, m_AlgaeShooter, m_Hang, m_TeleopActionExecutor);
+
+            // reset swerve modules
+            m_SwerveDrive.resetModulesToAbsolute();
+
+            //add subsystems to its manager
+            m_SubsystemManager.setSubsystems(
+                m_SwerveDrive,
+                m_Elevator,
+                m_ExampleSubsystem,
+                m_AlgaeShooter,
+                m_Shooter,
+                m_Hang,
+                m_Funnel
+                //Insert instances of additional subsystems here
+            );
+            //register subsystems to loopers
+            m_SubsystemManager.registerEnabledLoops(m_EnabledLooper);
+            m_SubsystemManager.registerDisabledLoops(m_DisabledLooper);
+
+            //load all predefined trajectories  
+            TrajectoryGenerator.getInstance().generateTrajectories();
+			/*
+            RobotState.getInstance().resetKalman(); //TODO: complete RobotState classes
+            */
+            //set robot to neutral brake
+            m_SwerveDrive.setNeutralBrake(true);
+
+            //binds single-button events
+//            bindSingleButtonCmds ();
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);    //TODO: CrashTracker needs to be ported. to log crash/exception
+			throw t;
+		}
+    }
+
+    /**
+     * Use this method to define your button->command mappings for single-button events. Buttons can be created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void bindSingleButtonCmds() {
+        System.out.println("-->binding single button commands");
+//        m_btnZeroGyro.onTrue(new InstantCommand(() -> m_SwerveDrive.resetModulesToAbsolute())); //TODO: zeroGyro() vs zeroHeading()? check with victor
+        // additional command bindings for single-event buttons
+    }
+
+
+    // switch between two loopers
+    public void switchOnLooper (Looper onLooper, Looper offLooper){
+        offLooper.stop();
+        onLooper.start();
+    }
+
+    // init manual (teleop) mode
+    public void initManualMode (){
+        if (m_AutoModeExecutor != null) {
+			m_AutoModeExecutor.stop();
+		}
    		try {
             //RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
@@ -248,8 +233,22 @@ public class RobotContainer25 {
                 System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
                 }
 */
-                m_Controller.update();
-                
+                if(xboxController.getYButton()) {
+                    m_Elevator.runElevator(-0.1);
+                }
+                else if(xboxController.getAButton()) {
+                    m_Elevator.runElevator(0.1);
+                }
+                else{
+                    m_Elevator.runElevator(-0.02);
+                }
+
+                if(xboxController.getXButton()) {
+                    m_Shooter.spin();                   
+                }
+                else{
+                    m_Shooter.stop();
+                }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));

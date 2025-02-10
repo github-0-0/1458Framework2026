@@ -4,11 +4,12 @@ import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import frc.robot.Constants;
+import frc.robot.Ports;
 
-public class Laser {
-    public static LaserCan intakeLaser = new LaserCan(Constants.Shooter.kIntakeLimitSwitchId);
-    public static LaserCan shooterLaser = new LaserCan(Constants.Shooter.kShooterLimitSwitchId);
-    public static LaserCan algaeShooterLaser = new LaserCan(Constants.AlgaeShooter.kAlgaeShooterLimitSwitchId);
+public class Laser {    
+    public static LaserCan intakeLaser = new LaserCan(Ports.LaserCanIDCoralBack.getDeviceNumber());
+    public static LaserCan shooterLaser = new LaserCan(Ports.LaserCanIDCoralFront.getDeviceNumber());
+    public static LaserCan algaeShooterLaser = new LaserCan(Ports.LaserCanIDAlgae.getDeviceNumber());
 
     public Laser() {}
 
@@ -38,5 +39,4 @@ public class Laser {
         LaserCan.Measurement measurement = algaeShooterLaser.getMeasurement();
         return (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
-
 }

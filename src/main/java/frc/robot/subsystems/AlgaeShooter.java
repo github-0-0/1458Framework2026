@@ -124,19 +124,19 @@ public class AlgaeShooter extends Subsystem {
 	}
 
 	public boolean checkIntakeSensor() {
-		if(Laser.inRangeIntake()) {
-			return true;
-		} else {
+		//if(Laser.inRangeIntake()) {
+		//	return true;
+		//} else {
 			return false;
-		}
+		//}
 	}
 
 	public boolean checkShootSensor() {
-		if(Laser.inRangeAlgaeShooter()) {
-			return true;
-		} else {
+		//if(Laser.inRangeAlgaeShooter()) {
+		//	return true;
+		//} else {
 			return false;
-		}
+		//}
 	}
 	/*---------------------------------- Custom Private Functions ---------------------------------*/
 

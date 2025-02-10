@@ -100,7 +100,8 @@ public class Funnel extends Subsystem {
 	}
 
 	public double pivotTargetToAngle(PivotTarget target) {
-		switch (target) {
+/*DC.2.10.25, commented out to compile; todo: put them back when h/w is ready
+ 		switch (target) {
 		case START:
 			return Constants.Funnel.k_pivotStartAngle;
 		case END:
@@ -109,6 +110,8 @@ public class Funnel extends Subsystem {
 			// "Safe" default
 			return 0.0;
 		}
+*/	
+		return 0;
 	}
 
 	/*---------------------------------- Custom Public Functions ----------------------------------*/
