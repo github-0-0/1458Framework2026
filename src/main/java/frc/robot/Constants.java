@@ -363,15 +363,14 @@ public final class Constants {
         public static final double k_pivotEncoderOffset = 0.166842; // Straight up, sketchy to reset to "up"
     
         // Pivot set point angles
-        public static final double k_pivotAngleGround = 60;
-        public static final double k_pivotAngleSource = 190;
-        public static final double k_pivotAngleAmp = k_pivotAngleSource;
-        public static final double k_pivotAngleStow = 275;
+        //public static final double k_pivotAngleGround = 60;
+        //public static final double k_pivotAngleSource = 190;
+        //public static final double k_pivotAngleAmp = k_pivotAngleSource;
+        //public static final double k_pivotAngleStow = 275;
     
         // Intake speeds
-        public static final double k_intakeSpeed = 0.7;
-        public static final double k_ejectSpeed = -0.45;
-        public static final double k_feedShooterSpeed = -0.5;
+        public static final double k_pivotStartAngle = 0;
+        public static final double k_pivotEndAngle = 75;
         
         public static final TalonFXConfiguration IntakeConfiguration() {
             TalonFXConfiguration config = new TalonFXConfiguration();
@@ -385,24 +384,11 @@ public final class Constants {
         }
       }
 
-      public static class Shooter {
+      public static class CoralShooter {
         public static final int kShooterLeftMotorId = 12;
         public static final int kShooterRightMotorId = 13;
-
-        public static final double kShooterP = 0.00005;
-        public static final double kShooterI = 0.0;
-        public static final double kShooterD = 0.0;
-        public static final double kShooterFF = 0.0002;
-
-        public static final double kShooterMinOutput = 0;
-        public static final double kShooterMaxOutput = 1;
-        public static final TalonFXConfiguration ShooterConfiguration() {
-            TalonFXConfiguration config = new TalonFXConfiguration();
-            config.Slot0.kP = Constants.Shooter.kShooterP;
-            config.Slot0.kI = Constants.Shooter.kShooterI;
-            config.Slot0.kD = Constants.Shooter.kShooterD;
-            return config;
-        }
+        
+        public static final double kShooterSpeed = 0.1;
       }
     
     public static final class PathPlannerRobotConfig {

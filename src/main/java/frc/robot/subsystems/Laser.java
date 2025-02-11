@@ -3,6 +3,9 @@ package frc.robot.subsystems;
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Ports;
 
@@ -11,7 +14,9 @@ public class Laser {
     public static LaserCan shooterLaser = new LaserCan(Ports.LaserCanIDCoralFront.getDeviceNumber());
     public static LaserCan algaeShooterLaser = new LaserCan(Ports.LaserCanIDAlgae.getDeviceNumber());
 
+
     public Laser() {}
+
 
     public static double getMeasurementIntake() {
         return intakeLaser.getMeasurement().distance_mm;
@@ -38,5 +43,11 @@ public class Laser {
     public static boolean inRangeAlgaeShooter() {
         LaserCan.Measurement measurement = algaeShooterLaser.getMeasurement();
         return (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+    }
+
+    public static void testLaser() {
+        SmartDashboard.putNumber("Laser/Intake sensor",inRangeIntake()?1:0);
+        SmartDashboard.putNumber("Laser/Shooter sensor",inRangeShooter()?1:0);
+        SmartDashboard.putNumber("Laser/Algae sensor",inRangeAlgaeShooter()?1:0);
     }
 }
