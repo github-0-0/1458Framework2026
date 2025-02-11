@@ -3,13 +3,13 @@ package frc.robot.autos.actions;
 
 import frc.robot.Robot;
 import frc.robot.subsystems.Laser;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.CoralShooter;
 
 public class CoralShooterAction implements Action {
-    private Shooter mShooter = Shooter.getInstance();
+    private CoralShooter mShooter = CoralShooter.getInstance();
 	
 	public CoralShooterAction() {
-		mShooter = Shooter.getInstance();
+		mShooter = CoralShooter.getInstance();
 	}
 	@Override
 	public void start() {
