@@ -57,7 +57,7 @@ public class RobotContainer25 {
     private SwerveDrive m_SwerveDrive;
     private Funnel m_Funnel;
     private Elevator m_Elevator;
-    private Shooter m_Shooter;
+    private CoralShooter m_Shooter;
     private Cancoders m_Cancoders;
     private AlgaeShooter m_AlgaeShooter;
     private Hang m_Hang;
@@ -74,9 +74,10 @@ public class RobotContainer25 {
             m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
             m_SwerveDrive = SwerveDrive.getInstance();
             m_Elevator = Elevator.getInstance();
-            m_Shooter = Shooter.getInstance();
+            m_Shooter = CoralShooter.getInstance();
             m_AlgaeShooter = AlgaeShooter.getInstance();
             m_Hang = Hang.getInstance();
+            m_Funnel = Funnel.getInstance();
 
             // init cancoders
             if (Robot.isReal()) {
@@ -201,12 +202,16 @@ public class RobotContainer25 {
             if (m_AutoModeExecutor != null) {
 			    m_AutoModeExecutor.stop();
 		    }
-            testChassisSpeedConvert();
+
+            //testChassisSpeedConvert();
             //CrashTracker.logTest("Testing crashtracker - if you see this it works");
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}
+    }
+    public void testModePeriodic () {
+        Laser.testLaser();
     }
 
     // manual mode periodic callback

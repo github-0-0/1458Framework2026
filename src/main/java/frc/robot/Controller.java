@@ -13,14 +13,14 @@ public class Controller {
     private SwerveDrive m_SwerveDrive = null;
     private Funnel m_Funnel = null;
     private Elevator m_Elevator = null;
-    private Shooter m_Shooter = null;
+    private CoralShooter m_Shooter = null;
     private AlgaeShooter m_AlgaeShooter = null;
     private Hang m_Hang;
     public TeleopActionExecutor m_TeleopActionExecutor = null;
     public XboxController mXboxController = null;
     public boolean prev_left_trigger = false;
     public boolean prev_right_trigger = false;
-    public Controller(XboxController xboxController, DummySubsystem exampleSubsystem, SwerveDrive swerveDrive, Funnel funnel, Elevator elevator, Shooter shooter, AlgaeShooter aShooter, Hang hang, TeleopActionExecutor teleopActionExecutor) {
+    public Controller(XboxController xboxController, DummySubsystem exampleSubsystem, SwerveDrive swerveDrive, Funnel funnel, Elevator elevator, CoralShooter shooter, AlgaeShooter aShooter, Hang hang, TeleopActionExecutor teleopActionExecutor) {
         mXboxController = xboxController;
         m_ExampleSubsystem = exampleSubsystem;
         m_SwerveDrive = swerveDrive;
