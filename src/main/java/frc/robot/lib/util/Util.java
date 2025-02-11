@@ -266,4 +266,8 @@ dc.10.21.2024 commented out because wpilib Rotation2d misses .distance () method
 	public static Pose2d translateBy(Pose2d a, Pose2d b){
 		return new Pose2d(translateBy(a.getTranslation(), b.getTranslation()),a.getRotation().plus(b.getRotation()));
 	}
+
+	public static double twist2dMagnitude(Twist2d t) {
+		return Math.sqrt(t.dx * t.dx + t.dy * t.dy);
+	}
 }
