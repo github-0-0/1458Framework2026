@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import frc.robot.lib.util.COTSTalonFXSwerveConstants;
 import frc.robot.lib.util.SwerveModuleConstants;
 import frc.robot.subsystems.SwerveDrive.KinematicLimits;
@@ -155,6 +156,8 @@ public final class Constants {
             public static final SwerveModuleConstants constants =
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
+
+        public static double kMaxAngularAcceleration = 720.0; //TODO: set this to tuned value in future
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
@@ -302,6 +305,7 @@ public final class Constants {
 
     }
 
+    //dc.2.11.2025, retain the current elevator code in main branch while merging with strategybranch
     public static class Elevator {
         //TODO: tune elevator constants to bot
         public static final int kElevatorLeftMotorId = 20;
@@ -345,7 +349,7 @@ public final class Constants {
         }
     }
     
-    public static class Intake {
+    public static class Funnel {
         //TODO: Tune intake constants to bot
 
         // Motors
@@ -353,23 +357,22 @@ public final class Constants {
         public static final int kPivotMotorId = 10;
     
         // DIO
-        public static final int kIntakeLimitSwitchId = 70;
-        public static final int kShooterLimitSwitchId = 71;
+        public static final int kIntakeLimitSwitchId = 30;
+        public static final int kShooterLimitSwitchId = 31;
     
     
         // Absolute encoder offset
         public static final double k_pivotEncoderOffset = 0.166842; // Straight up, sketchy to reset to "up"
     
         // Pivot set point angles
-        public static final double k_pivotAngleGround = 60;
-        public static final double k_pivotAngleSource = 190;
-        public static final double k_pivotAngleAmp = k_pivotAngleSource;
-        public static final double k_pivotAngleStow = 275;
+        //public static final double k_pivotAngleGround = 60;
+        //public static final double k_pivotAngleSource = 190;
+        //public static final double k_pivotAngleAmp = k_pivotAngleSource;
+        //public static final double k_pivotAngleStow = 275;
     
         // Intake speeds
-        public static final double k_intakeSpeed = 0.7;
-        public static final double k_ejectSpeed = -0.45;
-        public static final double k_feedShooterSpeed = -0.5;
+        public static final double k_pivotStartAngle = 0;
+        public static final double k_pivotEndAngle = 75;
         
         public static final TalonFXConfiguration IntakeConfiguration() {
             TalonFXConfiguration config = new TalonFXConfiguration();
@@ -383,6 +386,14 @@ public final class Constants {
         }
       }
 
+      public static class CoralShooter {    //originally Shooter
+        public static final int kShooterLeftMotorId = 12;
+        public static final int kShooterRightMotorId = 13;
+        
+        public static final double kShooterSpeed = 0.1;
+      }
+
+      //dc.2.11.25, keey the shooter class for now, TODO: remove when CoralShooter is QAed.
       public static class Shooter {
         public static final int kShooterLeftMotorId = 12;
         public static final int kShooterRightMotorId = 13;
@@ -402,15 +413,9 @@ public final class Constants {
             return config;
         }
       }
-      public static class AlgaeShooter {
-        public static final int kAlgaeShooterLeftMotorId = 26;
-        public static final int kAlgaeShooterRightMotorId = 27;
-        public static final double kAlgaeShooterSpeed = 0.5;
-      }
-    
+      
     public static final class PathPlannerRobotConfig {
         public static RobotConfig config = null;
-        //ok java
         static {
             try {
                 config = RobotConfig.fromGUISettings();
@@ -419,6 +424,19 @@ public final class Constants {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static final class AlgaeShooter { //TODO: make constants correct
+        public static final int kAlgaeShooterLeftMotorId = 26;
+        public static final int kAlgaeShooterRightMotorId = 27;
+        public static final int kAlgaeShooterLimitSwitchId = 32;
+        public static final double kAlgaeShooterSpeed = 0.05;
+    }
+
+    public static final class Hang { //TODO: make constants correct
+        public static final int kHangMotorId = 51;
+        public static final double kHangSpeed = 0.05;
+        public static final double kHoldSpeed = 0.02;
     }
     
 
