@@ -9,11 +9,12 @@ import java.util.List;
  */
 public class SeriesAction implements Action {
 	private Action mCurrentAction;
-	private final ArrayList<Action> mRemainingActions;
+	private ArrayList<Action> mActionList;
+	private ArrayList<Action> mRemainingActions;
 
 	public SeriesAction(List<Action> actions) {
-		mRemainingActions = new ArrayList<>(actions.size());
-		mRemainingActions.addAll(actions);
+		mActionList = new ArrayList<>(actions.size());
+		mActionList.addAll(actions);
 		mCurrentAction = null;
 	}
 
@@ -22,7 +23,11 @@ public class SeriesAction implements Action {
 	}
 
 	@Override
-	public void start() {}
+	public void start() {
+		mRemainingActions = new ArrayList<>(mActionList);
+		mCurrentAction = null;
+		System.out.println("Series Action running!");
+	}
 
 	@Override
 	public void update() {
