@@ -14,42 +14,42 @@ import frc.robot.Constants;
 import frc.robot.Loops.ILooper;
 import frc.robot.Loops.Loop;
 import frc.robot.subsystems.SwerveDrive.PeriodicIO;
-
-public class AlgaeShooter extends Subsystem {
+//both shooter and intake for coral
+public class CoralShooter extends Subsystem {
 
 	/*-------------------------------- Private instance variables ---------------------------------*/
-	private static AlgaeShooter mInstance;
+	private static CoralShooter mInstance;
 	
 	private PeriodicIO mPeriodicIO = new PeriodicIO();
 
-	public static AlgaeShooter getInstance() {
+	public static CoralShooter getInstance() {
 		if (mInstance == null) {
-		mInstance = new AlgaeShooter();
+		mInstance = new CoralShooter();
 		}
 		return mInstance;
 	}
 
 	private class PeriodicIO {
 		double speed = 0.0;
-		AlgaeShooterState state = AlgaeShooterState.STOP;
+		ShooterState state = ShooterState.STOP;
 	} 
 	
-	private enum AlgaeShooterState {
+	private enum ShooterState {
 		INTAKE,
 		SHOOT,
 		STOP
 	}
 
-	private TalonFX mLeftAlgaeShooterMotor;
-	private TalonFX mRightAlgaeShooterMotor;
+	private TalonFX mLeftShooterMotor;
+	private TalonFX mRightShooterMotor;
 
-	private AlgaeShooter() {
-		//super("AlgaeShooter");
-		mLeftAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterLeftMotorId);
-		mRightAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterRightMotorId); //LEADER
-		mLeftAlgaeShooterMotor.setControl(new Follower(mRightAlgaeShooterMotor.getDeviceID(), true));
-		mLeftAlgaeShooterMotor.setNeutralMode(NeutralModeValue.Brake);
-        mRightAlgaeShooterMotor.setNeutralMode(NeutralModeValue.Brake);
+	private CoralShooter() {
+		//super("Shooter");
+		mLeftShooterMotor = new TalonFX(Constants.CoralShooter.kShooterLeftMotorId);
+		mRightShooterMotor = new TalonFX(Constants.CoralShooter.kShooterRightMotorId); //LEADER
+		mLeftShooterMotor.setControl(new Follower(mRightShooterMotor.getDeviceID(), true));
+		mLeftShooterMotor.setNeutralMode(NeutralModeValue.Brake);
+		mRightShooterMotor.setNeutralMode(NeutralModeValue.Brake);
 	}
 
 	/*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -62,28 +62,31 @@ public class AlgaeShooter extends Subsystem {
 
 			@Override
 			public void onLoop(double timestamp) {
+///* dc.2.10.25, commented out to compile so that we can merge GIT
 				switch (mPeriodicIO.state) {
 					case INTAKE:
-						if (!Laser.inRangeAlgaeShooter()) {
-							spinIn();
+						if (Laser.inRangeIntake()) {
+							spin();
 						} else {
 							stop();
 						}
 						break;
 					case SHOOT:
-						if (Laser.inRangeAlgaeShooter()) {
-							spinOut();
+						if (Laser.inRangeShooter()) {
+							spin();
 						} else {
 							stop();
+							intake();
 						}
 						break;
 					case STOP:
 						stop();
 						break;
 					default:
-						System.err.println("How did this happen?");
+						System.err.println("coral shooter state corruption happened?");
 						break;
 				}
+
 			}
 
 			@Override
@@ -95,7 +98,7 @@ public class AlgaeShooter extends Subsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
-		mRightAlgaeShooterMotor.set(mPeriodicIO.speed);
+		mRightShooterMotor.set(mPeriodicIO.speed);
 	}
 
 	@Override
@@ -112,29 +115,26 @@ public class AlgaeShooter extends Subsystem {
 	/*---------------------------------- Custom Public Functions ----------------------------------*/
 
 	public void intake() {
-		mPeriodicIO.state = AlgaeShooterState.INTAKE;
+		mPeriodicIO.state = ShooterState.INTAKE;
 	}
 
 	public void shoot() {
-		mPeriodicIO.state = AlgaeShooterState.SHOOT;
+		mPeriodicIO.state = ShooterState.SHOOT;
 	}
 
-	public void stopAlgaeShooter() {
-		mPeriodicIO.state = AlgaeShooterState.STOP;
+	public void stopShooter() {
+		mPeriodicIO.state = ShooterState.STOP;
 	}
+
 	/*---------------------------------- Custom Private Functions ---------------------------------*/
 
-	public void spinOut() {
-		mPeriodicIO.speed = Constants.AlgaeShooter.kAlgaeShooterSpeed;
+	public void spin() {
+		mPeriodicIO.speed = Constants.CoralShooter.kShooterSpeed; //Constants.Shooter.kShooterSpeed;
 	}
-
-    public void spinIn() {
-        mPeriodicIO.speed = -Constants.AlgaeShooter.kAlgaeShooterSpeed;
-    }
 	
 	@Override
 	public void stop() {
 		mPeriodicIO.speed = 0.0;
-		mPeriodicIO.state = AlgaeShooterState.STOP;
 	}
+  /*---------------------------------- Custom Private Functions ---------------------------------*/
 }
