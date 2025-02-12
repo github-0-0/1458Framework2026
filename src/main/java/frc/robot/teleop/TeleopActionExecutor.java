@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.teleop;
 
 import frc.robot.autos.AutoModeEndedException;
 import frc.robot.autos.actions.Action;

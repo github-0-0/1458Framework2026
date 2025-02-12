@@ -1,8 +1,10 @@
-package frc.robot;
+package frc.robot.teleop;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.*;
+import frc.robot.FieldLayout;
+import frc.robot.RobotState;
 import frc.robot.autos.actions.*;
 /**
  * A class that contains the controls for the robot.
