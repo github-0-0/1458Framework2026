@@ -63,7 +63,7 @@ public class RobotState {
 
 	public double lastTimestamp = 0;
 
-	private Rotation2d rotationZero;
+	private Rotation2d rotationZero=new Rotation2d();//dc.2.11.2025, bugfix, init to zero, otherwise, it broke the first addOdometryUpdate()
 
 	public RobotState() {
 		reset(0.0, new InterpolatingPose2d());
