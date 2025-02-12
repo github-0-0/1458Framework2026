@@ -91,7 +91,7 @@ public class Funnel extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
-		SmartDashboard.putNumber("Pivot/Abs Enc (getAbsolutePosition)", m_pivotEncoder.getAbsolutePosition().getValueAsDouble());
+//		SmartDashboard.putNumber("Pivot/Abs Enc (getAbsolutePosition)", m_pivotEncoder.getAbsolutePosition().getValueAsDouble());	//dc.2.11.25, TODO: to be restored
 		SmartDashboard.putNumber("Pivot/Abs Enc (getPivotAngleDegrees)", getPivotAngleDegrees());
 		SmartDashboard.putNumber("Pivot/Setpoint", pivotTargetToAngle(m_periodicIO.pivot_target));
 
@@ -114,9 +114,9 @@ public class Funnel extends Subsystem {
 	/*---------------------------------- Custom Public Functions ----------------------------------*/
 
 	public double getPivotAngleDegrees() {
-		double value = m_pivotEncoder.getAbsolutePosition().getValueAsDouble() -
-			Constants.Funnel.k_pivotEncoderOffset + 0.5;
-		return Units.rotationsToDegrees(modRotations(value));
+//		double value = m_pivotEncoder.getAbsolutePosition().getValueAsDouble() -
+//			Constants.Funnel.k_pivotEncoderOffset + 0.5;
+		return 0.;//Units.rotationsToDegrees(modRotations(value)); //dc.2.11.25, turn off cancoder to avoid CAM frame not receiving error; TODO: all cancoders shall go to Cancoders.java
 	}
 
 	// Pivot helper functions
