@@ -9,9 +9,9 @@ public class LMiddleCoralScoreAutoMode extends AutoStringAuto {
          *  but with different elevator levels
          */ 
         // starting pos 2, goes to reef 1, snaps apriltag left,  elevator 2 activated, coral shot, coral station 1, coral intake, reef 2, apriltag right, elevator 1, coral shot, repeat 3 times, change elevator level on each iteration
-        super("S 2 R 1 Snap 0 Elevator 2 CShoot " // Initial sequence: 1.5 seconds
-                   + "( CS 1 CIntake R 2 Snap 1 Elevator 1 CShoot ) " // First iteration: 4 seconds
-                   + "( CS 1 CIntake R 2 Snap 1 Elevator 2 CShoot ) " // Second iteration: 4 seconds
-                   + "( CS 1 CIntake R 2 Snap 1 Elevator 3 CShoot )"); // Third iteration: 4 seconds
+        super("S 2 R 1 Elevator 2 CShoot " // Initial sequence: 1.5 seconds
+                   + "( CS 1 CIntake R 2 Elevator 1 CShoot ) " // First iteration: 4 seconds
+                   + "( CS 1 CIntake R 2 Elevator 2 CShoot ) " // Second iteration: 4 seconds
+                   + "( CS 1 CIntake R 2 Elevator 3 CShoot )"); // Third iteration: 4 seconds
     }
 }
