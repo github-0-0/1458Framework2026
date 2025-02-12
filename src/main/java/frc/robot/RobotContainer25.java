@@ -19,6 +19,7 @@ import frc.robot.Loops.Looper;
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
+//dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.vision.*;
 import edu.wpi.first.wpilibj.Timer;
@@ -68,6 +69,7 @@ public class RobotContainer25 {
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
 	
+    private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
 
     //contructor
     public RobotContainer25 (){
@@ -78,8 +80,8 @@ public class RobotContainer25 {
             m_SwerveDrive = SwerveDrive.getInstance();
             m_Elevator = Elevator.getInstance();
             m_Shooter = Shooter.getInstance();
-            m_CoralShooter = CoralShooter.getInstance();
             m_AlgaeShooter = AlgaeShooter.getInstance();
+            m_CoralShooter = CoralShooter.getInstance();
             m_Hang = Hang.getInstance();
             m_Funnel = Funnel.getInstance();
 
@@ -106,13 +108,10 @@ public class RobotContainer25 {
                 m_Elevator,
                 m_ExampleSubsystem,
                 m_AlgaeShooter,
-<<<<<<< HEAD
-                m_VisionDevices
-=======
-                m_Shooter,
+                m_VisionDevices,
+                m_CoralShooter,
                 m_Hang,
                 m_Funnel
->>>>>>> strategyBranch
                 //Insert instances of additional subsystems here
             );
             //register subsystems to loopers
@@ -263,8 +262,19 @@ public class RobotContainer25 {
                 if(xboxController.getXButton()) {
                     m_Shooter.spin();                   
                 }
+                else if(xboxController.getBButton()) {
+                    m_Shooter.reverse();
+                }
                 else{
                     m_Shooter.stop();
+                }
+                if(xboxController.getRightBumperButton()) {
+                    m_AlgaeShooter.intake();
+                }else if(xboxController.getLeftBumperButton()){
+                    m_AlgaeShooter.shoot();
+                }
+                else{
+                    m_AlgaeShooter.stopAlgaeShooter();
                 }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
