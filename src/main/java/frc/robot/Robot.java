@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import au.grapplerobotics.CanBridge;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -70,6 +71,8 @@ public class Robot extends TimedRobot {
     m_robotStateField.setRobotPose(m_robotStatePose);
     
     SmartDashboard.putData("Robot State", m_robotStateField);
+
+    CanBridge.runTCP();
     //subsystems and loop framework init code move to RobotContainer25 class  
   }
 
