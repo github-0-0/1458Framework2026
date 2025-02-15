@@ -353,8 +353,7 @@ public final class Constants {
         //TODO: Tune intake constants to bot
 
         // Motors
-        public static final int kIntakeMotorId = 9;
-        public static final int kPivotMotorId = 10;
+        public static final int kPivotMotorId = 50;
     
         // DIO
         public static final int kIntakeLimitSwitchId = 30;
