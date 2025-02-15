@@ -42,6 +42,7 @@ public class ParallelAction implements Action {
 
 	@Override
 	public void start() {
+		System.out.println("Parallel Action running!");
 		for (Action action : mActions) {
 			action.start();
 		}
