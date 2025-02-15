@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -20,12 +21,12 @@ import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
 //dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
+//dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.vision.*;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
-import frc.robot.subsystems.Shooter;//dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
 import frc.robot.Loops.CrashTracker;
 /**
  * DC 10.28.2024
@@ -258,27 +259,33 @@ public class RobotContainer25 {
                 else{
                     m_Elevator.runElevator(-0.02);
                 }
-
                 if(xboxController.getXButton()) {
-                    m_Shooter.spin();                   
+                    m_Shooter.spinFast();
                 }
-                else if(xboxController.getBButton()) {
-                    m_Shooter.reverse();
+                else if(Laser.inRangeIntake()) {
+                    m_Shooter.spin();                   
                 }
                 else{
                     m_Shooter.stop();
                 }
-                if(xboxController.getRightBumperButton()) {
-                    m_AlgaeShooter.intake();
-                }else if(xboxController.getLeftBumperButton()){
+                if(xboxController.getLeftBumperButton()){
                     m_AlgaeShooter.shoot();
                 }
+                else if(Laser.inRangeAlgaeShooter()) {
+                    m_AlgaeShooter.stop();
+                }
+                else if(xboxController.getRightBumperButton()) {
+                    m_AlgaeShooter.intake();
+                }
                 else{
-                    m_AlgaeShooter.stopAlgaeShooter();
+                    m_AlgaeShooter.stop();
                 }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
+                
+                SmartDashboard.putNumber("Algae thingy", Laser.getMeasurementAlgaeShooter());
+                
 
 //			mDriverControls.oneControllerMode();
 

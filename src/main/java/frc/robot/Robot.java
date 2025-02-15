@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     
     SmartDashboard.putData("Robot State", m_robotStateField);
 
-    CanBridge.runTCP();
+  
     //subsystems and loop framework init code move to RobotContainer25 class  
   }
 

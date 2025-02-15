@@ -10,9 +10,9 @@ import frc.robot.Constants;
 import frc.robot.Ports;
 
 public class Laser {    
-    public static LaserCan intakeLaser = null; //new LaserCan(Ports.LaserCanIDCoralBack.getDeviceNumber());
-    public static LaserCan shooterLaser = null; //new LaserCan(Ports.LaserCanIDCoralFront.getDeviceNumber());
-    public static LaserCan algaeShooterLaser =null;// new LaserCan(Ports.LaserCanIDAlgae.getDeviceNumber());
+    public static LaserCan intakeLaser = new LaserCan(Ports.LaserCanIDCoralBack.getDeviceNumber());
+    public static LaserCan shooterLaser = new LaserCan(Ports.LaserCanIDCoralFront.getDeviceNumber());
+    public static LaserCan algaeShooterLaser = new LaserCan(Ports.LaserCanIDAlgae.getDeviceNumber());
 
 
     public Laser() {}
@@ -31,18 +31,14 @@ public class Laser {
     }
 
     public static boolean inRangeIntake() {
-        LaserCan.Measurement measurement = intakeLaser.getMeasurement();
-        return (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        return getMeasurementIntake() < 100;
     }
-
     public static boolean inRangeShooter() {
-        LaserCan.Measurement measurement = shooterLaser.getMeasurement();
-        return (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        return getMeasurementShooter() < 100;
     }
 
     public static boolean inRangeAlgaeShooter() {
-        LaserCan.Measurement measurement = algaeShooterLaser.getMeasurement();
-        return (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        return getMeasurementAlgaeShooter() < 5;
     }
 
     public static void testLaser() {
