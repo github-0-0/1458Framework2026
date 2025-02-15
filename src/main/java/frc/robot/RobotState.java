@@ -1,20 +1,28 @@
 package frc.robot;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
+import edu.wpi.first.math.trajectory.Trajectory;
 import frc.robot.subsystems.vision.VisionPoseAcceptor;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.StateSpaceUtil;
@@ -346,5 +354,36 @@ public class RobotState {
 		public Vector<N2> getXYStdev() {
 			return xy_stdev;
 		}
+	}
+
+	public Optional<Trajectory> alignToTagTrajectory(Integer id) {
+		AprilTagFieldLayout apriltags;
+		try {
+			apriltags = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile); // See https://firstfrc.blob.core.windows.net/frc2025/Manual/TeamUpdates/TeamUpdate12.pdf
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		TrajectoryConfig config = new TrajectoryConfig(
+			5.05/5, 
+			4.4/5
+		); // TODO: Remove /5 after testing
+
+		Optional<Pose3d> tagPose = apriltags.getTagPose(id);
+
+		if (!tagPose.isPresent()) {
+			return Optional.empty();
+		}
+
+		var interiorWaypoints = new ArrayList<Translation2d>();
+
+		var trajectory = TrajectoryGenerator.generateTrajectory(
+			getInstance().getLatestFieldToVehicle(),
+			interiorWaypoints,
+			tagPose.get().toPose2d(),
+			config
+		);
+
+		return Optional.of(trajectory);
 	}
 }
