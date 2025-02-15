@@ -24,10 +24,13 @@ public class WaitAction implements Action {
 	public void update() {}
 
 	@Override
-	public void done() {}
+	public void done() {
+		System.out.println("Finished waiting!");
+	}
 
 	@Override
 	public void start() {
 		mStartTime = Timer.getFPGATimestamp();
+		System.out.println("Waiting for " + mTimeToWait + "seconds!");
 	}
 }

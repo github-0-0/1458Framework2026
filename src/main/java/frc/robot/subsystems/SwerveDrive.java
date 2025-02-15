@@ -56,7 +56,7 @@ public class SwerveDrive extends Subsystem {
 		PATH_FOLLOWING
 	}
 
-	private WheelTracker mWheelTracker;
+	public WheelTracker mWheelTracker;
 	private final Field2d m_field = new Field2d();
 	private Pigeon mPigeon = Pigeon.getInstance();
 	public SwerveModule[] mModules;
@@ -82,8 +82,10 @@ public class SwerveDrive extends Subsystem {
 
 	private int mCounter=0;//TODO: code for debug, to be removed
 
-	private final StructArrayPublisher<SwerveModuleState> statePublisher = NetworkTableInstance.getDefault()
-        .getStructArrayTopic("SmartDashboard/Drive/States", SwerveModuleState.struct).publish();
+	private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher = NetworkTableInstance.getDefault()
+        .getStructArrayTopic("SmartDashboard/Drive/States_Desired", SwerveModuleState.struct).publish();
+	private final StructArrayPublisher<SwerveModuleState> measuredStatesPublisher = NetworkTableInstance.getDefault()
+        .getStructArrayTopic("SmartDashboard/Drive/States_Measured", SwerveModuleState.struct).publish();
     private final StructPublisher<Rotation2d> rotationPublisher = NetworkTableInstance.getDefault()
         .getStructTopic("SmartDashboard/Drive/Rotation", Rotation2d.struct).publish();
     private final StructPublisher<ChassisSpeeds> chassisSpeedsPublisher = NetworkTableInstance.getDefault()
@@ -111,11 +113,7 @@ public class SwerveDrive extends Subsystem {
 		mPigeon.setYaw(0.0);
 		mWheelTracker = new WheelTracker(mModules);
 
-		SmartDashboard.putData("Pure WheelTracker", m_field);
-	}
-
-	public void setWheelTrackerPose(Pose2d initial) {
-		mWheelTracker.resetPose(initial);
+		SmartDashboard.putData("Field", m_field);
 	}
 
 	public void setKinematicLimits(KinematicLimits newLimits) {
@@ -280,14 +278,17 @@ public class SwerveDrive extends Subsystem {
 		mPeriodicIO.heading = mPigeon.getYaw();
 		mPeriodicIO.pitch = mPigeon.getPitch();
 
+		SwerveModuleState[] moduleStates = getModuleStates();
 		Twist2d twist_vel = toTwist2d(Constants.SwerveConstants.kKinematics
-				.toChassisSpeeds(getModuleStates()));
+				.toChassisSpeeds(moduleStates));
 		Translation2d translation_vel = new Translation2d(twist_vel.dx, twist_vel.dy);
 		translation_vel = translation_vel.rotateBy(getHeading());
 		mPeriodicIO.measured_velocity = new Twist2d(
 				translation_vel.getX(),
 				translation_vel.getY(),
 				twist_vel.dtheta);
+
+		measuredStatesPublisher.set(moduleStates);
 	}
 
 	public synchronized void setTrajectory(TrajectoryIterator trajectory) {
@@ -417,6 +418,10 @@ public class SwerveDrive extends Subsystem {
 	private void updateSetpoint() {
 		if (mControlState == DriveControlState.FORCE_ORIENT) return;
 
+		SmartDashboard.putNumber("Drive/ChassisSpeeds.vx", mPeriodicIO.des_chassis_speeds.vxMetersPerSecond);
+		SmartDashboard.putNumber("Drive/ChassisSpeeds.vy", mPeriodicIO.des_chassis_speeds.vyMetersPerSecond);
+		SmartDashboard.putNumber("Drive/ChassisSpeeds.omega", mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
+
 		Pose2d robot_pose_vel = new Pose2d(
 				mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt * 4.0,
 				mPeriodicIO.des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt * 4.0,
@@ -426,6 +431,7 @@ public class SwerveDrive extends Subsystem {
 
 		ChassisSpeeds wanted_speeds;
 		if (mOverrideHeading) {
+			System.out.println("updateSetPoint(): override heading is TRUE;");
 			stabilizeHeading(mTrackingAngle);
 			double new_omega = mHeadingController.update(mPeriodicIO.heading.getRadians(), Timer.getFPGATimestamp());
 			ChassisSpeeds speeds = new ChassisSpeeds(twist_vel.dx, twist_vel.dy, new_omega);
@@ -511,24 +517,24 @@ public class SwerveDrive extends Subsystem {
 				NetworkTableInstance.getDefault().getEntry("/Telemetry/ChassisAccel/omegaRPSS").setDouble(domega * min_omega_scalar);
 			}*/
 		}
-		
+
 
 		SwerveModuleState[] real_module_setpoints = SwerveConstants.kKinematics.toSwerveModuleStates(wanted_speeds);
    		{
 			//TODO: debug code, TBR
 //			if (mCounter++ >50){
 //				mCounter =0;
-//				SmartDashboard.putString("updateSetPoint().wanted_speed (Omega, vx, vy)", 
+//				SmartDashboard.putString("updateSetPoint().wanted_speed (Omega, vx, vy)",
 //						String.format("%.2f,%.2f,%.2f", wanted_speeds.omegaRadiansPerSecond, wanted_speeds.vxMetersPerSecond, wanted_speeds.vyMetersPerSecond));
 //
 //				for (int i = 0; i < mModules.length; i++) {
-//					SmartDashboard.putString("updateSetPoint().real_module_setpoints["+ i +"].angle", 
+//					SmartDashboard.putString("updateSetPoint().real_module_setpoints["+ i +"].angle",
 //						String.format("%.2f",real_module_setpoints[i].angle.getDegrees()));
 //				}
 //			}
 			SmartDashboard.putNumber("updateSetPoint().wanted_speed.Omega)", wanted_speeds.omegaRadiansPerSecond);
 			SmartDashboard.putNumber("updateSetPoint().wanted_speed.vx)", wanted_speeds.vxMetersPerSecond);
-			SmartDashboard.putNumber("updateSetPoint().wanted_speed.vy)", wanted_speeds.vyMetersPerSecond);	
+			SmartDashboard.putNumber("updateSetPoint().wanted_speed.vy)", wanted_speeds.vyMetersPerSecond);
 		}
 
 		SwerveDriveKinematics.desaturateWheelSpeeds(real_module_setpoints, Constants.SwerveConstants.maxSpeed);
@@ -628,8 +634,7 @@ public class SwerveDrive extends Subsystem {
 		m_field.setRobotPose(mWheelTracker.getRobotPose());
 
 		// Publish swerve module states and rotaton to smartdashboard
-		// statePublisher.set(SwerveConstants.kKinematics.toSwerveModuleStates(wanted_speeds));
-		statePublisher.set(mPeriodicIO.des_module_states);
+		desiredStatesPublisher.set(mPeriodicIO.des_module_states);
 
 		chassisSpeedsPublisher.set(mPeriodicIO.des_chassis_speeds);
 
@@ -675,6 +680,11 @@ public class SwerveDrive extends Subsystem {
 		odometryReset = true;
 		Pose2d wanted_pose = pose;
 		mWheelTracker.resetPose(wanted_pose);
+		//dc.1.24.2025, bugfix, force update odometry after resetPose for WheelTracker.
+		// Otherwise, RobotState will NOT be updated until next cycle (20ms later, at OnLoop())..
+		// Therefore, immediate call to getPose() will return pose before reset.
+		// Wield behavior are found for SwerveTrajectoryAction() in SIM mode
+		RobotState.getInstance().addOdometryUpdate(Timer.getFPGATimestamp(),new InterpolatingPose2d(mWheelTracker.getRobotPose()),mPeriodicIO.measured_velocity,mPeriodicIO.predicted_velocity);
 	}
 /*
 //dc.zeroReference

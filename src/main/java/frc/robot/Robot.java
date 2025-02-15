@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
 
   public static final CTREConfigs ctreConfigs = new CTREConfigs();
 
+  
   private Command m_autonomousCommand;
 
   private RobotContainer25 m_robotContainer;
@@ -152,6 +153,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+    m_robotContainer.testModePeriodic();
     m_robotContainer.updateLimeLightData();
   }
 }

@@ -1,5 +1,7 @@
 package frc.robot.lib.swerve;
 
+import static edu.wpi.first.units.Units.Volts;
+
 //dc.10.21.2024 ported from com.team1678.lib.swerve;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -13,6 +15,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
+import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 //dc.10.21.2024 replacing with our own/ported classes
@@ -33,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //dc.10.21.2024, replace citrus SwerveModuleState with WPILIB version, the same practice as other Victor & Shaji
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
@@ -94,10 +98,15 @@ public class SwerveModule extends Subsystem {
 		mSignals[2] = mAngleMotor.getRotorPosition();
 		mSignals[3] = mAngleMotor.getRotorVelocity();
 
-	/*dc: Todo: update motor sim according to CTRE 2025 APIs 
-		mDriveMotorSim = new DCMotorSim(DCMotor.getFalcon500(1), Constants.Swerve.driveGearRatio, 0.001);
-		mAngleMotorSim = new DCMotorSim(DCMotor.getFalcon500(1), Constants.Swerve.angleGearRatio, 0.001);
-	*/
+		//dc. Venka's upgrade simulation code to WPIlib 2025 version.
+		mDriveMotorSim = new DCMotorSim(
+			LinearSystemId.createDCMotorSystem(
+				DCMotor.getKrakenX60Foc(1), 0.001, Constants.Swerve.driveGearRatio),
+				DCMotor.getKrakenX60Foc(1));
+		mAngleMotorSim = new DCMotorSim(
+			LinearSystemId.createDCMotorSystem(
+				DCMotor.getKrakenX60Foc(1), 0.001, Constants.Swerve.angleGearRatio),
+				DCMotor.getFalcon500Foc(1));
 	}
 
 	@Override
@@ -172,15 +181,6 @@ public class SwerveModule extends Subsystem {
 		} else if (relativeDegrees < -90.0) {
 			relativeDegrees += 180.0;
 			flip = true;
-		}
- 		{//todo: debug code, TBR
-//			if (mCounter++ >50){
-//				mCounter =0;
-//				SmartDashboard.putString("Module #"+ kModuleNumber+" setSteeringAngleOpti(), desiredAngle, angleUnclamped",
-//					String.format("%.2f,%.2f", targetClamped, angleUnclamped));
-//				SmartDashboard.putString("Module #"+ kModuleNumber+" setSteeringAngleOpti(), relativeDegreesPreFlip, relativeDegrees",
-//					String.format("%.2f,%.2f", relativeDegreesPreFlip,relativeDegrees));
-//			}
 		}
 		setSteeringAngleRaw(angleUnclamped + relativeDegrees);
 		target_angle = angleUnclamped + relativeDegrees;
@@ -368,24 +368,26 @@ public class SwerveModule extends Subsystem {
 		angleEncoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
 		// Simulate drive
-		mDriveMotorSim.setInputVoltage(mDriveMotorSimState.getMotorVoltage());
+		mDriveMotorSim.setInputVoltage(mDriveMotorSimState.getMotorVoltageMeasure().in(Volts));
 		mDriveMotorSim.update(TimedRobot.kDefaultPeriod);
 
-		double drivePosition = mDriveMotorSim.getAngularPositionRotations();
-		double driveVelocity = mDriveMotorSim.getAngularVelocityRadPerSec() * Constants.Swerve.wheelCircumference / (2.0 * Math.PI);
-		mDriveMotorSimState.setRawRotorPosition(drivePosition * Constants.Swerve.driveGearRatio);
-		mDriveMotorSimState.setRotorVelocity(driveVelocity * Constants.Swerve.driveGearRatio);
+		mDriveMotorSimState.setRawRotorPosition(
+			mDriveMotorSim.getAngularPosition().times(Constants.Swerve.driveGearRatio));
+		mDriveMotorSimState.setRotorVelocity(
+			mDriveMotorSim.getAngularVelocity().times(Constants.Swerve.driveGearRatio));
 
 		// Simulate steering
-		mAngleMotorSim.setInputVoltage(mAngleMotorSimState.getMotorVoltage());
+		mAngleMotorSim.setInputVoltage(mAngleMotorSimState.getMotorVoltageMeasure().in(Volts));
 		mAngleMotorSim.update(TimedRobot.kDefaultPeriod);
 
-		double steeringPosition = mAngleMotorSim.getAngularPositionRotations();
-		double steeringVelocity = mAngleMotorSim.getAngularVelocityRadPerSec() * Constants.Swerve.wheelCircumference / (2.0 * Math.PI);
-		mAngleMotorSimState.setRawRotorPosition(steeringPosition * Constants.Swerve.angleGearRatio);
-		mAngleMotorSimState.setRotorVelocity(steeringVelocity * Constants.Swerve.angleGearRatio);
+		mAngleMotorSimState.setRawRotorPosition(
+			mAngleMotorSim.getAngularPosition().times(Constants.Swerve.angleGearRatio));
+		mAngleMotorSimState.setRotorVelocity(
+			mAngleMotorSim.getAngularVelocity().times(Constants.Swerve.angleGearRatio));
 
-		angleEncoderSimState.setRawPosition(steeringPosition * Constants.Swerve.angleGearRatio);
-		angleEncoderSimState.setVelocity(steeringVelocity * Constants.Swerve.angleGearRatio);
+		angleEncoderSimState.setRawPosition(
+			mAngleMotorSim.getAngularPosition().times(Constants.Swerve.angleGearRatio));
+		angleEncoderSimState.setVelocity(
+			mAngleMotorSim.getAngularVelocity().times(Constants.Swerve.angleGearRatio));
 	}
 }

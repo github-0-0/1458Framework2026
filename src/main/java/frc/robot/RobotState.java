@@ -71,7 +71,7 @@ public class RobotState {
 
 	public double lastTimestamp = 0;
 
-	private Rotation2d rotationZero;
+	private Rotation2d rotationZero=new Rotation2d();//dc.2.11.2025, bugfix, init to zero, otherwise, it broke the first addOdometryUpdate()
 
 	public RobotState() {
 		reset(0.0, new InterpolatingPose2d());
@@ -325,6 +325,17 @@ public class RobotState {
 		return mHasRecievedVisionUpdate;
 	}
 
+	/**
+	 * Updates tracker to use stricter auto vision filtering.
+	 * @param in_auto If auto filters should be used.
+	 */
+	public synchronized void setIsInAuto(boolean in_auto) {
+		mIsInAuto = in_auto;
+	}
+
+	/**
+	 * Class to hold information about a vision update.
+	 */
 	public static class VisionUpdate {
 		private double timestamp;
 		private Translation2d field_to_camera;
