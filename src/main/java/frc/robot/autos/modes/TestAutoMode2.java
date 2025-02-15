@@ -9,7 +9,7 @@ import frc.robot.autos.actions.SwerveTrajectoryAction.ResetWheelTracker;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
 import frc.robot.lib.trajectory.TrajectoryGenerator.TrajectorySet;
 import frc.robot.autos.actions.*;
-
+//not worke
 public class TestAutoMode2 extends AutoModeBase {
     private TrajectoryGenerator trajectoryGenerator = TrajectoryGenerator.getInstance();
     private TrajectorySet trajectorySet = trajectoryGenerator.getTrajectorySet();
@@ -21,7 +21,6 @@ public class TestAutoMode2 extends AutoModeBase {
     public TestAutoMode2() {
         autoString = "[ ( Wait 1 Elevator L4 Shoot ) ( CS 1 R 1 P 1 ) ] Wait 2 P 1 CS 2 R 2 ";
     }
-    //TODO: Fix Errors here
     public Action parsePath(String action) {
         Action returnAction;
         switch (action) {
@@ -88,7 +87,6 @@ public class TestAutoMode2 extends AutoModeBase {
                     runAction(parsePath(action));
                 case "[":
                     List<Action> listOfAutos = new ArrayList<Action>();
-                    Action currentAction;
                     while (!(actions[i].equals("]"))) {
                         List<Action> listOfActions = new ArrayList<Action>();
                         while (!(actions[i].equals(")"))) {
@@ -104,7 +102,6 @@ public class TestAutoMode2 extends AutoModeBase {
                     ParallelAction finalAction = new ParallelAction(listOfAutos);
                     runAction(finalAction);
                     i++;
-                    //TODO: square bracket[] is parallel, () is series.
                 case "Wait":
                     if (i + 1 < actions.length) {
                         String waitTime = actions[++i];

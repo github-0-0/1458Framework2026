@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import frc.robot.lib.util.COTSTalonFXSwerveConstants;
 import frc.robot.lib.util.SwerveModuleConstants;
 import frc.robot.subsystems.SwerveDrive.KinematicLimits;
@@ -22,6 +23,7 @@ import com.pathplanner.lib.config.RobotConfig;
 public final class Constants {
     public static final double stickDeadband = 0.07;
     public static boolean isEpsilon;
+    public static boolean isBareboneRobot=true; //dc.10.29.2024, set to true for barebone robot, false for full robot//
 
     // robot loop time
 	public static final double kLooperDt = 0.02;
@@ -112,7 +114,7 @@ public final class Constants {
             public static final int driveMotorID = 8;
             public static final int angleMotorID = 10;
             public static final int canCoderID = 7;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.1521);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.142334);//0.1521);
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
             public static final SwerveModuleConstants constants = 
@@ -126,7 +128,7 @@ public final class Constants {
             public static final int canCoderID = 6;
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.4243);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.419434);//0.4243);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
@@ -138,7 +140,7 @@ public final class Constants {
             public static final int canCoderID = 0;
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.1643);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.175781);//0.1643);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
@@ -150,10 +152,12 @@ public final class Constants {
             public static final int canCoderID = 1;
             public static final boolean isDriveInverted = false;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.4148);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.417236);//0.4148);
             public static final SwerveModuleConstants constants =
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
+
+        public static double kMaxAngularAcceleration = 720.0; //TODO: set this to tuned value in future
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
@@ -174,43 +178,30 @@ public final class Constants {
 
     public static VisionDeviceConstants kLeftVisionDevice = new VisionDeviceConstants(); // dot 13
     public static VisionDeviceConstants kRightVisionDevice = new VisionDeviceConstants(); // dot 12
+    public static VisionDeviceConstants kFrontVisionDevice = new VisionDeviceConstants();
+    public static VisionDeviceConstants kBackVisionDevice = new VisionDeviceConstants();
 
-    static {
-        kLeftVisionDevice.kTableName = "limelight-c";
+        static {//dc.2.10.25, TODO: update camera setting according to robot h/w config
+        kLeftVisionDevice.kTableName = "limelight-left";    
         kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325)),
                 Rotation2d.fromDegrees(-27));
 
-        kRightVisionDevice.kTableName = "limelight-bw";
+        kRightVisionDevice.kTableName = "limelight-right";  
         kRightVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
                 Rotation2d.fromDegrees(27.0));
-    }
-    
-    public static final class LimelightConstants {
+        
+        kFrontVisionDevice.kTableName = "limelight-front";
+        kFrontVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
+                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
+                Rotation2d.fromDegrees(27.0));
 
-		public static final double kNoteHeight = 0.0508;
-		public static final double kNoteTargetOffset = 0.2;
-		public static final double kMaxNoteTrackingDistance = 6.75;
-		public static final double kNoteTrackEpsilon = 1.0;
-
-		public static final String kName = "limelight";
-		public static final Translation2d kRobotToCameraTranslation = new Translation2d(0.0, 0.0);
-		public static final double kCameraHeightMeters = isEpsilon ? 0.59 : 0.65;
-		public static final Rotation2d kCameraPitch = Rotation2d.fromDegrees(-18.0);
-		public static final Rotation2d kCameraYaw = Rotation2d.fromDegrees(0.0);
-
-		public static final GoalTracker.Configuration kNoteTrackerConstants = new GoalTracker.Configuration();
-
-		static {
-			kNoteTrackerConstants.kMaxTrackerDistance = 0.46;
-			kNoteTrackerConstants.kMaxGoalTrackAge = 0.5;
-			kNoteTrackerConstants.kCameraFrameRate = 30.0;
-			kNoteTrackerConstants.kStabilityWeight = 1.0;
-			kNoteTrackerConstants.kAgeWeight = 0.2;
-			kNoteTrackerConstants.kSwitchingWeight = 0.2;
-		}
-	}
+        kBackVisionDevice.kTableName = "limelight-back";
+        kBackVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
+                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
+                Rotation2d.fromDegrees(27.0));
+}
 
     //dc.10.21.2024, citrus code constants
     public static final class SwerveConstants {
@@ -314,6 +305,7 @@ public final class Constants {
 
     }
 
+    //dc.2.11.2025, retain the current elevator code in main branch while merging with strategybranch
     public static class Elevator {
         //TODO: tune elevator constants to bot
         public static final int kElevatorLeftMotorId = 20;
@@ -357,12 +349,11 @@ public final class Constants {
         }
     }
     
-    public static class Intake {
+    public static class Funnel {
         //TODO: Tune intake constants to bot
 
         // Motors
-        public static final int kIntakeMotorId = 9;
-        public static final int kPivotMotorId = 10;
+        public static final int kPivotMotorId = 50;
     
         // DIO
         public static final int kIntakeLimitSwitchId = 30;
@@ -373,15 +364,14 @@ public final class Constants {
         public static final double k_pivotEncoderOffset = 0.166842; // Straight up, sketchy to reset to "up"
     
         // Pivot set point angles
-        public static final double k_pivotAngleGround = 60;
-        public static final double k_pivotAngleSource = 190;
-        public static final double k_pivotAngleAmp = k_pivotAngleSource;
-        public static final double k_pivotAngleStow = 275;
+        //public static final double k_pivotAngleGround = 60;
+        //public static final double k_pivotAngleSource = 190;
+        //public static final double k_pivotAngleAmp = k_pivotAngleSource;
+        //public static final double k_pivotAngleStow = 275;
     
         // Intake speeds
-        public static final double k_intakeSpeed = 0.7;
-        public static final double k_ejectSpeed = -0.45;
-        public static final double k_feedShooterSpeed = -0.5;
+        public static final double k_pivotStartAngle = 0;
+        public static final double k_pivotEndAngle = 75;
         
         public static final TalonFXConfiguration IntakeConfiguration() {
             TalonFXConfiguration config = new TalonFXConfiguration();
@@ -395,6 +385,14 @@ public final class Constants {
         }
       }
 
+      public static class CoralShooter {    //originally Shooter
+        public static final int kShooterLeftMotorId = 12;
+        public static final int kShooterRightMotorId = 13;
+        
+        public static final double kShooterSpeed = 0.1;
+      }
+
+      //dc.2.11.25, keey the shooter class for now, TODO: remove when CoralShooter is QAed.
       public static class Shooter {
         public static final int kShooterLeftMotorId = 12;
         public static final int kShooterRightMotorId = 13;
@@ -414,10 +412,9 @@ public final class Constants {
             return config;
         }
       }
-    
+      
     public static final class PathPlannerRobotConfig {
         public static RobotConfig config = null;
-        //ok java
         static {
             try {
                 config = RobotConfig.fromGUISettings();
@@ -426,6 +423,19 @@ public final class Constants {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static final class AlgaeShooter { //TODO: make constants correct
+        public static final int kAlgaeShooterLeftMotorId = 26;
+        public static final int kAlgaeShooterRightMotorId = 27;
+        public static final int kAlgaeShooterLimitSwitchId = 32;
+        public static final double kAlgaeShooterSpeed = 0.05;
+    }
+
+    public static final class Hang { //TODO: make constants correct
+        public static final int kHangMotorId = 51;
+        public static final double kHangSpeed = 0.05;
+        public static final double kHoldSpeed = 0.02;
     }
     
 

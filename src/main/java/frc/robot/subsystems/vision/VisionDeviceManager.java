@@ -19,6 +19,8 @@ public class VisionDeviceManager extends Subsystem {
 
 	private VisionDevice mLeftCamera;
 	private VisionDevice mRightCamera;
+	private VisionDevice mFrontCamera;
+	private VisionDevice mBackCamera;
 
 	private List<VisionDevice> mAllCameras;
 
@@ -32,11 +34,14 @@ public class VisionDeviceManager extends Subsystem {
 	private VisionDeviceManager() {
 		mLeftCamera = new VisionDevice(Constants.kLeftVisionDevice);
 		mRightCamera = new VisionDevice(Constants.kRightVisionDevice);
-		mAllCameras = List.of(mLeftCamera, mRightCamera);
+		mFrontCamera = new VisionDevice(Constants.kFrontVisionDevice);
+		mBackCamera = new VisionDevice(Constants.kBackVisionDevice);
+		mAllCameras = List.of(mLeftCamera, mRightCamera, mFrontCamera, mBackCamera);
 	}
 
 	@Override
 	public void readPeriodicInputs() {
+		//System.out.println("VisionDevice.readPeriodic()");
 		mAllCameras.forEach(VisionDevice::readPeriodicInputs);
 		mMovingAvgRead = mHeadingAvg.getAverage();
 	}
@@ -62,7 +67,10 @@ public class VisionDeviceManager extends Subsystem {
 	}
 
 	public synchronized boolean fullyConnected() {
-		return mLeftCamera.isConnected() && mRightCamera.isConnected();
+		return mLeftCamera.isConnected() ;
+			// && mRightCamera.isConnected()
+			// && mFrontCamera.isConnected()
+			// && mBackCamera.isConnected();
 	}
 
 	public synchronized VisionDevice getLeftVision() {
@@ -71,6 +79,14 @@ public class VisionDeviceManager extends Subsystem {
 
 	public synchronized VisionDevice getRightVision() {
 		return mRightCamera;
+	}
+
+	public synchronized VisionDevice getFrontVision() {
+		return mFrontCamera;
+	}
+
+	public synchronized VisionDevice getBackVision() {
+		return mBackCamera;
 	}
 
 	public static double getTimestampOffset() {

@@ -1,10 +1,13 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.util.HashMap;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -27,36 +30,26 @@ import edu.wpi.first.math.util.Units;
 public class FieldLayout {
 	public static double kFieldLength = Units.inchesToMeters(651.223);
 	public static double kFieldWidth = Units.inchesToMeters(323.277);
-	public static double kWingX = Units.inchesToMeters(229.201);
-	public static double kPodiumX = Units.inchesToMeters(126.75);
-	public static double kStartingLineX = Units.inchesToMeters(74.111);
+	public static int closestTag = -1;
+    public static Translation2d[] offsets = {
+		new Translation2d(0.85/2,-0.18),
+		new Translation2d(0.85/2, 0.18),
+		new Translation2d(0.85/2,0),
+		new Translation2d(-0.85/2,-0.18),
+		new Translation2d(-0.85/2,0),
+		new Translation2d(-0.85/2,0.18),
+	};
 
 	public static final double kApriltagWidth = Units.inchesToMeters(6.50);
 	public static final AprilTagFieldLayout kTagMap;
 
 	static {
 		try {
-			kTagMap = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+			kTagMap = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-
-	// center notes labeled 1-5, with 1 being closest to the fms table
-	public static Translation2d kCenterNote5 = new Translation2d(kFieldLength / 2.0, 0.752856);
-	public static Translation2d kCenterNote4 = new Translation2d(kFieldLength / 2.0, 2.429256);
-	public static Translation2d kCenterNote3 = new Translation2d(kFieldLength / 2.0, 4.105656);
-	public static Translation2d kCenterNote2 = new Translation2d(kFieldLength / 2.0, 5.782056);
-	public static Translation2d kCenterNote1 = new Translation2d(kFieldLength / 2.0, 7.458456);
-
-	public static Translation2d[] kCenterNotes =
-			new Translation2d[] {kCenterNote1, kCenterNote2, kCenterNote3, kCenterNote4, kCenterNote5};
-
-	public static Translation2d kAmpCenter =
-			new Translation2d(Units.inchesToMeters(72.455), Units.inchesToMeters(322.996));
-
-	/** Center of the speaker opening (blue alliance) */
-	public static Pose2d kSpeakerCenter = new Pose2d(0.2, kFieldWidth - Units.inchesToMeters(104.0), new Rotation2d());
 
 	public static Pose2d handleAllianceFlip(Pose2d blue_pose, boolean is_red_alliance) {
 		if (is_red_alliance) {
@@ -87,5 +80,32 @@ public class FieldLayout {
 			return kFieldLength - x_coordinate;
 		}
 		return x_coordinate;
+	}
+
+	public static Pose3d getClosestTagPos(Translation2d robot_position) {
+		Pose3d closest_tag = new Pose3d();
+		double closest_distance = Double.MAX_VALUE;
+		for (AprilTag tag : kTagMap.getTags()) {
+			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
+			if (distance < closest_distance) {
+				closest_tag = tag.pose;
+				closest_distance = distance;
+			}
+		}
+		return closest_tag;
+	}
+
+	public static int getClosestTag(Translation2d robot_position) {
+		int closest_tag = -1;
+		double closest_distance = Double.MAX_VALUE;
+		for (AprilTag tag : kTagMap.getTags()) {
+			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
+			if (distance < closest_distance) {
+				closest_tag = tag.ID;
+				closest_distance = distance;
+			}
+		}
+		closestTag = closest_tag;
+		return closest_tag;
 	}
 }
