@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -268,24 +267,22 @@ public class RobotContainer25 {
                 else{
                     m_Shooter.stop();
                 }
-                if(xboxController.getLeftBumperButton()){
+
+                
+                if(xboxController.getRightBumperButton()) {
+                    m_AlgaeShooter.intake();
+                }else if(xboxController.getLeftBumperButton()){
                     m_AlgaeShooter.shoot();
                 }
-                else if(Laser.inRangeAlgaeShooter()) {
-                    m_AlgaeShooter.stop();
-                }
-                else if(xboxController.getRightBumperButton()) {
-                    m_AlgaeShooter.intake();
-                }
                 else{
-                    m_AlgaeShooter.stop();
+                    m_AlgaeShooter.stopAlgaeShooter();
                 }
+                
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
-                
-                SmartDashboard.putNumber("Algae thingy", Laser.getMeasurementAlgaeShooter());
-                
+
+      
 
 //			mDriverControls.oneControllerMode();
 

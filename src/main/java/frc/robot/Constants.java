@@ -429,7 +429,7 @@ public final class Constants {
         public static final int kAlgaeShooterLeftMotorId = 26;
         public static final int kAlgaeShooterRightMotorId = 27;
         public static final int kAlgaeShooterLimitSwitchId = 32;
-        public static final double kAlgaeShooterSpeed = 0.05;
+        public static final double kAlgaeShooterSpeed = 0.4;
     }
 
     public static final class Hang { //TODO: make constants correct

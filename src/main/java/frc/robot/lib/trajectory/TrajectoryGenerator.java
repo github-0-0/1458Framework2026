@@ -33,12 +33,12 @@ public class TrajectoryGenerator {
 		//the parent folder NEEDs to be "./src/main/deploy/"
         public HashMap<String, PathPlannerTrajectory> set = new HashMap<>();
         public TrajectorySet() {
-            File folder = new File(Filesystem.getDeployDirectory(),"pathplanner/paths");
+           /* File folder = new File(Filesystem.getDeployDirectory(),"pathplanner/paths");
             System.out.println(folder.getAbsolutePath());
             for (File file : folder.listFiles()) { 
                 String fileName = file.getName().substring(0,file.getName().length() - 5); 
                 set.put(fileName, loadPathPlannerTrajectory(fileName));
-            }
+            } */
         }
         /*
         public Trajectory testTrajectoryZigzag = loadTrajectory("paths/output/s.0.0.zigzag.wpilib.json"); 
