@@ -2,8 +2,14 @@ package frc.robot;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import frc.robot.subsystems.vision.VisionPoseAcceptor;
@@ -367,34 +373,30 @@ public class RobotState {
 		}
 	}
 
-	public Optional<Trajectory> alignToTagTrajectory(Integer id) {
-		AprilTagFieldLayout apriltags;
-		try {
-			apriltags = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile); // See https://firstfrc.blob.core.windows.net/frc2025/Manual/TeamUpdates/TeamUpdate12.pdf
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	// public Optional<PathPlannerPath> alignToTagTrajectory(Integer id) {
+	// 	AprilTagFieldLayout apriltags;
+	// 	try {
+	// 		apriltags = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile); // See https://firstfrc.blob.core.windows.net/frc2025/Manual/TeamUpdates/TeamUpdate12.pdf
+	// 	} catch (IOException e) {
+	// 		throw new RuntimeException(e);
+	// 	}
 
-		TrajectoryConfig config = new TrajectoryConfig(
-			5.05/5, 
-			4.4/5
-		); // TODO: Remove /5 after testing
+	// 	Optional<Pose3d> tagPose = apriltags.getTagPose(id);
 
-		Optional<Pose3d> tagPose = apriltags.getTagPose(id);
+	// 	if (tagPose.isEmpty()) {
+	// 		return Optional.empty();
+	// 	}
 
-		if (!tagPose.isPresent()) {
-			return Optional.empty();
-		}
+	// 	List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+	// 		this.getLatestFieldToVehicle(),
+	// 		new Pose2d(this.getLatestFieldToVehicle().getTranslation(), tagPose.get().toPose2d().getRotation())
+	// 	);
+	// 	PathConstraints constraints = new PathConstraints(5.05/5, 4.4/4, 3.14, 720);
 
-		var interiorWaypoints = new ArrayList<Translation2d>();
+	// 	PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, tagPose.get().toPose2d().getRotation()));
+		
+	// 	path.preventFlipping = true;
 
-		var trajectory = TrajectoryGenerator.generateTrajectory(
-			getInstance().getLatestFieldToVehicle(),
-			interiorWaypoints,
-			tagPose.get().toPose2d(),
-			config
-		);
-
-		return Optional.of(trajectory);
-	}
+	// 	return Optional.of(path);
+	// }
 }

@@ -67,10 +67,10 @@ public class VisionDeviceManager extends Subsystem {
 	}
 
 	public synchronized boolean fullyConnected() {
-		return mLeftCamera.isConnected() ;
-			// && mRightCamera.isConnected()
-			// && mFrontCamera.isConnected()
-			// && mBackCamera.isConnected();
+		return mLeftCamera.isConnected()
+			&& mRightCamera.isConnected()
+			&& mFrontCamera.isConnected()
+			&& mBackCamera.isConnected();
 	}
 
 	public synchronized VisionDevice getLeftVision() {

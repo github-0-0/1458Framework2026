@@ -184,23 +184,23 @@ public final class Constants {
         static {//dc.2.10.25, TODO: update camera setting according to robot h/w config
         kLeftVisionDevice.kTableName = "limelight-left";    
         kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
-                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(7.325)),
-                Rotation2d.fromDegrees(-27));
+                new Translation2d(Units.inchesToMeters(10.5), Units.inchesToMeters(1.23)),
+                Rotation2d.fromDegrees(0));
 
         kRightVisionDevice.kTableName = "limelight-right";  
         kRightVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
-                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
-                Rotation2d.fromDegrees(27.0));
+                new Translation2d(Units.inchesToMeters(10.78), Units.inchesToMeters(-0.05)),
+                Rotation2d.fromDegrees(0));
         
         kFrontVisionDevice.kTableName = "limelight-front";
         kFrontVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
-                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
-                Rotation2d.fromDegrees(27.0));
+                new Translation2d(Units.inchesToMeters(11.11), Units.inchesToMeters(4.28)),
+                Rotation2d.fromDegrees(0));
 
         kBackVisionDevice.kTableName = "limelight-back";
         kBackVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
-                new Translation2d(Units.inchesToMeters(3.071), Units.inchesToMeters(-7.325)),
-                Rotation2d.fromDegrees(27.0));
+                new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(-0.96)),
+                Rotation2d.fromDegrees(0));
 }
 
     //dc.10.21.2024, citrus code constants

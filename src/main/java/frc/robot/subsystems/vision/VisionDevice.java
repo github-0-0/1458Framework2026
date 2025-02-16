@@ -42,7 +42,7 @@ public class VisionDevice extends Subsystem {
 
 	public VisionDevice(VisionDeviceConstants constants) {
 		robotField = new Field2d();
-		SmartDashboard.putData("Pure Vision", robotField);
+		SmartDashboard.putData(constants.kTableName + "/Vision Measurement", robotField);
 
 		mConstants = constants;
 		mConfigTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName + "/configs");
