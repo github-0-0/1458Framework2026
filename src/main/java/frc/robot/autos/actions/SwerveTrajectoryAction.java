@@ -21,12 +21,16 @@ public class SwerveTrajectoryAction implements Action {
 	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory) {
 		this(trajectory, ResetWheelTracker.NO);
 	}
-
+/*
 	public SwerveTrajectoryAction(String key, ResetWheelTracker resetPose) {
 		this(TrajectoryGenerator.getInstance().getTrajectorySet().set.get(key),resetPose);
 		name = key;
 	}
-
+*/
+	public SwerveTrajectoryAction(String key, ResetWheelTracker resetPose) {
+		this(TrajectoryGenerator.getInstance().getTrajectorySet().loadPathPlannerTrajectory(key),resetPose);
+		name = key;
+	}
 	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory, ResetWheelTracker resetPose) {
 		kTrajectory = trajectory;
 		mTrajectory = new TrajectoryIterator(trajectory);
