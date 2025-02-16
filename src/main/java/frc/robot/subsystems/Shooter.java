@@ -76,11 +76,15 @@ public class Shooter extends Subsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public void spin() {
-    mRightShooterMotor.set(-0.075);
+    mRightShooterMotor.set(-0.05);
+  }
+
+  public void spinFast() {
+    mRightShooterMotor.set(-0.15);
   }
 
   public void reverse() {
-    mRightShooterMotor.set(0.075);
+    mRightShooterMotor.set(0.05);
   }
 
   public void checkSensor() {
