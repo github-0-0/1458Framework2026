@@ -21,6 +21,10 @@ public class SwerveTrajectoryAction implements Action {
 	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory) {
 		this(trajectory, ResetWheelTracker.NO);
 	}
+	
+	public SwerveTrajectoryAction(String key) {
+		this(key, ResetWheelTracker.NO);
+	}
 /*
 	public SwerveTrajectoryAction(String key, ResetWheelTracker resetPose) {
 		this(TrajectoryGenerator.getInstance().getTrajectorySet().set.get(key),resetPose);

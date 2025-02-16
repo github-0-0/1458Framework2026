@@ -9,8 +9,6 @@ public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
 		TESTPATHMODE,
-		TESTAUTOMODE,
-		TESTAUTOMODE2,
 		TESTAUTOMODE3,
 		LEFTCORAL,
 		LMIDDLECORAL,
@@ -30,8 +28,6 @@ public class AutoModeSelector {
 	public AutoModeSelector() {
 		mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
 		mModeChooser.addOption("mode to test paths", DesiredMode.TESTPATHMODE);
-		mModeChooser.addOption("non working 1", DesiredMode.TESTAUTOMODE);
-		mModeChooser.addOption("non working 2", DesiredMode.TESTAUTOMODE2);
 		mModeChooser.addOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
 		mModeChooser.addOption("Left Coral", DesiredMode.LEFTCORAL);
 		mModeChooser.addOption("LMiddle Coral", DesiredMode.LMIDDLECORAL);
@@ -80,10 +76,6 @@ public class AutoModeSelector {
 				return Optional.of(new DoNothingMode());
 			case TESTPATHMODE:
 				return Optional.of(new TestPathMode());
-			case TESTAUTOMODE:
-				return Optional.of(new TestAutoMode());
-			case TESTAUTOMODE2:
-				return Optional.of(new TestAutoMode2());
 			case TESTAUTOMODE3:
 				return Optional.of(new TestAutoMode3());
 			case LEFTCORAL:
