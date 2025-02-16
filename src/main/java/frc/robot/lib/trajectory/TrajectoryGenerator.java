@@ -54,7 +54,7 @@ public class TrajectoryGenerator {
         */
         /* dc.10.21.2024, additional trajectory can be added similar to the TestTrajectory */
 
-        private Trajectory loadTrajectory (String sJsonFile){
+        public Trajectory loadTrajectory (String sJsonFile){
             try{
                 // Get the path to the deployed JSON file
                 Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(sJsonFile);                
@@ -67,7 +67,7 @@ public class TrajectoryGenerator {
                 return null;
             }
         }
-        private PathPlannerTrajectory loadPathPlannerTrajectory (String sJsonFile) {
+        public PathPlannerTrajectory loadPathPlannerTrajectory (String sJsonFile) {
             try {
                 PathPlannerPath path;
                 path = PathPlannerPath.fromPathFile(sJsonFile);
