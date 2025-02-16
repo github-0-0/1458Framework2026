@@ -114,7 +114,7 @@ public final class Constants {
             public static final int driveMotorID = 8;
             public static final int angleMotorID = 10;
             public static final int canCoderID = 7;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.1521);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.142334);//0.1521);
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
             public static final SwerveModuleConstants constants = 
@@ -128,7 +128,7 @@ public final class Constants {
             public static final int canCoderID = 6;
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.4243);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.419434);//0.4243);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
@@ -140,7 +140,7 @@ public final class Constants {
             public static final int canCoderID = 0;
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.1643);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.175781);//0.1643);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
@@ -152,7 +152,7 @@ public final class Constants {
             public static final int canCoderID = 1;
             public static final boolean isDriveInverted = false;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.4148);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.417236);//0.4148);
             public static final SwerveModuleConstants constants =
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
@@ -353,8 +353,7 @@ public final class Constants {
         //TODO: Tune intake constants to bot
 
         // Motors
-        public static final int kIntakeMotorId = 9;
-        public static final int kPivotMotorId = 10;
+        public static final int kPivotMotorId = 50;
     
         // DIO
         public static final int kIntakeLimitSwitchId = 30;
@@ -430,7 +429,7 @@ public final class Constants {
         public static final int kAlgaeShooterLeftMotorId = 26;
         public static final int kAlgaeShooterRightMotorId = 27;
         public static final int kAlgaeShooterLimitSwitchId = 32;
-        public static final double kAlgaeShooterSpeed = 0.05;
+        public static final double kAlgaeShooterSpeed = 0.4;
     }
 
     public static final class Hang { //TODO: make constants correct

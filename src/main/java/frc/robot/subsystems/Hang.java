@@ -52,7 +52,7 @@ public class Hang extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                switch (mPeriodicIO.state) {
+                /*switch (mPeriodicIO.state) {
                     case HANG:
                         hang();
                         break;
@@ -69,17 +69,18 @@ public class Hang extends Subsystem {
                         System.err.println("This should not be happening.");
                         break;
                 }
+                        */
             }
             
             @Override
             public void onStop(double timestamp) {
-                stop();
+                //stop();
             }
         });
     }
 
     public void writePeriodicOutputs() {
-        mHangMotor.set(mPeriodicIO.speed);
+        //mHangMotor.set(mPeriodicIO.speed);
     }
 
     /*@Override
@@ -115,4 +116,10 @@ public class Hang extends Subsystem {
         mPeriodicIO.speed = Constants.Hang.kHoldSpeed;
         mPeriodicIO.state = HangState.HOLD;
     }
+
+    public void setMotor(double speed) {
+        mHangMotor.set(speed);
+    }
+
+
 }

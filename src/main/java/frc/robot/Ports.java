@@ -24,7 +24,7 @@ public class Ports {
 
 //	public static final CanDeviceId BL_DRIVE = new CanDeviceId(4, "CV");
 //	public static final CanDeviceId BL_ROTATION = new CanDeviceId(5, "CV");
-	public static final CanDeviceId BL_CANCODER = new CanDeviceId(0, "CV");
+	public static final CanDeviceId BL_CANCODER = new CanDeviceId(14, "CV");//dc.2.15.25, changed id to debug lasercan
 
 //	public static final CanDeviceId BR_DRIVE = new CanDeviceId(6, "CV");
 //	public static final CanDeviceId BR_ROTATION = new CanDeviceId(7, "CV");

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import au.grapplerobotics.CanBridge;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -15,6 +16,7 @@ import frc.robot.Loops.Looper;
 //import frc.robot.controlboard.ControlBoard;
 //import frc.robot.controlboard.DriverControls;
 import frc.robot.subsystems.DummySubsystem;
+import frc.robot.subsystems.Laser;
 import frc.robot.subsystems.SubsystemManager;
 
 /**
@@ -70,6 +72,8 @@ public class Robot extends TimedRobot {
     m_robotStateField.setRobotPose(m_robotStatePose);
     
     SmartDashboard.putData("Robot State", m_robotStateField);
+
+  
     //subsystems and loop framework init code move to RobotContainer25 class  
   }
 
@@ -87,7 +91,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
+    //SmartDashboard.putNumber("Algae Shooter", Laser.getMeasurementAlgaeShooter());
     m_robotStatePose = RobotState.getInstance().getLatestFieldToVehicle();
     m_robotStateField.setRobotPose(m_robotStatePose);
 
