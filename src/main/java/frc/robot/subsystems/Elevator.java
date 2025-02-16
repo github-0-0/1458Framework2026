@@ -82,8 +82,9 @@ public class Elevator extends Subsystem {
     L4,
   }
 
-  public int currentState = 0;
-  public int targetState = 0;
+  private int currentState = 0;
+  private int targetState = 0;
+  private double targetRot = 0;
 
   private static class PeriodicIO {
     double elevator_target = 0.0;
@@ -109,7 +110,7 @@ public class Elevator extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     //goToTarget();
-
+    
 
 
     
@@ -144,7 +145,7 @@ public class Elevator extends Subsystem {
     mPeriodicIO.is_elevator_pos_control = false;
     mPeriodicIO.elevator_power = 0.0;
 
-    mRightMotor.set(0.0);
+    mRightMotor.set(-0.02);
   }
 
   @Override
@@ -195,7 +196,7 @@ public class Elevator extends Subsystem {
   // }
 
 public void updateLocation() {
-  for(int i = 0; i < 5; i++) {
+  for(int i = 0; i < 4; i++) {
     if(DigitalSensor.getSensor(i)) {
       currentState = i;
       break;
@@ -207,12 +208,46 @@ public void updateLocation() {
 
 public void setTargetLevel(int target) {
   targetState = target;
-  if(targetState > 4) {
-    targetState = 0;
+  if(targetState > 3) {
+    targetState = 3;
   }
   if(targetState < 0) {
-    targetState = 4;
+    targetState = 0;
   }
+  switch(targetState) {
+    case 0:
+      targetRot = 0;
+      break;
+    case 1:
+      targetRot = -11.229;
+      break;
+    case 2:
+      targetRot = -23.44;
+      break;
+    case 3:
+      targetRot = -43;
+      break;
+    default:
+      targetRot = 0;
+      break;
+
+  }
+}
+
+public int getTarget() {
+  return targetState;
+}
+
+public int getCurr() {
+  return currentState;
+}
+
+public double getRot(){
+  return mRightMotor.getPosition().getValueAsDouble();
+}
+
+public void resetRot() {
+  mRightMotor.setPosition(0);
 }
 
 public void incTarget() {
@@ -228,23 +263,22 @@ public void runElevator(double speed) {
 }
 
 public boolean goToTarget() {
-  updateLocation();
-  if(targetState > 4 || targetState < 0) {
-    targetState = 0;
-  }
+  double currentRot = getRot();
+  
   if(Laser.inRangeIntake()) {
     return false;
   }
-  else if(targetState == currentState) {
+  
+  else if(Math.abs(Math.abs(currentRot) - Math.abs(targetRot)) < 0.5) {
     stop();
     return true;
   }
-  else if(targetState > currentState) {
-    runElevator(0.05);
+  else if(targetRot < currentRot) {
+    runElevator(-0.1);
     return false;
   }
-  else if(targetState < currentState) {
-    runElevator(-0.05);
+  else if(targetState > currentState) {
+    runElevator(0.1);
     return false;
   }
   return false;
