@@ -3,8 +3,10 @@ package frc.robot.subsystems.vision;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import frc.robot.FieldLayout;
+import frc.robot.LimelightHelpers;
 import frc.robot.RobotState;
 import frc.robot.RobotState.VisionUpdate;
+import frc.robot.lib.drivers.Pigeon;
 import frc.robot.subsystems.Subsystem;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -29,6 +31,8 @@ public class VisionDevice extends Subsystem {
 	private final VisionDeviceConstants mConstants;
 	private PeriodicIO mPeriodicIO = new PeriodicIO();
 
+	private Pigeon mPigeon;
+
 	private NetworkTable mConfigTable;
 	private NetworkTable mOutputTable;
 	private NetworkTable mCalibTable;
@@ -43,6 +47,8 @@ public class VisionDevice extends Subsystem {
 	public VisionDevice(VisionDeviceConstants constants) {
 		robotField = new Field2d();
 		SmartDashboard.putData(constants.kTableName + "/Vision Measurement", robotField);
+
+		mPigeon = Pigeon.getInstance();
 
 		mConstants = constants;
 		mConfigTable = NetworkTableInstance.getDefault().getTable(mConstants.kTableName + "/configs");
@@ -109,6 +115,13 @@ public class VisionDevice extends Subsystem {
 		double[] mt2Pose = mObservations.get();
 		double[] stdDevs = mStdDevs.get();
 		double timestamp = Timer.getFPGATimestamp() * Math.pow(10, 6) - VisionDeviceManager.getTimestampOffset();
+		
+		if (mt2Pose.length == 0) {
+			return;
+		}
+
+		LimelightHelpers.SetRobotOrientation(mConstants.kTableName, mPigeon.getYaw().getDegrees(), 0, 0, 0, 0, 0);	
+
 		Pose2d botPose = new Pose2d(mt2Pose[0], mt2Pose[1], new Rotation2d(mt2Pose[5] * Math.PI / 180));
 		Vector<N2> stdDevsVec = VecBuilder.fill(stdDevs[6], stdDevs[7]);
 

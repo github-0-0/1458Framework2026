@@ -229,7 +229,7 @@ public class WheelTracker {
 		props.previousEncDistance = currentEncDistance;
 	}
 
-	private void resetModulePoses(Pose2d mRobotPose) {
+	public void resetModulePoses(Pose2d mRobotPose) {
 		for (int i = 0; i < mModules.length; i++) {
 			WheelProperties props = WheelProperties[i];
 			Translation2d modulePosition = new Pose2d(mRobotPose.getTranslation().plus(props.startingPosition),mRobotPose.getRotation())

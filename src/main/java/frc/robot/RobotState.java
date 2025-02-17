@@ -1,7 +1,6 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +10,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 
-import edu.wpi.first.math.trajectory.Trajectory;
+import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.vision.VisionPoseAcceptor;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -24,8 +23,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -77,7 +74,7 @@ public class RobotState {
 
 	public double lastTimestamp = 0;
 
-	private Rotation2d rotationZero=new Rotation2d();//dc.2.11.2025, bugfix, init to zero, otherwise, it broke the first addOdometryUpdate()
+	private Rotation2d rotationZero = new Rotation2d();
 
 	public RobotState() {
 		reset(0.0, new InterpolatingPose2d());
@@ -159,6 +156,8 @@ public class RobotState {
 			mKalmanFilter.setXhat(0, field_to_odom.getX());
 			mKalmanFilter.setXhat(1, field_to_odom.getY());
 			mLatestVisionUpdate = Optional.ofNullable(update);
+
+			SwerveDrive.getInstance().mWheelTracker.resetModulePoses(new Pose2d(field_to_odom, rotZero));
 		} else {
 			double vision_timestamp = mLatestVisionUpdate.get().timestamp;
 			lastTimestamp = mLatestVisionUpdate.get().timestamp;
@@ -373,30 +372,30 @@ public class RobotState {
 		}
 	}
 
-	// public Optional<PathPlannerPath> alignToTagTrajectory(Integer id) {
-	// 	AprilTagFieldLayout apriltags;
-	// 	try {
-	// 		apriltags = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile); // See https://firstfrc.blob.core.windows.net/frc2025/Manual/TeamUpdates/TeamUpdate12.pdf
-	// 	} catch (IOException e) {
-	// 		throw new RuntimeException(e);
-	// 	}
+	public Optional<PathPlannerPath> alignToTagTrajectory(Integer id) {
+		AprilTagFieldLayout apriltags;
+		try {
+			apriltags = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile); // See https://firstfrc.blob.core.windows.net/frc2025/Manual/TeamUpdates/TeamUpdate12.pdf
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
-	// 	Optional<Pose3d> tagPose = apriltags.getTagPose(id);
+		Optional<Pose3d> tagPose = apriltags.getTagPose(id);
 
-	// 	if (tagPose.isEmpty()) {
-	// 		return Optional.empty();
-	// 	}
+		if (tagPose.isEmpty()) {
+			return Optional.empty();
+		}
 
-	// 	List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-	// 		this.getLatestFieldToVehicle(),
-	// 		new Pose2d(this.getLatestFieldToVehicle().getTranslation(), tagPose.get().toPose2d().getRotation())
-	// 	);
-	// 	PathConstraints constraints = new PathConstraints(5.05/5, 4.4/4, 3.14, 720);
+		List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+			this.getLatestFieldToVehicle(),
+			new Pose2d(this.getLatestFieldToVehicle().getTranslation(), tagPose.get().toPose2d().getRotation())
+		);
+		PathConstraints constraints = new PathConstraints(5.05/5, 4.4/4, 3.14, 720);
 
-	// 	PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, tagPose.get().toPose2d().getRotation()));
+		PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, tagPose.get().toPose2d().getRotation()));
 		
-	// 	path.preventFlipping = true;
+		path.preventFlipping = true;
 
-	// 	return Optional.of(path);
-	// }
+		return Optional.of(path);
+	}
 }
