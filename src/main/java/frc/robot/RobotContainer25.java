@@ -250,14 +250,21 @@ public class RobotContainer25 {
                 System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
                 }
 */
-                if(xboxController.getYButton()) {
-                    m_Elevator.runElevator(-0.1);
+                if(xboxController.getYButtonPressed()) {
+                    m_Elevator.incTarget();
                 }
-                else if(xboxController.getAButton()) {
-                    m_Elevator.runElevator(0.1);
+                else if(xboxController.getAButtonPressed()) {
+                    m_Elevator.decTarget();
                 }
-                else{
-                    m_Elevator.runElevator(-0.02);
+                else {
+                   // m_Elevator.runElevator(-0.02);
+                }
+
+                if(xboxController.getBButton()) {
+                    m_Elevator.goToTarget();
+                }
+                else {
+                    m_Elevator.stop();
                 }
 
                 if(xboxController.getXButton()) {
@@ -269,23 +276,50 @@ public class RobotContainer25 {
                 else{
                     m_Shooter.stop();
                 }
-                if(xboxController.getLeftBumperButton()){
-                    m_AlgaeShooter.shoot();
-                }
-                else if(Laser.inRangeAlgaeShooter()) {
-                    m_AlgaeShooter.stop();
-                }
-                else if(xboxController.getRightBumperButton()) {
-                    m_AlgaeShooter.intake();
+
+                
+                if(xboxController.getRightBumperButton()) {
+                    //m_Funnel.runMotor(-0.3);
+                    m_Hang.setMotor(0.3);
+                }else if(xboxController.getLeftBumperButton()){
+                    //m_Funnel.runMotor(0.3);
+                    m_Hang.setMotor(-0.3);
                 }
                 else{
-                    m_AlgaeShooter.stop();
+                    m_Funnel.runMotor(0);
+                    m_Hang.setMotor(-0);
                 }
+
+                if(xboxController.getAxisCount() == 0) {
+                    m_Funnel.runMotor(0.1);
+                }
+                else if(xboxController.getAxisCount() == 180) {
+                    m_Funnel.runMotor(-0.1);
+                }
+                else {
+                    //m_Funnel.runMotor(0);
+                }
+
+                if(xboxController.getAxisCount() == 90) {
+                    m_Hang.setMotor(0.1);
+                }
+                else if(xboxController.getAxisCount() == 270) {
+                    m_Hang.setMotor(-0.1);
+                }
+                else {
+                    //m_Hang.setMotor(0);
+                }
+
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
-                
-                SmartDashboard.putNumber("Algae thingy", Laser.getMeasurementAlgaeShooter());
+
+                for(int i = 0; i < 4;  i++) {
+                    SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
+                }
+                SmartDashboard.putNumber("Target: ", m_Elevator.getTarget());
+                SmartDashboard.putNumber("Current State: ", m_Elevator.getCurr());
+                SmartDashboard.putNumber("Rotation Elevator", m_Elevator.getRot());
 
                 if (Robot.isSimulation()) {
                     m_Elevator.updateSimPeriodic();

@@ -81,7 +81,7 @@ public class Funnel extends Subsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
-		mPivotMotor.setVoltage(m_periodicIO.intake_pivot_voltage);
+		//mPivotMotor.setVoltage(m_periodicIO.intake_pivot_voltage);
 	}
 
 	@Override
@@ -157,4 +157,12 @@ public class Funnel extends Subsystem {
 	public static int clamp(int val, int min, int max) {
 		return Math.max(min, Math.min(max, val));
 	}
+
+	public void runMotor(double speed) {
+		mPivotMotor.set(speed);
+	}
+
+
+
+
 }
