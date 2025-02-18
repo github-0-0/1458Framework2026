@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -34,11 +36,7 @@ public class Elevator extends Subsystem {
 
 
 
-  
-  private TrapezoidProfile mProfile;
-  private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
-  private TrapezoidProfile.State mGoalState = new TrapezoidProfile.State();
-  private PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+  private MotionMagicVoltage m_request;
   private double prevUpdateTime = Timer.getFPGATimestamp();
 
   //private SlewRateLimiter mSpeedLimiter = new SlewRateLimiter(1000);
@@ -54,23 +52,39 @@ public class Elevator extends Subsystem {
 
     mPeriodicIO = new PeriodicIO();
 
+
+
     // LEFT ELEVATOR MOTOR
-    mLeftMotor = new TalonFX(Constants.Elevator.kElevatorLeftMotorId);
+    mLeftMotor = new TalonFX(Constants.Elevator.kElevatorLeftMotorId); //MASTER
     // RIGHT ELEVATOR MOTOR
     mRightMotor = new TalonFX(Constants.Elevator.kElevatorRightMotorId);
+
+    var talonFXConfigs = new TalonFXConfiguration();
+
+
+    var slot0Configs = talonFXConfigs.Slot0;
+    slot0Configs.kS = 0.1; // Add 0.1 V output to overcome static friction
+    slot0Configs.kV = 0.0; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kP = 2.4; // An error of 1 rotation results in 2.4 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
+
+    var motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicJerk = 1600;
+
+    mRightMotor.getConfigurator().apply(talonFXConfigs);
+    mLeftMotor.getConfigurator().apply(talonFXConfigs);
+
     
-    mLeftMotor.setControl(new Follower(mRightMotor.getDeviceID(), true));
+    mRightMotor.setControl(new Follower(mLeftMotor.getDeviceID(), true));
     mLeftMotor.setNeutralMode(NeutralModeValue.Coast);
-    mRightMotor.setNeutralMode(NeutralModeValue.Brake);
+    mLeftMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    // mRightMotor.setInverted(true);
-    mRightMotor.setControl(new DutyCycleOut(mLeftMotor.getDutyCycle().getValue()));
-
-    //mLeftMotor.burnFlash();
-    //mRightMotor.burnFlash();
-    //TODO: figure out burnflash equivalent
-    mProfile = new TrapezoidProfile(
-        new TrapezoidProfile.Constraints(Constants.Elevator.kMaxVelocity, Constants.Elevator.kMaxAcceleration));
+    mLeftMotor.setControl(new DutyCycleOut(mLeftMotor.getDutyCycle().getValue()));
+    
+    m_request = new MotionMagicVoltage(0);
   }
 
   public enum ElevatorState {
@@ -110,34 +124,6 @@ public class Elevator extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     //goToTarget();
-    
-
-
-    
-    // double curTime = Timer.getFPGATimestamp();
-    // double dt = curTime - prevUpdateTime;
-    // prevUpdateTime = curTime;
-    // if (mPeriodicIO.is_elevator_pos_control) {
-    //   // Update goal
-    //   mGoalState.position = mPeriodicIO.elevator_target;
-
-    //   // Calculate new state
-    //   prevUpdateTime = curTime;
-    //   mCurState = mProfile.calculate(dt, mCurState, mGoalState);
-
-    //   // Set PID controller to new state
-    //   /*mLeftPIDController.setReference(
-    //       mCurState.position,
-    //       CANSparkMax.ControlType.kPosition,
-    //       0,
-    //       Constants.Elevator.kG,
-    //       ArbFFUnits.kVoltage);*/ //TODO: verify if this patch works
-    //   mLeftMotor.setControl(m_request.withPosition(mCurState.position));
-    // } else {
-    //   //mCurState.position = mLeftEncoder.getPosition().getValueAsDouble();
-    //   mCurState.velocity = 0;
-    //   mLeftMotor.set(mPeriodicIO.elevator_power);
-    
   }
 
   @Override
@@ -145,7 +131,7 @@ public class Elevator extends Subsystem {
     mPeriodicIO.is_elevator_pos_control = false;
     mPeriodicIO.elevator_power = 0.0;
 
-    mRightMotor.set(-0.02);
+    runElevator(0.02);
   }
 
   @Override
@@ -154,8 +140,6 @@ public class Elevator extends Subsystem {
     SmartDashboard.putNumber("Position/Target", mPeriodicIO.elevator_target);
     //SmartDashboard.putNumber("Velocity/Current", mLeftEncoder.getVelocity().getValueAsDouble());
 
-    SmartDashboard.putNumber("Position/Setpoint", mCurState.position);
-    SmartDashboard.putNumber("Velocity/Setpoint", mCurState.velocity);
 
     SmartDashboard.putNumber("Current/Left", mLeftMotor.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Current/Right", mRightMotor.getSupplyCurrent().getValueAsDouble());
@@ -216,19 +200,19 @@ public void setTargetLevel(int target) {
   }
   switch(targetState) {
     case 0:
-      targetRot = -0.1;
+      targetRot = 0.1;
       break;
     case 1:
-      targetRot = -11.229;
+      targetRot = 11.229;
       break;
     case 2:
-      targetRot = -23.44;
+      targetRot = 23.44;
       break;
     case 3:
-      targetRot = -45;
+      targetRot = 45;
       break;
     default:
-      targetRot = -0.1;
+      targetRot = 0.1;
       break;
 
   }
@@ -247,7 +231,7 @@ public double getTargRot() {
 }
 
 public double getRot(){
-  return mRightMotor.getPosition().getValueAsDouble();
+  return mLeftMotor.getPosition().getValueAsDouble();
 }
 
 public void resetRot() {
@@ -263,7 +247,7 @@ public void decTarget() {
  }
 
 public void runElevator(double speed) {
-  mRightMotor.set(speed);
+  mLeftMotor.set(speed);
 }
 
 public boolean goToTarget() {
@@ -273,20 +257,18 @@ public boolean goToTarget() {
     System.out.println("Break Laser Check");
     return false;
   }
-  
-  else if(Math.abs(Math.abs(currentRot) - Math.abs(targetRot)) < 0.5) {
+  mLeftMotor.setControl(m_request.withPosition(targetRot));
+
+  if(Math.abs(Math.abs(currentRot) - Math.abs(targetRot)) < 0.5) {
     System.out.println("At Location");
-    stop();
     return true;
   }
   else if(targetRot < currentRot) {
     System.out.println("Moving Up");
-    runElevator(-0.2);
     return false;
   }
   else if(targetRot > currentRot) {
     System.out.println("Moving Down");
-    runElevator(0.15);
     return false;
   }
   System.out.println("No Case");

@@ -265,11 +265,6 @@ m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                 else if(xboxController.getAButtonPressed()) {
                     m_Elevator.decTarget();
                 }
-                else {
-                   // m_Elevator.runElevator(-0.02);
-                }
-
-
                 if(xboxController.getBButton()) {
                     m_Elevator.goToTarget();
                 }
