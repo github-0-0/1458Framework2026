@@ -44,6 +44,7 @@ public class RobotContainer25 {
     private final Joystick m_JoyStick = new Joystick(0);
 
     private final XboxController xboxController = new XboxController(0);
+    private final XboxController xboxController2 = new XboxController(1);
     /* button key-value */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
@@ -70,7 +71,7 @@ public class RobotContainer25 {
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
 	
-    private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
+    //private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
 
     //contructor
     public RobotContainer25 (){
@@ -82,7 +83,7 @@ public class RobotContainer25 {
             m_Elevator = Elevator.getInstance();
             m_Shooter = Shooter.getInstance();
             m_AlgaeShooter = AlgaeShooter.getInstance();
-//            m_CoralShooter = CoralShooter.getInstance();
+            //m_CoralShooter = CoralShooter.getInstance();
             m_Hang = Hang.getInstance();
             m_Funnel = Funnel.getInstance();
 
@@ -109,8 +110,8 @@ public class RobotContainer25 {
                 m_Elevator,
                 m_ExampleSubsystem,
                 m_AlgaeShooter,
-                m_VisionDevices,
-//                m_CoralShooter,
+                //m_VisionDevices,
+                //m_CoralShooter,
                 m_Hang,
                 m_Funnel
                 //Insert instances of additional subsystems here
@@ -231,7 +232,7 @@ public class RobotContainer25 {
             //mControlBoard.update();
 
 			/* Drive */
-			if (m_JoyStick.getRawButton(XboxController.Button.kStart.value)) {
+			if (xboxController.getStartButton()) {
 				System.out.println("keyY is pressed, zero the wheels!");
                 if (m_SwerveDrive != null)             
                     m_SwerveDrive.zeroGyro(0);
@@ -250,6 +251,14 @@ public class RobotContainer25 {
                 System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
                 }
 */
+
+System.out.println("Before Swerve");
+
+m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+    translationVal, strafeVal, rotationVal,
+    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
+    System.out.println("After Swerve");
+
                 if(xboxController.getYButtonPressed()) {
                     m_Elevator.incTarget();
                 }
@@ -259,6 +268,7 @@ public class RobotContainer25 {
                 else {
                    // m_Elevator.runElevator(-0.02);
                 }
+
 
                 if(xboxController.getBButton()) {
                     m_Elevator.goToTarget();
@@ -276,53 +286,51 @@ public class RobotContainer25 {
                     m_Shooter.stop();
                 }
 
-                
                 if(xboxController.getRightBumperButton()) {
-                    //m_Funnel.runMotor(-0.3);
-                    m_Hang.setMotor(0.3);
+                    m_AlgaeShooter.intake();
+
+                    
                 }else if(xboxController.getLeftBumperButton()){
-                    //m_Funnel.runMotor(0.3);
+                    m_AlgaeShooter.shoot();
+                }
+                else{
+                    m_AlgaeShooter.stop();
+                }
+
+                if(xboxController2.getRightBumperButton()) {
+                    m_Hang.setMotor(0.3);
+                }else if(xboxController2.getLeftBumperButton()){
                     m_Hang.setMotor(-0.3);
                 }
                 else{
-                    m_Funnel.runMotor(0);
+                    
                     m_Hang.setMotor(-0);
                 }
 
-                if(xboxController.getAxisCount() == 0) {
-                    m_Funnel.runMotor(0.1);
+                if(xboxController2.getRightTriggerAxis() > 0.7) {
+                   m_Funnel.runMotor(-0.3);
+                   
+                }else if(xboxController2.getLeftTriggerAxis() > 0.7){
+                    m_Funnel.runMotor(0.3);
                 }
-                else if(xboxController.getAxisCount() == 180) {
-                    m_Funnel.runMotor(-0.1);
-                }
-                else {
-                    //m_Funnel.runMotor(0);
+                else{
+                    m_Funnel.runMotor(0);
                 }
 
-                if(xboxController.getAxisCount() == 90) {
-                    m_Hang.setMotor(0.1);
-                }
-                else if(xboxController.getAxisCount() == 270) {
-                    m_Hang.setMotor(-0.1);
-                }
-                else {
-                    //m_Hang.setMotor(0);
-                }
 
                    
 
             
                 
-                m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-                    translationVal, strafeVal, rotationVal,
-                    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
-
+ 
                 for(int i = 0; i < 4;  i++) {
                     SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
                 }
                 SmartDashboard.putNumber("Target: ", m_Elevator.getTarget());
                 SmartDashboard.putNumber("Current State: ", m_Elevator.getCurr());
                 SmartDashboard.putNumber("Rotation Elevator", m_Elevator.getRot());
+                SmartDashboard.putNumber("Target rotation", m_Elevator.getTargRot());
+                SmartDashboard.putNumber("Laser Thing", Laser.getMeasurementAlgaeShooter());
 
 //			mDriverControls.oneControllerMode();
 

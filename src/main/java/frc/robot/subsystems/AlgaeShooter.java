@@ -72,10 +72,9 @@ public class AlgaeShooter extends Subsystem {
 						break;
 					case SHOOT:
 						spinOut();
-						//if(Laser.getMeasurementAlgaeShooter() > 300) {
-						//	stop();
-						//}	
-					spinOut();
+						if(Laser.getMeasurementAlgaeShooter() > 300) {
+							stop();
+						}	//6.9, 19.14
 						break;
 					case STOP:
 						stop();

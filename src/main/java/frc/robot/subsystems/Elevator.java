@@ -216,7 +216,7 @@ public void setTargetLevel(int target) {
   }
   switch(targetState) {
     case 0:
-      targetRot = 0;
+      targetRot = -0.1;
       break;
     case 1:
       targetRot = -11.229;
@@ -225,10 +225,10 @@ public void setTargetLevel(int target) {
       targetRot = -23.44;
       break;
     case 3:
-      targetRot = -43;
+      targetRot = -45;
       break;
     default:
-      targetRot = 0;
+      targetRot = -0.1;
       break;
 
   }
@@ -240,6 +240,10 @@ public int getTarget() {
 
 public int getCurr() {
   return currentState;
+}
+
+public double getTargRot() {
+  return targetRot;
 }
 
 public double getRot(){
@@ -266,21 +270,26 @@ public boolean goToTarget() {
   double currentRot = getRot();
   
   if(Laser.inRangeIntake()) {
+    System.out.println("Break Laser Check");
     return false;
   }
   
   else if(Math.abs(Math.abs(currentRot) - Math.abs(targetRot)) < 0.5) {
+    System.out.println("At Location");
     stop();
     return true;
   }
   else if(targetRot < currentRot) {
-    runElevator(-0.1);
+    System.out.println("Moving Up");
+    runElevator(-0.2);
     return false;
   }
-  else if(targetState > currentState) {
-    runElevator(0.1);
+  else if(targetRot > currentRot) {
+    System.out.println("Moving Down");
+    runElevator(0.15);
     return false;
   }
+  System.out.println("No Case");
   return false;
 }
 
