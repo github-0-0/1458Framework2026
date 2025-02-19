@@ -1,6 +1,5 @@
 package frc.robot;
 
-
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -28,9 +27,11 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
 import frc.robot.Loops.CrashTracker;
+
 /**
  * DC 10.28.2024
- * This class is where the bulk of the robot (for 2025 FRC season) should be declared,
+ * This class is where the bulk of the robot (for 2025 FRC season) should be
+ * declared,
  * while very little robot logic should actually be handled in the {@link Robot}
  * periodic methods. Instead, the structure of the robot (including
  * subsystems, loopers, control button mappings etc) should be declared here.
@@ -38,7 +39,7 @@ import frc.robot.Loops.CrashTracker;
  */
 
 public class RobotContainer25 {
-    public static boolean is_red_alliance = false;  //TODO: code the update logic for this property
+    public static boolean is_red_alliance = false; // TODO: code the update logic for this property
 
     /* Controllers */
     private final Joystick m_JoyStick = new Joystick(0);
@@ -50,10 +51,8 @@ public class RobotContainer25 {
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
     /* JoyStick Buttons */
-    private final JoystickButton m_btnZeroGyro = new JoystickButton(m_JoyStick, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(m_JoyStick, XboxController.Button.kLeftBumper.value);//TODO: how to drive if not robot-centric?
-
-    /* loop framework objects*/
+    
+    /* loop framework objects */
     private final Looper m_EnabledLooper = new Looper();
     private final Looper m_DisabledLooper = new Looper();
     public final SubsystemManager m_SubsystemManager = SubsystemManager.getInstance();
@@ -67,23 +66,25 @@ public class RobotContainer25 {
     private CoralShooter m_CoralShooter;
     private Funnel m_Funnel;
     private Hang m_Hang;
-    
+
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
-	
-    //private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
 
-    //contructor
-    public RobotContainer25 (){
-        try{
-            //get instance of subsystems
+    // private VisionDeviceManager m_VisionDevices =
+    // VisionDeviceManager.getInstance();
+
+    // contructor
+    public RobotContainer25() {
+        try {
+            // get instance of subsystems
             m_ExampleSubsystem = DummySubsystem.getInstance();
-            m_Cancoders = Cancoders.getInstance();//Cancoders shall be initialized before SwerveDrive as Cancoders are used by Module constructor and initialization code
+            m_Cancoders = Cancoders.getInstance();// Cancoders shall be initialized before SwerveDrive as Cancoders are
+                                                  // used by Module constructor and initialization code
             m_SwerveDrive = SwerveDrive.getInstance();
             m_Elevator = Elevator.getInstance();
             m_Shooter = Shooter.getInstance();
             m_AlgaeShooter = AlgaeShooter.getInstance();
-            //m_CoralShooter = CoralShooter.getInstance();
+            // m_CoralShooter = CoralShooter.getInstance();
             m_Hang = Hang.getInstance();
             m_Funnel = Funnel.getInstance();
 
@@ -101,255 +102,266 @@ public class RobotContainer25 {
             }
 
             // reset swerve modules
-            if (m_SwerveDrive != null)             
+            if (m_SwerveDrive != null)
                 m_SwerveDrive.resetModulesToAbsolute();
 
-            //add subsystems to its manager
+            // add subsystems to its manager
             m_SubsystemManager.setSubsystems(
-                m_SwerveDrive,
-                m_Elevator,
-                m_ExampleSubsystem,
-                m_AlgaeShooter,
-                //m_VisionDevices,
-                //m_CoralShooter,
-                m_Hang,
-                m_Funnel
-                //Insert instances of additional subsystems here
+                    m_SwerveDrive,
+                    m_Elevator,
+                    m_ExampleSubsystem,
+                    m_AlgaeShooter,
+                    // m_VisionDevices,
+                    // m_CoralShooter,
+                    m_Hang,
+                    m_Funnel
+            // Insert instances of additional subsystems here
             );
-            //register subsystems to loopers
+            // register subsystems to loopers
             m_SubsystemManager.registerEnabledLoops(m_EnabledLooper);
             m_SubsystemManager.registerDisabledLoops(m_DisabledLooper);
 
-            //load all predefined trajectories  
+            // load all predefined trajectories
             TrajectoryGenerator.getInstance().generateTrajectories();
-			
-            RobotState.getInstance().resetKalman(); //TODO: complete RobotState classes
-            
-            //set robot to neutral brake
-            if (m_SwerveDrive != null)             
+
+            RobotState.getInstance().resetKalman(); // TODO: complete RobotState classes
+
+            // set robot to neutral brake
+            if (m_SwerveDrive != null)
                 m_SwerveDrive.setNeutralBrake(true);
 
-            //binds single-button events
-//            bindSingleButtonCmds ();
-		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);    //TODO: CrashTracker needs to be ported. to log crash/exception
-			throw t;
-		}
+            // binds single-button events
+            // bindSingleButtonCmds ();
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t); // TODO: CrashTracker needs to be ported. to log crash/exception
+            throw t;
+        }
     }
 
     /**
-     * Use this method to define your button->command mappings for single-button events. Buttons can be created by
+     * Use this method to define your button->command mappings for single-button
+     * events. Buttons can be created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+     * it to a {@link
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void bindSingleButtonCmds() {
         System.out.println("-->binding single button commands");
-//        m_btnZeroGyro.onTrue(new InstantCommand(() -> m_SwerveDrive.resetModulesToAbsolute())); //TODO: zeroGyro() vs zeroHeading()? check with victor
+        // m_btnZeroGyro.onTrue(new InstantCommand(() ->
+        // m_SwerveDrive.resetModulesToAbsolute())); //TODO: zeroGyro() vs
+        // zeroHeading()? check with victor
         // additional command bindings for single-event buttons
     }
 
-
     // switch between two loopers
-    public void switchOnLooper (Looper onLooper, Looper offLooper){
+    public void switchOnLooper(Looper onLooper, Looper offLooper) {
         offLooper.stop();
         onLooper.start();
     }
 
     // init manual (teleop) mode
-    public void initManualMode (){
+    public void initManualMode() {
         if (m_AutoModeExecutor != null) {
-			m_AutoModeExecutor.stop();
-		}
-   		try {
-            //RobotState.getInstance().setIsInAuto(false);
+            m_AutoModeExecutor.stop();
+        }
+        try {
+            // RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
-            if (m_SwerveDrive != null)             
-     			m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
+            if (m_SwerveDrive != null)
+                m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
-		} catch (Throwable t) {
+        } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
+            throw t;
+        }
 
     }
+
     // init manual (teleop) mode
-    public void initAutoMode (){
-		m_AutoModeSelector.reset();
-		m_AutoModeSelector.updateModeCreator(true);
+    public void initAutoMode() {
+        m_AutoModeSelector.reset();
+        m_AutoModeSelector.updateModeCreator(true);
         Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
 
-		m_AutoModeExecutor = new AutoModeExecutor();
+        m_AutoModeExecutor = new AutoModeExecutor();
         if (autoMode.isPresent() && (autoMode.get() != m_AutoModeExecutor.getAutoMode())) {
             m_AutoModeExecutor.setAutoMode(autoMode.get());
         }
         try {
-            //RobotState.getInstance().setIsInAuto(false);
+            // RobotState.getInstance().setIsInAuto(false);
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
             m_AutoModeExecutor.start();
-		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
 
     }
 
     // init manual (teleop) mode
-    public void initDisabledMode (){
+    public void initDisabledMode() {
         if (m_AutoModeExecutor != null) {
-			m_AutoModeExecutor.stop();
-		}
+            m_AutoModeExecutor.stop();
+        }
         try {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
-		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
     }
 
     // init manual (teleop) mode
-    public void initTestMode (){
+    public void initTestMode() {
         try {
-            //RobotState.getInstance().setIsInAuto(false);
+            // RobotState.getInstance().setIsInAuto(false);
             if (m_AutoModeExecutor != null) {
-			    m_AutoModeExecutor.stop();
-		    }
+                m_AutoModeExecutor.stop();
+            }
 
-            //testChassisSpeedConvert();
-            //CrashTracker.logTest("Testing crashtracker - if you see this it works");
-		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
+            // testChassisSpeedConvert();
+            // CrashTracker.logTest("Testing crashtracker - if you see this it works");
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
     }
-    public void testModePeriodic () {
+
+    public void testModePeriodic() {
         Laser.testLaser();
     }
 
     // manual mode periodic callback
-    public void manualModePeriodic (){
-		try {
-            //mControlBoard.update();
+    public void manualModePeriodic() {
+        try {
+            // mControlBoard.update();
 
-			/* Drive */
-			if (xboxController.getStartButton()) {
-				System.out.println("keyY is pressed, zero the wheels!");
-                if (m_SwerveDrive != null)             
+            /* Drive */
+            if (xboxController.getStartButton()) {
+                System.out.println("keyY is pressed, zero the wheels!");
+                if (m_SwerveDrive != null)
                     m_SwerveDrive.zeroGyro(0);
-			}
-                //dc.11.9.24, to scale up joystick input to max-speed
-                double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
-                double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
-                double rotationVal = MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
-/*              if (translationVal!=0.0 || strafeVal!=0.0 ) { 
-                //dc 1.20.25, debug issues after robot rotation
-                System.out.println("DC: manualModePeriodc() field speed: tVal=" + translationVal + ", sVal=" + strafeVal + ", rVal=" + rotationVal);
-                System.out.println("DC: manualModePeriodc() swerveHeading =" + m_SwerveDrive.getHeading().getDegrees());
-                ChassisSpeeds rs = ChassisSpeeds.fromFieldRelativeSpeeds(
+            }
+            // dc.11.9.24, to scale up joystick input to max-speed
+            double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis),
+                    Constants.stickDeadband) * Constants.SwerveConstants.maxSpeed;
+            double strafeVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)
+                    * Constants.SwerveConstants.maxSpeed;
+            double rotationVal = MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)
+                    * Constants.Swerve.maxAngularVelocity;
+            /*
+             * if (translationVal!=0.0 || strafeVal!=0.0 ) {
+             * //dc 1.20.25, debug issues after robot rotation
+             * System.out.println("DC: manualModePeriodc() field speed: tVal=" +
+             * translationVal + ", sVal=" + strafeVal + ", rVal=" + rotationVal);
+             * System.out.println("DC: manualModePeriodc() swerveHeading =" +
+             * m_SwerveDrive.getHeading().getDegrees());
+             * ChassisSpeeds rs = ChassisSpeeds.fromFieldRelativeSpeeds(
+             * translationVal, strafeVal, rotationVal,
+             * Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance));
+             * System.out.println("DC: manualModePeriodc() robot speed: tVal=" +
+             * rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" +
+             * rs.omegaRadiansPerSecond);
+             * }
+             */
+
+            m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
-                    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance));
-                System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
-                }
-*/
+                    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
 
-System.out.println("Before Swerve");
-
-m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-    translationVal, strafeVal, rotationVal,
-    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
-    System.out.println("After Swerve");
-
-                if(xboxController.getYButtonPressed()) {
-                    m_Elevator.incTarget();
-                }
-                else if(xboxController.getAButtonPressed()) {
-                    m_Elevator.decTarget();
-                }
-                if(xboxController.getBButton()) {
-                    m_Elevator.goToTarget();
-                }
-                else {
-                    m_Elevator.stop();
-                }
-                if(xboxController.getXButton()) {
-                    m_Shooter.spinFast();
-                }
-                else if(Laser.inRangeIntake()) {
-                    m_Shooter.spin();                   
-                }
-                else{
-                    m_Shooter.stop();
-                }
-
-                if(xboxController.getRightBumperButton()) {
-                    m_AlgaeShooter.intake();
-
-                    
-                }else if(xboxController.getLeftBumperButton()){
-                    m_AlgaeShooter.shoot();
-                }
-                else{
-                    m_AlgaeShooter.stop();
-                }
-
-                if(xboxController2.getRightBumperButton()) {
-                    m_Hang.setMotor(0.3);
-                }else if(xboxController2.getLeftBumperButton()){
-                    m_Hang.setMotor(-0.3);
-                }
-                else{
-                    
-                    m_Hang.setMotor(-0);
-                }
-
-                if(xboxController2.getRightTriggerAxis() > 0.7) {
-                   m_Funnel.runMotor(-0.3);
-                   
-                }else if(xboxController2.getLeftTriggerAxis() > 0.7){
-                    m_Funnel.runMotor(0.3);
-                }
-                else{
-                    m_Funnel.runMotor(0);
-                }
-
-
-                   
+            int plus = xboxController.getPOV();
 
             
-                
- 
-                for(int i = 0; i < 4;  i++) {
-                    SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
-                }
-                SmartDashboard.putNumber("Target: ", m_Elevator.getTarget());
-                SmartDashboard.putNumber("Current State: ", m_Elevator.getCurr());
-                SmartDashboard.putNumber("Rotation Elevator", m_Elevator.getRot());
-                SmartDashboard.putNumber("Target rotation", m_Elevator.getTargRot());
-                SmartDashboard.putNumber("Laser Thing", Laser.getMeasurementAlgaeShooter());
+            if(plus == 180) {
+                m_Elevator.setTargetLevel(0);
+            }
+            else if(plus == 0) {
+                m_Elevator.setTargetLevel(3);
+            }
+            else if(plus == 90) {
+                m_Elevator.setTargetLevel(1);
+            }
+            else if(plus == 270) {
+                m_Elevator.setTargetLevel(2);
+            }
 
-//			mDriverControls.oneControllerMode();
+            if (xboxController.getBButton()) {
+                m_Elevator.goToTarget();
+            } else {
+                m_Elevator.stop();
+            }
+            if (xboxController.getXButton()) {
+                m_Shooter.spinFast();
+            } else if (Laser.inRangeIntake()) {
+                m_Shooter.spin();
+            } else {
+                m_Shooter.stop();
+            }
 
-		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
+            if (xboxController.getRightBumperButton()) {
+                m_AlgaeShooter.intake();
+
+            } else if (xboxController.getLeftBumperButton()) {
+                m_AlgaeShooter.shoot();
+            } else {
+                m_AlgaeShooter.stop();
+            }
+
+            if (xboxController2.getRightBumperButton()) {
+                m_Hang.setMotor(0.3);
+            } else if (xboxController2.getLeftBumperButton()) {
+                m_Hang.setMotor(-0.3);
+            } else {
+
+                m_Hang.setMotor(-0);
+            }
+
+            if (xboxController2.getRightTriggerAxis() > 0.7) {
+                m_Funnel.runMotor(-0.3);
+
+            } else if (xboxController2.getLeftTriggerAxis() > 0.7) {
+                m_Funnel.runMotor(0.3);
+            } else {
+                m_Funnel.runMotor(0);
+            }
+
+            for (int i = 0; i < 4; i++) {
+                SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
+            }
+            SmartDashboard.putNumber("Target: ", m_Elevator.getTarget());
+            SmartDashboard.putNumber("Current State: ", m_Elevator.getCurr());
+            SmartDashboard.putNumber("Rotation Elevator", m_Elevator.getRot());
+            SmartDashboard.putNumber("Target rotation", m_Elevator.getTargRot());
+            SmartDashboard.putNumber("Laser Thing", Laser.getMeasurementAlgaeShooter());
+
+            // mDriverControls.oneControllerMode();
+
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
 
     }
 
-    public void testChassisSpeedConvert (){
-        double tV= 2;
-        double sV=0.0;//1;
-        double rV=0.0;
-        ChassisSpeeds rs = ChassisSpeeds.fromFieldRelativeSpeeds( tV, sV, rV, Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance));
+    public void testChassisSpeedConvert() {
+        double tV = 2;
+        double sV = 0.0;// 1;
+        double rV = 0.0;
+        ChassisSpeeds rs = ChassisSpeeds.fromFieldRelativeSpeeds(tV, sV, rV,
+                Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance));
         System.out.println("DC: testChassisSpeedConvert field speed: tVal=" + tV + ", sVal=" + sV + ", rVal=" + rV);
-        System.out.println("DC: testChassisSpeedConvert robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
-        System.out.println("DC: testChassisSpeedConvert swerveHeading: heading=" + m_SwerveDrive.getHeading() + ", field=" + sV + ", rVal=" + rV);
+        System.out.println("DC: testChassisSpeedConvert robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal="
+                + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
+        System.out.println("DC: testChassisSpeedConvert swerveHeading: heading=" + m_SwerveDrive.getHeading()
+                + ", field=" + sV + ", rVal=" + rV);
     }
 
-    //dummy methods for now.
+    // dummy methods for now.
     public Command getAutonomousCommand() {
         return null;
     }
+
     public void updateLimeLightData() {
     }
 }

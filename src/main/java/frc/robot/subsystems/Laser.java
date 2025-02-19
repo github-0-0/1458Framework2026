@@ -9,14 +9,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Ports;
 
-public class Laser {    
+public class Laser {
     public static LaserCan intakeLaser = new LaserCan(Ports.LaserCanIDCoralBack.getDeviceNumber());
     public static LaserCan shooterLaser = new LaserCan(Ports.LaserCanIDCoralFront.getDeviceNumber());
     public static LaserCan algaeShooterLaser = new LaserCan(Ports.LaserCanIDAlgae.getDeviceNumber());
 
-
-    public Laser() {}
-
+    public Laser() {
+    }
 
     public static double getMeasurementIntake() {
         return intakeLaser.getMeasurement().distance_mm;
@@ -33,6 +32,7 @@ public class Laser {
     public static boolean inRangeIntake() {
         return getMeasurementIntake() < 100;
     }
+
     public static boolean inRangeShooter() {
         return getMeasurementShooter() < 100;
     }
@@ -42,8 +42,8 @@ public class Laser {
     }
 
     public static void testLaser() {
-        SmartDashboard.putNumber("Laser/Intake sensor",inRangeIntake()?1:0);
-        SmartDashboard.putNumber("Laser/Shooter sensor",inRangeShooter()?1:0);
-        SmartDashboard.putNumber("Laser/Algae sensor",inRangeAlgaeShooter()?1:0);
+        SmartDashboard.putNumber("Laser/Intake sensor", inRangeIntake() ? 1 : 0);
+        SmartDashboard.putNumber("Laser/Shooter sensor", inRangeShooter() ? 1 : 0);
+        SmartDashboard.putNumber("Laser/Algae sensor", inRangeAlgaeShooter() ? 1 : 0);
     }
 }

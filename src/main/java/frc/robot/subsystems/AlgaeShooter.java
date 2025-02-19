@@ -19,12 +19,12 @@ public class AlgaeShooter extends Subsystem {
 
 	/*-------------------------------- Private instance variables ---------------------------------*/
 	private static AlgaeShooter mInstance;
-	
+
 	private PeriodicIO mPeriodicIO = new PeriodicIO();
 
 	public static AlgaeShooter getInstance() {
 		if (mInstance == null) {
-		mInstance = new AlgaeShooter();
+			mInstance = new AlgaeShooter();
 		}
 		return mInstance;
 	}
@@ -32,8 +32,8 @@ public class AlgaeShooter extends Subsystem {
 	private class PeriodicIO {
 		double speed = 0.0;
 		AlgaeShooterState state = AlgaeShooterState.STOP;
-	} 
-	
+	}
+
 	private enum AlgaeShooterState {
 		INTAKE,
 		SHOOT,
@@ -44,12 +44,12 @@ public class AlgaeShooter extends Subsystem {
 	private TalonFX mRightAlgaeShooterMotor;
 
 	private AlgaeShooter() {
-		//super("AlgaeShooter");
+		// super("AlgaeShooter");
 		mLeftAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterLeftMotorId);
-		mRightAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterRightMotorId); //LEADER
+		mRightAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterRightMotorId); // LEADER
 		mLeftAlgaeShooterMotor.setControl(new Follower(mRightAlgaeShooterMotor.getDeviceID(), true));
 		mLeftAlgaeShooterMotor.setNeutralMode(NeutralModeValue.Brake);
-        mRightAlgaeShooterMotor.setNeutralMode(NeutralModeValue.Brake);
+		mRightAlgaeShooterMotor.setNeutralMode(NeutralModeValue.Brake);
 	}
 
 	/*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -58,7 +58,8 @@ public class AlgaeShooter extends Subsystem {
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {}
+			public void onStart(double timestamp) {
+			}
 
 			@Override
 			public void onLoop(double timestamp) {
@@ -72,10 +73,6 @@ public class AlgaeShooter extends Subsystem {
 						break;
 					case SHOOT:
 						spinOut();
-						if(Laser.getMeasurementAlgaeShooter() > 300) {
-							stop();
-						}	//6.9, 19.14
-						break;
 					case STOP:
 						stop();
 						break;
@@ -103,10 +100,10 @@ public class AlgaeShooter extends Subsystem {
 	}
 
 	/*
-	@Override
-	public void reset() {
-	}
-	*/
+	 * @Override
+	 * public void reset() {
+	 * }
+	 */
 
 	/*---------------------------------- Custom Public Functions ----------------------------------*/
 
@@ -127,10 +124,10 @@ public class AlgaeShooter extends Subsystem {
 		mPeriodicIO.speed = Constants.AlgaeShooter.kAlgaeShooterSpeed;
 	}
 
-    public void spinIn() {
-        mPeriodicIO.speed = -Constants.AlgaeShooter.kAlgaeShooterSpeed;
-    }
-	
+	public void spinIn() {
+		mPeriodicIO.speed = -Constants.AlgaeShooter.kAlgaeShooterSpeed;
+	}
+
 	@Override
 	public void stop() {
 		mPeriodicIO.speed = 0.0;
