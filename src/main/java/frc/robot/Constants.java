@@ -310,27 +310,30 @@ public final class Constants {
         //TODO: tune elevator constants to bot
         public static final int kElevatorLeftMotorId = 20;
         public static final int kElevatorRightMotorId = 21;
-    
-        public static final double kP = 0.15;
-        public static final double kI = 0;
+        
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
+        public static final double kP = 0.8;
+        public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kIZone = 5.0;
-        public static final double kG = 0.5;
+        
     
-        public static final double kMaxVelocity = 65;
-        public static final double kMaxAcceleration = 200;
-        public static final int kCurrentThreshold = 45;
+        public static final double kCruiseVelocity = 80;
+        public static final double kAcceleration = 240;
+        public static final double kJerk = 1600;
+        public static final int CurrentThreshold = 45;
         public static final int kMaxCurrent = 40;
         public static final double kMaxPowerUp = 0.1;
         public static final double kMaxPowerDown = 0.1;
         
         //TODO: Find correct elevator heights for each level
-        public static final double kGROUNDHeight = 0.0;
-        public static final double kL1Height = 5.0; //Most likely wrong
-        public static final double kL2Height = 9.0;
-        public static final double kL3Height = 25.14;
-        public static final double kL4Height = 52.0;
-        public static final double kMaxHeight = 56.2;
+        public static final double kGroundHeight = 0.05; //occasionally stalls at bottom
+        public static final double kL2Height = 11.229;
+        public static final double kL3Height = 23.44;
+        public static final double kL4Height = 44.5;    //stalls at top
+        public static final double kAPHeight = 6.9;
+        public static final double kA1Height = 19.4;
+        public static final double kA2Height = 32.5; //Unsure
         
         public static final TalonFXConfiguration ElevatorConfiguration() {
             TalonFXConfiguration config = new TalonFXConfiguration();

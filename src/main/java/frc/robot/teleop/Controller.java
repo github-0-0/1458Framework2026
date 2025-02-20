@@ -60,19 +60,16 @@ public class Controller {
         }
         
         if(mXboxController.getPOV() == 180) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(0));
+            m_TeleopActionExecutor.runAction(new ElevatorActionGround());
         }
-        if (mXboxController.getYButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(1));
+        else if (mXboxController.getPOV() == 0) {
+            m_TeleopActionExecutor.runAction(new ElevatorActionL4());
         }
-        if (mXboxController.getAButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(2));
+        else if (mXboxController.getPOV() == 90) {
+            m_TeleopActionExecutor.runAction(new ElevatorActionL3());
         }
-        if (mXboxController.getBButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(3));
-        }
-        if (mXboxController.getXButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(4));
+        else if (mXboxController.getPOV() == 270) {
+            m_TeleopActionExecutor.runAction(new ElevatorActionL2());
         }
 
         if (mXboxController.getLeftTriggerAxis()>0.5) {
@@ -93,7 +90,7 @@ public class Controller {
                 }
             }
             m_TeleopActionExecutor.runAction(new SeriesAction(
-                new ElevatorAction(isL3 ? 3 : 2),
+                new ElevatorActionL3(),
                 new SnapToTag(2),
                 new AlgaeIntakeAction()
             ));

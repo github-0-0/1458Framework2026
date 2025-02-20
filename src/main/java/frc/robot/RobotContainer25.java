@@ -274,16 +274,16 @@ public class RobotContainer25 {
 
             
             if(plus == 180) {
-                m_Elevator.setTargetLevel(0);
+                m_Elevator.goToElevatorGround();
             }
             else if(plus == 0) {
-                m_Elevator.setTargetLevel(3);
+                m_Elevator.goToElevatorL4();
             }
             else if(plus == 90) {
-                m_Elevator.setTargetLevel(1);
+                m_Elevator.goToElevatorL2();
             }
             else if(plus == 270) {
-                m_Elevator.setTargetLevel(2);
+                m_Elevator.goToElevatorL3();
             }
 
             if (!xboxController.getBButton()) {
@@ -329,11 +329,6 @@ public class RobotContainer25 {
             for (int i = 0; i < 4; i++) {
                 SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
             }
-            SmartDashboard.putNumber("Target: ", m_Elevator.getTarget());
-            SmartDashboard.putNumber("Current State: ", m_Elevator.getCurr());
-            SmartDashboard.putNumber("Rotation Elevator", m_Elevator.getRot());
-            SmartDashboard.putNumber("Target rotation", m_Elevator.getTargRot());
-            SmartDashboard.putNumber("Laser Thing", Laser.getMeasurementAlgaeShooter());
 
             // mDriverControls.oneControllerMode();
 
