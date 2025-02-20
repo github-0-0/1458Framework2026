@@ -142,7 +142,7 @@ public class TestAutoMode3 extends AutoModeBase {
                 case "AIntake":
                     listOfActions.add(new AlgaeIntakeAction());
                     break;
-                    case "GElevator":
+                case "GElevator":
                     listOfActions.add(new ElevatorActionGround());
                     break;
                 case "L2Elevator":

@@ -9,9 +9,8 @@ public class ElevatorActionAP implements Action {
 	@Override
 	public void start() {
 		mElevator = Elevator.getInstance();
-		mElevator.goToElevatorGround();
+		mElevator.goToElevatorAP();
 	}
-
 	@Override
 	public void update() {
 		

@@ -1,15 +1,16 @@
 package frc.robot.autos.actions;
 
 import frc.robot.Robot;
+import frc.robot.subsystems.CoralShooter;
 import frc.robot.subsystems.Elevator;
 
-public class ElevatorActionGround implements Action {
-	private Elevator mElevator = null;
+public class CoralShootAction implements Action {
+	private CoralShooter mShooter = null;
 
 	@Override
 	public void start() {
-		mElevator = Elevator.getInstance();
-		mElevator.goToElevatorGround();
+		mShooter = CoralShooter.getInstance();
+		mShooter.shoot();
 	}
 
 	@Override
@@ -20,11 +21,11 @@ public class ElevatorActionGround implements Action {
 	@Override
 	public boolean isFinished() {
 		if (Robot.isSimulation()) return true;
-		return mElevator.isAtTarget();
+		return !mShooter.isShooting();
 	}
 
 	@Override
 	public void done() {
-		mElevator.stop();
+		mShooter.intake();
 	}
 }

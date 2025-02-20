@@ -54,7 +54,7 @@ public class Shooter extends Subsystem {
 
   @Override
   public void writePeriodicOutputs() {
-
+    
   }
 
   @Override

@@ -392,7 +392,9 @@ public final class Constants {
         public static final int kShooterLeftMotorId = 12;
         public static final int kShooterRightMotorId = 13;
         
-        public static final double kShooterSpeed = 0.1;
+        public static final double kShooterIntakeSpeed = 0.1;
+        public static final double kShooterShootSpeed = 0.15;
+        
       }
 
       //dc.2.11.25, keey the shooter class for now, TODO: remove when CoralShooter is QAed.

@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.time.Period;
 import java.util.zip.Checksum;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -31,7 +32,8 @@ public class CoralShooter extends Subsystem {
 
 	private class PeriodicIO {
 		double speed = 0.0;
-		ShooterState state = ShooterState.STOP;
+		ShooterState state = ShooterState.INTAKE;
+		boolean isShooting = false;
 	} 
 	
 	private enum ShooterState {
@@ -65,6 +67,7 @@ public class CoralShooter extends Subsystem {
 ///* dc.2.10.25, commented out to compile so that we can merge GIT
 				switch (mPeriodicIO.state) {
 					case INTAKE:
+						mPeriodicIO.isShooting = false;
 						if (Laser.inRangeIntake()) {
 							spin();
 						} else {
@@ -72,15 +75,12 @@ public class CoralShooter extends Subsystem {
 						}
 						break;
 					case SHOOT:
+						mPeriodicIO.isShooting = true;
 						if (Laser.inRangeShooter()) {
-							spin();
+							spinFast();
 						} else {
-							stop();
 							intake();
 						}
-						break;
-					case STOP:
-						stop();
 						break;
 					default:
 						System.err.println("coral shooter state corruption happened?");
@@ -112,7 +112,6 @@ public class CoralShooter extends Subsystem {
 	}
 	*/
 
-	/*---------------------------------- Custom Public Functions ----------------------------------*/
 
 	public void intake() {
 		mPeriodicIO.state = ShooterState.INTAKE;
@@ -122,19 +121,21 @@ public class CoralShooter extends Subsystem {
 		mPeriodicIO.state = ShooterState.SHOOT;
 	}
 
-	public void stopShooter() {
-		mPeriodicIO.state = ShooterState.STOP;
+	public boolean isShooting() {
+		return mPeriodicIO.isShooting;
 	}
 
-	/*---------------------------------- Custom Private Functions ---------------------------------*/
-
 	public void spin() {
-		mPeriodicIO.speed = Constants.CoralShooter.kShooterSpeed; //Constants.Shooter.kShooterSpeed;
+		mPeriodicIO.speed = Constants.CoralShooter.kShooterIntakeSpeed; //Constants.Shooter.kShooterSpeed;
+	}
+
+	public void spinFast() {
+		mPeriodicIO.speed = Constants.CoralShooter.kShooterShootSpeed;
 	}
 	
 	@Override
 	public void stop() {
 		mPeriodicIO.speed = 0.0;
 	}
-  /*---------------------------------- Custom Private Functions ---------------------------------*/
+  
 }
