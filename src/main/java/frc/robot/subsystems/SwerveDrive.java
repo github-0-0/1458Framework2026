@@ -775,7 +775,7 @@ public class SwerveDrive extends Subsystem {
 	}
 */
 	@Override
-	public void stop() {
+	public synchronized void stop() {
 		mPeriodicIO.des_chassis_speeds = new ChassisSpeeds();
 		mControlState = DriveControlState.OPEN_LOOP;
 	}
