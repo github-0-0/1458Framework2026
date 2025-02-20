@@ -20,6 +20,8 @@ import frc.robot.Loops.Looper;
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
+import frc.robot.autos.actions.SnapToTag;
+import frc.robot.autos.modes.TeleopAutoMode;
 //dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
 //dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
 import frc.robot.subsystems.*;
@@ -28,6 +30,8 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
 import frc.robot.Loops.CrashTracker;
+import frc.robot.teleop.Controller;
+import frc.robot.teleop.TeleopActionExecutor;
 /**
  * DC 10.28.2024
  * This class is where the bulk of the robot (for 2025 FRC season) should be declared,
@@ -39,6 +43,8 @@ import frc.robot.Loops.CrashTracker;
 
 public class RobotContainer25 {
     public static boolean is_red_alliance = false;  //TODO: code the update logic for this property
+
+    private Controller m_Controller;
 
     /* Controllers */
     private final Joystick m_JoyStick = new Joystick(0);
@@ -69,6 +75,8 @@ public class RobotContainer25 {
     
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
+
+    public AutoModeExecutor mTeleopActionExecutor;
 	
     private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
 
@@ -160,12 +168,21 @@ public class RobotContainer25 {
         if (m_AutoModeExecutor != null) {
 			m_AutoModeExecutor.stop();
 		}
+
    		try {
+            // Create an empty TeleopAutoMode and bind it to controller
+            mTeleopActionExecutor = new AutoModeExecutor();
+            TeleopAutoMode teleopAutoMode = new TeleopAutoMode();
+            mTeleopActionExecutor.setAutoMode(teleopAutoMode);
+            m_Controller = new Controller(xboxController, teleopAutoMode);            
+            // turn on the looper
             //RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
             if (m_SwerveDrive != null)             
      			m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
+            // start TeleopAutoMode, empty for now, to be activated by shortcut keys from controller.
+            mTeleopActionExecutor.start();
 		} catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -240,89 +257,15 @@ public class RobotContainer25 {
                 double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
                 double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
                 double rotationVal = MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
-/*              if (translationVal!=0.0 || strafeVal!=0.0 ) { 
-                //dc 1.20.25, debug issues after robot rotation
-                System.out.println("DC: manualModePeriodc() field speed: tVal=" + translationVal + ", sVal=" + strafeVal + ", rVal=" + rotationVal);
-                System.out.println("DC: manualModePeriodc() swerveHeading =" + m_SwerveDrive.getHeading().getDegrees());
-                ChassisSpeeds rs = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    translationVal, strafeVal, rotationVal,
-                    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance));
-                System.out.println("DC: manualModePeriodc() robot speed: tVal=" + rs.vxMetersPerSecond + ", sVal=" + rs.vyMetersPerSecond + ", rVal=" + rs.omegaRadiansPerSecond);
-                }
-*/
-                if(xboxController.getYButtonPressed()) {
-                    m_Elevator.incTarget();
-                }
-                else if(xboxController.getAButtonPressed()) {
-                    m_Elevator.decTarget();
-                }
-                else {
-                   // m_Elevator.runElevator(-0.02);
-                }
 
-                if(xboxController.getBButton()) {
-                    m_Elevator.goToTarget();
-                }
-                else {
-                    m_Elevator.stop();
-                }
-                if(xboxController.getXButton()) {
-                    m_Shooter.spinFast();
-                }
-                else if(Laser.inRangeIntake()) {
-                    m_Shooter.spin();                   
-                }
-                else{
-                    m_Shooter.stop();
-                }
+                m_Controller.processKeyCommand();
 
-                
-                if(xboxController.getRightBumperButton()) {
-                    //m_Funnel.runMotor(-0.3);
-                    m_Hang.setMotor(0.3);
-                }else if(xboxController.getLeftBumperButton()){
-                    //m_Funnel.runMotor(0.3);
-                    m_Hang.setMotor(-0.3);
-                }
-                else{
-                    m_Funnel.runMotor(0);
-                    m_Hang.setMotor(-0);
-                }
-
-                if(xboxController.getAxisCount() == 0) {
-                    m_Funnel.runMotor(0.1);
-                }
-                else if(xboxController.getAxisCount() == 180) {
-                    m_Funnel.runMotor(-0.1);
-                }
-                else {
-                    //m_Funnel.runMotor(0);
-                }
-
-                if(xboxController.getAxisCount() == 90) {
-                    m_Hang.setMotor(0.1);
-                }
-                else if(xboxController.getAxisCount() == 270) {
-                    m_Hang.setMotor(-0.1);
-                }
-                else {
-                    //m_Hang.setMotor(0);
-                }
-
-                   
-
-            
-                
-
-                // if (xboxController.getRightTriggerAxis() > 0.7) {
-                //     RobotState.getInstance().alignToTagTrajectory(20);
-                // }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
 
                 for(int i = 0; i < 4;  i++) {
-                    SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
+                    //SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
                 }
                 SmartDashboard.putNumber("Target: ", m_Elevator.getTarget());
                 SmartDashboard.putNumber("Current State: ", m_Elevator.getCurr());
