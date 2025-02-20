@@ -1,5 +1,7 @@
 package frc.robot.lib.drivers;
 
+import java.util.Optional;
+
 //dc.10.21.2024 ported from com.team1678.lib.drivers;
 //replace citrus Rotation2d class with wpi version,
 //???therefore, we use unaryMinus() call to replaces inverse() call in original citrus code
@@ -18,8 +20,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.units.Units.*;
 
@@ -47,6 +51,11 @@ public class Pigeon {
 	private Pigeon(int port) {
 		mGyro = new Pigeon2(port, "CV"); //TODO: ADD TO CONSTANTS
 		mGyro.getConfigurator().apply(new Pigeon2Configuration());
+
+		Optional<Alliance> ally = DriverStation.getAlliance();
+		if (ally.isPresent() && ally.get() == Alliance.Blue) {
+			yawAdjustmentAngle = Rotation2d.fromDegrees(180);
+		}
 	}
 
 	public Rotation2d getYaw() {

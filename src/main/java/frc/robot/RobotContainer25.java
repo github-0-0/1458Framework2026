@@ -313,6 +313,10 @@ public class RobotContainer25 {
 
             
                 
+
+                // if (xboxController.getRightTriggerAxis() > 0.7) {
+                //     RobotState.getInstance().alignToTagTrajectory(20);
+                // }
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
