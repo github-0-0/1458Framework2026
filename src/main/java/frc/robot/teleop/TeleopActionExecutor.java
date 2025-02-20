@@ -1,5 +1,6 @@
 package frc.robot.teleop;
 
+import frc.robot.Loops.CrashTrackingRunnable;
 import frc.robot.autos.AutoModeEndedException;
 import frc.robot.autos.actions.Action;
 import frc.robot.subsystems.SwerveDrive.PeriodicIO;
@@ -18,9 +19,43 @@ public class TeleopActionExecutor {
 	public List<Action> m_runningActions = new ArrayList<Action>();
 	private static TeleopActionExecutor mInstance;
 
+	private Thread m_thread;
+
+	public TeleopActionExecutor() {
+		m_thread = new Thread(new CrashTrackingRunnable() {
+			@Override
+			public void runCrashTracked() {
+				run();
+				System.out.println("Teleop Action Executor Running!");
+			}
+			
+		});
+	
+		m_thread.start();
+	}
+
+
+
+	public void run() {
+		for (Action action : m_runningActions) {
+			if (!action.isFinished()) {
+				action.update();
+			} else {
+				action.done();
+			}
+		}
+		long waitTime = (long) (m_update_rate * 1000.0);
+		try {
+			Thread.sleep(waitTime);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public static TeleopActionExecutor getInstance() {
 		if (mInstance == null) {
-		mInstance = new TeleopActionExecutor();
+			mInstance = new TeleopActionExecutor();
 		}
 		return mInstance;
 	}
@@ -30,20 +65,11 @@ public class TeleopActionExecutor {
 	}
 
 	public void runAction(Action action) {
-		m_runningActions.add(action);
 		action.start();
-		while (!action.isFinished()) {
-			action.update();
-			long waitTime = (long) (m_update_rate * 1000.0);
-			try {
-				Thread.sleep(waitTime);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		action.done();
+		m_runningActions.add(action);
 	}
-		public void abort() {
+
+	public void abort() {
 		if (m_runningActions.isEmpty()) {
 			System.out.println("No running actions to abort");
 			return;
