@@ -61,13 +61,13 @@ public class Elevator extends Subsystem {
     var slot0Configs = talonFXConfigs.Slot0;
     slot0Configs.kS = 0.0; // Add 0.0 V output to overcome static friction
     slot0Configs.kV = 0.0; // A velocity target of 1 rps results in 0.0 V output
-    slot0Configs.kP = 0.4; // An error of 1 rotation results in 0.4 V output
+    slot0Configs.kP = 0.8; // An error of 1 rotation results in 0.4 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0.0; // A velocity of 1 rps results in 0.0 V output
 
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicAcceleration = 240; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk = 1600;
 
     mRightMotor.getConfigurator().apply(talonFXConfigs);
@@ -126,7 +126,7 @@ public class Elevator extends Subsystem {
     mPeriodicIO.is_elevator_pos_control = false;
     mPeriodicIO.elevator_power = 0.0;
 
-    runElevator(0.02);
+    mLeftMotor.setVoltage(0);
   }
 
   @Override

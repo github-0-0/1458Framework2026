@@ -286,7 +286,7 @@ public class RobotContainer25 {
                 m_Elevator.setTargetLevel(2);
             }
 
-            if (xboxController.getBButton()) {
+            if (!xboxController.getBButton()) {
                 m_Elevator.goToTarget();
             } else {
                 m_Elevator.stop();
