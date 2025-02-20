@@ -78,5 +78,7 @@ public class SwerveTrajectoryAction implements Action {
 	}
 
 	@Override
-	public void done() {}
+	public void done() {
+		mDrive.stop();
+	}
 }
