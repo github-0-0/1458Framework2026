@@ -11,6 +11,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Loops.ILooper;
+import frc.robot.Loops.Loop;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.DigitalSensor;
@@ -50,7 +53,7 @@ public class Elevator extends Subsystem {
 
     var talonFXConfigs = new TalonFXConfiguration();
 
-    var slot0Configs = talonFXConfigs.Slot1;
+    var slot0Configs = talonFXConfigs.Slot0;
     slot0Configs.kS = Constants.Elevator.kS; // Add 0.0 V output to overcome static friction
     slot0Configs.kV = Constants.Elevator.kV; // A velocity target of 1 rps results in 0.0 V output
     slot0Configs.kP = Constants.Elevator.kP; // An error of 1 rotation results in 0.4 V output
@@ -100,6 +103,27 @@ public class Elevator extends Subsystem {
   // mPeriodicIO.is_pivot_low = false;
   // }
   // }
+
+  	/*-------------------------------- Generic Subsystem Functions --------------------------------*/
+
+	@Override
+	public void registerEnabledLoops(ILooper enabledLooper) {
+		enabledLooper.register(new Loop() {
+			@Override
+			public void onStart(double timestamp) {}
+
+			@Override
+			public void onLoop(double timestamp) {
+        
+			}
+
+			@Override
+			public void onStop(double timestamp) {
+				stop();
+			}
+		});
+	}
+
 
   @Override
   public void writePeriodicOutputs() {
@@ -165,6 +189,7 @@ public class Elevator extends Subsystem {
       System.out.println("Break Laser Check");
       return;
     }
+    System.out.println("Going to Target: " + mPeriodicIO.elevator_target);
     mLeftMotor.setControl(m_request.withPosition(mPeriodicIO.elevator_target));
 
     

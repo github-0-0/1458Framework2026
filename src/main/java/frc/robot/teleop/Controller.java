@@ -25,9 +25,9 @@ public class Controller {
 
     // key event handling in manual mode periodic 
     public void processKeyCommand() {
-        System.out.println("updated");
+        //System.out.println("updated");
         if ( mTeleopAutoMode==null) return;
-
+        
         //abort
         if (mXboxController1.getRawButton(7)) {
             System.out.println("attempted to abort actions");
@@ -37,12 +37,14 @@ public class Controller {
 
         //elevator
         if (mXboxController1.getYButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
-        }
-        if (mXboxController1.getAButtonPressed()) {
             mTeleopAutoMode.runAction(new ElevatorAction("L4"));
         }
+        if (mXboxController1.getAButtonPressed()) {
+            mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
+        }
+        
         if (mXboxController1.getBButtonPressed()) {
+            //System.out.println("L2 Called");
             mTeleopAutoMode.runAction(new ElevatorAction("L2"));
         }
         if (mXboxController1.getXButtonPressed()) {

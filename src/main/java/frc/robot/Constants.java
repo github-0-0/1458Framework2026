@@ -311,7 +311,7 @@ public final class Constants {
         public static final int kElevatorLeftMotorId = 20;
         public static final int kElevatorRightMotorId = 21;
         
-        public static final double kS = 0.0;
+        public static final double kS = 0.01;
         public static final double kV = 0.0;
         public static final double kP = 0.8;
         public static final double kI = 0.0;
