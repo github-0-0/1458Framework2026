@@ -49,7 +49,7 @@ public class CoralShooter extends Subsystem {
 		//super("Shooter");
 		mLeftShooterMotor = new TalonFX(Constants.CoralShooter.kShooterLeftMotorId);
 		mRightShooterMotor = new TalonFX(Constants.CoralShooter.kShooterRightMotorId); //LEADER
-		mLeftShooterMotor.setControl(new Follower(mRightShooterMotor.getDeviceID(), true));
+		mRightShooterMotor.setControl(new Follower(mLeftShooterMotor.getDeviceID(), true));
 		mLeftShooterMotor.setNeutralMode(NeutralModeValue.Brake);
 		mRightShooterMotor.setNeutralMode(NeutralModeValue.Brake);
 	}
@@ -98,7 +98,7 @@ public class CoralShooter extends Subsystem {
 
 	@Override
 	public void writePeriodicOutputs() {
-		mRightShooterMotor.set(mPeriodicIO.speed);
+		mLeftShooterMotor.set(mPeriodicIO.speed);
 	}
 
 	@Override

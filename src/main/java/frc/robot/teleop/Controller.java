@@ -70,7 +70,8 @@ public class Controller {
 
         //Coral
         if (mXboxController1.getLeftBumperButtonPressed()) {
-            mTeleopAutoMode.runAction(new AlgaeShooterAction());
+            //mTeleopAutoMode.runAction(new AlgaeShooterAction());
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("L3"), new CoralShootAction()));
             /*int tag = FieldLayout.getClosestTag(RobotState.getInstance().getLatestFieldToVehicle().getTranslation());
             boolean isL3 = false;
             for (int num : new int[] {18, 20, 22, 7, 9, 11}) {
@@ -92,6 +93,7 @@ public class Controller {
         //Drive train
         if (mXboxController1.getPOV() == 0 && prevPOV != 0) {
             //mTeleopAutoMode.runAction(new SnapToTag(2));
+            
         }
         if (mXboxController1.getPOV() == 90 && prevPOV != 90) {
             //mTeleopAutoMode.runAction(new SnapToTag(1));
@@ -100,6 +102,6 @@ public class Controller {
             //mTeleopAutoMode.runAction(new SnapToTag(0));
         }
 
-        //prevPOV = mXboxController1.getPOV();
+        prevPOV = mXboxController1.getPOV();
     }
 }
