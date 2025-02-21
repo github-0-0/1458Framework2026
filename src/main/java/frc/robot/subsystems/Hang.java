@@ -40,7 +40,7 @@ public class Hang extends Subsystem {
 
     private TalonFX mHangMotor;
 
-    private Hang() {
+    public Hang() {
         mHangMotor = new TalonFX(Constants.Hang.kHangMotorId);
         mHangMotor.setNeutralMode(NeutralModeValue.Brake);
     }
