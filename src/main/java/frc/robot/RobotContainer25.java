@@ -6,7 +6,10 @@ import java.util.Optional;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Threads;
@@ -77,7 +80,7 @@ public class RobotContainer25 {
 
     public AutoModeExecutor mTeleopActionExecutor;
 	
-    private VisionDeviceManager m_VisionDevices = VisionDeviceManager.getInstance();
+    private VisionDeviceManager m_VisionDevices;
 
     // contructor
     public RobotContainer25() {
@@ -93,6 +96,9 @@ public class RobotContainer25 {
             m_CoralShooter = CoralShooter.getInstance();
             m_Hang = Hang.getInstance();
             m_Funnel = Funnel.getInstance();
+
+            if (!Robot.isSimulation()){//turn off vision in simulation
+                m_VisionDevices = VisionDeviceManager.getInstance();}
 
             // init cancoders
             if (Robot.isReal() && !Constants.isBareboneRobot) {
@@ -127,37 +133,15 @@ public class RobotContainer25 {
             m_SubsystemManager.registerEnabledLoops(m_EnabledLooper);
             m_SubsystemManager.registerDisabledLoops(m_DisabledLooper);
 
-            // load all predefined trajectories
-            TrajectoryGenerator.getInstance().generateTrajectories();
-
             RobotState.getInstance().resetKalman(); // TODO: complete RobotState classes
 
             // set robot to neutral brake
             if (m_SwerveDrive != null)
                 m_SwerveDrive.setNeutralBrake(true);
-
-            // binds single-button events
-            // bindSingleButtonCmds ();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t); // TODO: CrashTracker needs to be ported. to log crash/exception
             throw t;
         }
-    }
-
-    /**
-     * Use this method to define your button->command mappings for single-button
-     * events. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-     * it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     */
-    private void bindSingleButtonCmds() {
-        System.out.println("-->binding single button commands");
-        // m_btnZeroGyro.onTrue(new InstantCommand(() ->
-        // m_SwerveDrive.resetModulesToAbsolute())); //TODO: zeroGyro() vs
-        // zeroHeading()? check with victor
-        // additional command bindings for single-event buttons
     }
 
     // switch between two loopers
@@ -206,6 +190,8 @@ public class RobotContainer25 {
         try {
             // RobotState.getInstance().setIsInAuto(false);
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
+            // init simulation
+            if (Robot.isSimulation()){initSimulation();}            
             m_AutoModeExecutor.start();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -295,12 +281,29 @@ public class RobotContainer25 {
         System.out.println("DC: testChassisSpeedConvert swerveHeading: heading=" + m_SwerveDrive.getHeading()
                 + ", field=" + sV + ", rVal=" + rV);
     }
-
+/* 
     // dummy methods for now.
     public Command getAutonomousCommand() {
         return null;
     }
 
     public void updateLimeLightData() {
+    }
+*/
+    //init robot for simulation mode
+    private void initSimulation(){
+        //put robot on the start line  to simulate the actual game
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if (!ally.isPresent()){
+            System.out.println("Alliance is NOT present! Abort!");
+            return;
+        }
+		if (ally.get() == Alliance.Blue) {
+//            m_SwerveDrive.zeroGyro(180);
+            m_SwerveDrive.resetOdometry(new Pose2d(new Translation2d(8.0,7.0), Rotation2d.fromDegrees(0)));
+        }else{
+//            m_SwerveDrive.zeroGyro(0);
+            m_SwerveDrive.resetOdometry(new Pose2d(new Translation2d(9.5,1.26), Rotation2d.fromDegrees(0)));
+        }
     }
 }

@@ -27,22 +27,6 @@ import frc.robot.subsystems.SubsystemManager;
  */
 public class Robot extends TimedRobot {
 
-    // @-@ new objects from Framework25
-  
-   public final SubsystemManager m_SubsystemManager = SubsystemManager.getInstance();
-   //private final ControlBoard mControlBoard = ControlBoard.getInstance();
-	 //private final DriverControls mDriverControls = new DriverControls();
-
-   private final Looper m_EnabledLooper = new Looper();
-   private final Looper m_DisabledLooper = new Looper();
-   private DummySubsystem m_ExampleSubsystem;
-
-
-  public static final CTREConfigs ctreConfigs = new CTREConfigs();
-
-  
-  private Command m_autonomousCommand;
-
   private RobotContainer25 m_robotContainer;
 
   private Field2d m_robotStateField;
@@ -65,14 +49,13 @@ public class Robot extends TimedRobot {
       edu.wpi.first.net.PortForwarder.add(port, "limelight-front.local", port);
       edu.wpi.first.net.PortForwarder.add(port, "limelight-back.local", port);
     }
-    
     m_robotStateField = new Field2d();
-    m_robotStatePose = new Pose2d();
+/*     m_robotStatePose = new Pose2d();
 
     m_robotStateField.setRobotPose(m_robotStatePose);
     
     SmartDashboard.putData("Robot State", m_robotStateField);
-
+*/
   
     //subsystems and loop framework init code move to RobotContainer25 class  
   }
@@ -110,12 +93,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
     //init auto mode
     m_robotContainer.initAutoMode();
   }
@@ -126,15 +103,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-
-    //mControlBoard.update(); //dc:TODO: revisit controlboard class late;  
     //initialize container for teleop mode 
     m_robotContainer.initManualMode();
 
@@ -144,13 +112,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     m_robotContainer.manualModePeriodic();  //run the manual mode loop
-    m_robotContainer.updateLimeLightData();
   }
 
   @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
     m_robotContainer.initTestMode();
   }
 
@@ -158,6 +123,5 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     m_robotContainer.testModePeriodic();
-    m_robotContainer.updateLimeLightData();
   }
 }

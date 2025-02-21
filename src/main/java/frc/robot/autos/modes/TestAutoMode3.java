@@ -1,42 +1,11 @@
 package frc.robot.autos.modes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import frc.robot.autos.AutoModeBase;
-import frc.robot.autos.AutoModeEndedException;
-import frc.robot.autos.actions.SwerveTrajectoryAction.ResetWheelTracker;
-import frc.robot.autos.actions.*;
-
-public class TestAutoMode3 extends AutoModeBase {
-    public String autoString;
-    private String lastPoint = null;
-    private Boolean isFirstTrajectory = true;
-
-
-    /**
-     * Syntax:
-     * Space between each command (including brackets, parentheses, etc.)
-     * Space between each command and its argument
-     * S (start), P (processor), R (reef), CS (coral station), and the following number denotes a point (REMEMBER TO ADD A SPACE BETWEEN THE LETTER AND THE NUMBER). See {@link Robot2025\src\main\deploy\pathplanner\Naming}
-     * After stating a point the robot will try to move to that point
-     * Always check if the trajectory exists in the set
-     * [ actions ] denote a parallel action, where actions are run in parallel
-     * ( actions ) denote a series action, where actions are run one by one
-     * { actions } denote a repeat action, where actions are repeated a number of times denoted by the number after the closing bracket
-     * Wait and the following number denotes a wait action for that number of seconds
-     * CIntake denotes a coral intake action
-     * CShoot denotes a coral shoot action
-     * AIntake denotes an algae intake action
-     * AShoot denotes an algae shoot action
-     * Elevator and the following number denotes an elevator action to that height index
-     * Snap and the follwing number denotes a snap to nearest apriltag, where the number is 1 if we are aiming for the right reef and 0 if we are aiming for the left reef.
-     */
-    
-    public TestAutoMode3() {
-        autoString = "S 1 R 1 S 1";
+public class TestAutoMode3 extends AutoStringAuto {
+    public TestAutoMode3()   {        
+            super("S 2 R 6 CS 1 R 6 CS 2 R 3 CS 2 R 1 ");
+        }
     }
-        
+/*         
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("TestAutoMode: Running test auto mode!");
@@ -153,3 +122,4 @@ public class TestAutoMode3 extends AutoModeBase {
         return listOfActions;
     }
 }
+*/
