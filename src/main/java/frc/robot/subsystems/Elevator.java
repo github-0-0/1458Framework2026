@@ -186,10 +186,10 @@ public class Elevator extends Subsystem {
   public void goToTarget() {
 
     if (Laser.inRangeIntake()) {
-      System.out.println("Break Laser Check");
+//      System.out.println("Break Laser Check");
       return;
     }
-    System.out.println("Going to Target: " + mPeriodicIO.elevator_target);
+//    System.out.println("Going to Target: " + mPeriodicIO.elevator_target);
     mLeftMotor.setControl(m_request.withPosition(mPeriodicIO.elevator_target));
 
     
