@@ -10,13 +10,6 @@ public class AutoModeSelector {
 		DO_NOTHING,
 		TESTPATHMODE,
 		TESTAUTOMODE3,
-		LEFTCORAL,
-		LMIDDLECORAL,
-		RLMIDDLE,
-		RRMIDDLE,
-		LRMIDDLE,
-		LLMIDDLE,
-		L4AROUND
 	}
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -27,16 +20,9 @@ public class AutoModeSelector {
 
 	public AutoModeSelector() {
 		mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
-		mModeChooser.addOption("mode to test paths", DesiredMode.TESTPATHMODE);
-		mModeChooser.addOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
-		mModeChooser.addOption("Left Coral", DesiredMode.LEFTCORAL);
-		mModeChooser.addOption("LMiddle Coral", DesiredMode.LMIDDLECORAL);
-		mModeChooser.addOption("RLMiddle", DesiredMode.RLMIDDLE);
-		mModeChooser.addOption("RRMiddle!", DesiredMode.RRMIDDLE);
-		mModeChooser.addOption("LRMiddle", DesiredMode.LRMIDDLE);
-		mModeChooser.addOption("L4Around", DesiredMode.L4AROUND);
-
-		mModeChooser.setDefaultOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
+		mModeChooser.addOption("TestPathMode", DesiredMode.TESTPATHMODE);
+		mModeChooser.addOption("AutoMode3", DesiredMode.TESTAUTOMODE3);
+		mModeChooser.setDefaultOption("AutoMode3", DesiredMode.TESTAUTOMODE3);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
 	}
 
@@ -71,27 +57,13 @@ public class AutoModeSelector {
 	}
 
 	private Optional<AutoModeBase> getAutoModeForParams(DesiredMode mode ){
-			switch (mode) {
+		switch (mode) {
 			case DO_NOTHING:
 				return Optional.of(new DoNothingMode());
 			case TESTPATHMODE:
 				return Optional.of(new TestPathMode());
 			case TESTAUTOMODE3:
 				return Optional.of(new TestAutoMode3());
-			case LEFTCORAL:
-				return Optional.of(new LeftCoralScoreAutoMode());
-			case LMIDDLECORAL:
-				return Optional.of(new LMiddleCoralScoreAutoMode());	
-			case RLMIDDLE:
-				return Optional.of(new Start2LeftSideCoral());
-			case RRMIDDLE:
-				return Optional.of(new Start2RightSideCoral());
-			case LRMIDDLE:
-				return Optional.of(new Start3RightSideCoral());
-			case LLMIDDLE:
-				return Optional.of(new Start3LeftSideCoral());
-			case L4AROUND:
-				return Optional.of(new RightAroundTheReefL4());
 			default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
 				break;
