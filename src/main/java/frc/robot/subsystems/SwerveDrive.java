@@ -110,7 +110,7 @@ public class SwerveDrive extends Subsystem {
 		mMotionPlanner = new DriveMotionPlanner();
 		mHeadingController = new SwerveHeadingController();
 
-		mPigeon.setYaw(0.0);
+		//mPigeon.setYaw(0.0); //dc.2.21.25, pigeon could have starting angle such as FRC 2025 game, in which pigeon will face backward on blue side
 		mWheelTracker = new WheelTracker(mModules);
 
 		SmartDashboard.putData("Field", m_field);
