@@ -2,7 +2,6 @@ package frc.robot.autos.actions;
 
 import frc.robot.Robot;
 import frc.robot.subsystems.CoralShooter;
-import frc.robot.subsystems.Elevator;
 
 public class CoralShootAction implements Action {
 	private CoralShooter mShooter = null;
