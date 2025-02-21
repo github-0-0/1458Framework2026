@@ -37,20 +37,20 @@ public class Controller {
 
         //elevator
         if (mXboxController1.getYButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction(0));
+            mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
         }
         if (mXboxController1.getAButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction(1));
+            mTeleopAutoMode.runAction(new ElevatorAction("L4"));
         }
         if (mXboxController1.getBButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction(2));
+            mTeleopAutoMode.runAction(new ElevatorAction("L2"));
         }
         if (mXboxController1.getXButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction(3));
+            mTeleopAutoMode.runAction(new ElevatorAction("L3"));
         }
 
         //algae
-        if (mXboxController1.getLeftTriggerAxis()>0.5) {
+        if (mXboxController1.getLeftTriggerAxis()> 0.5) {
             if (!prev_left_trigger) {
                 prev_left_trigger = true;
                 mTeleopAutoMode.runAction(new AlgaeShooterAction());
@@ -59,15 +59,16 @@ public class Controller {
             prev_left_trigger = false;
         }
         if (mXboxController1.getRightTriggerAxis()>0.5) {
-            if (!prev_right_trigger) {
-                mTeleopAutoMode.runAction(new CoralShooterAction());
-            }
-        } else {
-            prev_right_trigger = false;
+        //     if (!prev_right_trigger) {
+        //         mTeleopAutoMode.runAction(new CoralShootAction());
+        //     }
+        // } else {
+        //     prev_right_trigger = false;
         }
 
         //Coral
         if (mXboxController1.getLeftBumperButtonPressed()) {
+            mTeleopAutoMode.runAction(new AlgaeShooterAction());
             /*int tag = FieldLayout.getClosestTag(RobotState.getInstance().getLatestFieldToVehicle().getTranslation());
             boolean isL3 = false;
             for (int num : new int[] {18, 20, 22, 7, 9, 11}) {
@@ -75,31 +76,28 @@ public class Controller {
                     isL3 = true;
                 }
             }*/
-            mTeleopAutoMode.runAction(new SeriesAction(
+            //mTeleopAutoMode.runAction(new SeriesAction(
                 //new ElevatorAction(isL3 ? 3 : 2),
                 //new SnapToTag(2),
-                new AlgaeIntakeAction()
-            ));
+               // new AlgaeIntakeAction()
+           // ));
         }
         if (mXboxController1.getRightBumperButtonPressed()) {
             
-            mTeleopAutoMode.runAction(new SeriesAction(
-                //new SnapToTag(2),
-                new CoralIntakeAction()
-            ));
+            mTeleopAutoMode.runAction(new CoralShootAction());
         }
 
         //Drive train
         if (mXboxController1.getPOV() == 0 && prevPOV != 0) {
-            mTeleopAutoMode.runAction(new SnapToTag(2));
+            //mTeleopAutoMode.runAction(new SnapToTag(2));
         }
         if (mXboxController1.getPOV() == 90 && prevPOV != 90) {
-            mTeleopAutoMode.runAction(new SnapToTag(1));
+            //mTeleopAutoMode.runAction(new SnapToTag(1));
         }
         if (mXboxController1.getPOV() == 270 && prevPOV != 270) {
-            mTeleopAutoMode.runAction(new SnapToTag(0));
+            //mTeleopAutoMode.runAction(new SnapToTag(0));
         }
 
-        prevPOV = mXboxController1.getPOV();
+        //prevPOV = mXboxController1.getPOV();
     }
 }

@@ -12,7 +12,7 @@ public class CoralShootAction implements Action {
 		mShooter = CoralShooter.getInstance();
 		mShooter.shoot();
 	}
-
+	
 	@Override
 	public void update() {
 		

@@ -126,6 +126,39 @@ public class Elevator extends Subsystem {
     mLeftMotor.set(speed);
   }
 
+  public void setTarget(String targ) {
+    switch(targ) {
+      case "Ground":
+        mPeriodicIO.elevator_target = Constants.Elevator.kGroundHeight;
+        mPeriodicIO.state = "Ground";
+        break;
+      case "L2":
+        mPeriodicIO.elevator_target = Constants.Elevator.kL2Height;
+        mPeriodicIO.state = "L2";
+        break;
+      case "L3":
+        mPeriodicIO.elevator_target = Constants.Elevator.kL3Height;
+        mPeriodicIO.state = "L3";
+        break;
+      case "L4":
+        mPeriodicIO.elevator_target = Constants.Elevator.kL4Height;
+        mPeriodicIO.state = "L4";
+        break;
+      case "AP":
+        mPeriodicIO.elevator_target = Constants.Elevator.kAPHeight;
+        mPeriodicIO.state = "AP";
+        break;
+      case "A1":
+        mPeriodicIO.elevator_target = Constants.Elevator.kA1Height;
+        mPeriodicIO.state = "A1";
+      case "A2":
+        mPeriodicIO.elevator_target = Constants.Elevator.kA2Height;
+        mPeriodicIO.state = "A2";
+
+    }
+  }
+
+
   public void goToTarget() {
 
     if (Laser.inRangeIntake()) {
@@ -142,39 +175,4 @@ public class Elevator extends Subsystem {
     return Math.abs(mLeftMotor.getPosition().getValueAsDouble() - mPeriodicIO.elevator_target) < 0.5;
   }
 
-  public void goToElevatorGround() {
-    mPeriodicIO.elevator_target = Constants.Elevator.kGroundHeight;
-    mPeriodicIO.state = "Ground";
-  }
-
-
-  public void goToElevatorL2() {
-    mPeriodicIO.elevator_target = Constants.Elevator.kL2Height;
-    mPeriodicIO.state = "L2";
-  }
-
-  public void goToElevatorL3() {
-    mPeriodicIO.elevator_target = Constants.Elevator.kL3Height;
-    mPeriodicIO.state = "L3";
-  }
-
-  public void goToElevatorL4() {
-    mPeriodicIO.elevator_target = Constants.Elevator.kL4Height;
-    mPeriodicIO.state = "L4";
-  }
-
-  public void goToElevatorAP() {
-    mPeriodicIO.elevator_target = Constants.Elevator.kAPHeight;
-    mPeriodicIO.state = "AP";
-  }
-
-  public void goToElevatorA1() {
-    mPeriodicIO.elevator_target = Constants.Elevator.kA1Height;
-    mPeriodicIO.state = "A1";
-  }
-
-  public void goToElevatorA2() {
-    mPeriodicIO.elevator_target = Constants.Elevator.kA2Height;
-    mPeriodicIO.state = "A2";
-  }
 }

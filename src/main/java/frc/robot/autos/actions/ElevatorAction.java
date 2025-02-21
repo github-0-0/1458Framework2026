@@ -3,13 +3,16 @@ package frc.robot.autos.actions;
 import frc.robot.Robot;
 import frc.robot.subsystems.Elevator;
 
-public class ElevatorActionA2 implements Action {
+public class ElevatorAction implements Action {
 	private Elevator mElevator = null;
-
+	private String target = "";
+	public ElevatorAction(String targ) {
+		target = targ;
+	}
 	@Override
 	public void start() {
 		mElevator = Elevator.getInstance();
-		mElevator.goToElevatorA1();
+		mElevator.setTarget(target);
 	}
 
 	@Override

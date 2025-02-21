@@ -139,26 +139,8 @@ public class TestAutoMode3 extends AutoModeBase {
                 case "AIntake":
                     listOfActions.add(new AlgaeIntakeAction());
                     break;
-                case "GElevator":
-                    listOfActions.add(new ElevatorActionGround());
-                    break;
-                case "L2Elevator":
-                    listOfActions.add(new ElevatorActionL2());
-                    break;
-                case "L3Elevator":
-                    listOfActions.add(new ElevatorActionL3());
-                    break;
-                case "L4Elevator":
-                    listOfActions.add(new ElevatorActionL4());
-                    break;
-                case "A1Elevator":
-                    listOfActions.add(new ElevatorActionA1());
-                    break;
-                case "A2Elevator":
-                    listOfActions.add(new ElevatorActionA2());
-                    break;
-                case "APElevator":
-                    listOfActions.add(new ElevatorActionAP());
+                case "Elevator":
+                    listOfActions.add(new ElevatorAction(actionStrings[++i]));
                     break;
                 case "Snap":
                     listOfActions.add(new SnapToTag(Integer.parseInt(actionStrings[++i])));

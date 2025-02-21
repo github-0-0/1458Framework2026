@@ -272,9 +272,7 @@ public class RobotContainer25 {
                 for(int i = 0; i < 4;  i++) {
                     //SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
                 }
-                SmartDashboard.putNumber("Target: ", m_Elevator.getTarget());
-                SmartDashboard.putNumber("Current State: ", m_Elevator.getCurr());
-                SmartDashboard.putNumber("Rotation Elevator", m_Elevator.getRot());
+                
 
             // mDriverControls.oneControllerMode();
 
