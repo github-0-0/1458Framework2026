@@ -90,7 +90,7 @@ public class RobotContainer25 {
             m_Elevator = Elevator.getInstance();
             m_Shooter = Shooter.getInstance();
             m_AlgaeShooter = AlgaeShooter.getInstance();
-            // m_CoralShooter = CoralShooter.getInstance();
+            m_CoralShooter = CoralShooter.getInstance();
             m_Hang = Hang.getInstance();
             m_Funnel = Funnel.getInstance();
 
@@ -117,8 +117,8 @@ public class RobotContainer25 {
                     m_Elevator,
                     m_ExampleSubsystem,
                     m_AlgaeShooter,
-                    // m_VisionDevices,
-                    // m_CoralShooter,
+                    m_VisionDevices,
+                    m_CoralShooter,
                     m_Hang,
                     m_Funnel
             // Insert instances of additional subsystems here
