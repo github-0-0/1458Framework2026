@@ -197,6 +197,7 @@ public class Elevator extends Subsystem {
 
 
   public boolean isAtTarget() {
+    System.out.println("reading");
     return Math.abs(mLeftMotor.getPosition().getValueAsDouble() - mPeriodicIO.elevator_target) < 0.5;
   }
 
