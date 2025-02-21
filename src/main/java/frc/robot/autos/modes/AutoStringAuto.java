@@ -130,11 +130,8 @@ public class AutoStringAuto extends AutoModeBase {
                 case "Wait":
                     listOfActions.add(new WaitAction(Double.parseDouble(actionStrings[++i])));
                     break; 
-                case "CIntake":
-                    listOfActions.add(new CoralIntakeAction());
-                    break;
                 case "CShoot":
-                    listOfActions.add(new CoralShooterAction());
+                    listOfActions.add(new CoralShootAction());
                     break;
                 case "AShoot":
                     listOfActions.add(new AlgaeShooterAction());
