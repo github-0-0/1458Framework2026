@@ -130,11 +130,8 @@ public class TestAutoMode3 extends AutoModeBase {
                 case "Wait":
                     listOfActions.add(new WaitAction(Double.parseDouble(actionStrings[++i])));
                     break; 
-                case "CIntake":
-                    listOfActions.add(new CoralIntakeAction());
-                    break;
                 case "CShoot":
-                    listOfActions.add(new CoralShooterAction());
+                    listOfActions.add(new CoralShootAction());
                     break;
                 case "AShoot":
                     listOfActions.add(new AlgaeShooterAction());
@@ -142,8 +139,26 @@ public class TestAutoMode3 extends AutoModeBase {
                 case "AIntake":
                     listOfActions.add(new AlgaeIntakeAction());
                     break;
-                case "Elevator":
-                    listOfActions.add(new ElevatorAction(Integer.parseInt(actionStrings[++i])));
+                case "GElevator":
+                    listOfActions.add(new ElevatorActionGround());
+                    break;
+                case "L2Elevator":
+                    listOfActions.add(new ElevatorActionL2());
+                    break;
+                case "L3Elevator":
+                    listOfActions.add(new ElevatorActionL3());
+                    break;
+                case "L4Elevator":
+                    listOfActions.add(new ElevatorActionL4());
+                    break;
+                case "A1Elevator":
+                    listOfActions.add(new ElevatorActionA1());
+                    break;
+                case "A2Elevator":
+                    listOfActions.add(new ElevatorActionA2());
+                    break;
+                case "APElevator":
+                    listOfActions.add(new ElevatorActionAP());
                     break;
                 case "Snap":
                     listOfActions.add(new SnapToTag(Integer.parseInt(actionStrings[++i])));
