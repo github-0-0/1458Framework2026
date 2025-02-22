@@ -68,7 +68,7 @@ public class RobotContainer25 {
     private DummySubsystem m_ExampleSubsystem;
     private SwerveDrive m_SwerveDrive;
     private Elevator m_Elevator;
-    private Shooter m_Shooter;
+    //private Shooter m_Shooter; //replaced by CoralShooter
     private Cancoders m_Cancoders;
     private AlgaeShooter m_AlgaeShooter;
     private CoralShooter m_CoralShooter;
@@ -91,14 +91,14 @@ public class RobotContainer25 {
                                                   // used by Module constructor and initialization code
             m_SwerveDrive = SwerveDrive.getInstance();
             m_Elevator = Elevator.getInstance();
-            m_Shooter = Shooter.getInstance();
-            m_AlgaeShooter = AlgaeShooter.getInstance();
+            //m_Shooter = Shooter.getInstance();//replaced by CoralShooter
+            //m_AlgaeShooter = AlgaeShooter.getInstance();
             m_CoralShooter = CoralShooter.getInstance();
-            m_Hang = Hang.getInstance();
-            m_Funnel = Funnel.getInstance();
+            //m_Hang = Hang.getInstance();
+            //m_Funnel = Funnel.getInstance();
 
-            if (!Robot.isSimulation()){//turn off vision in simulation
-                m_VisionDevices = VisionDeviceManager.getInstance();}
+            //if (!Robot.isSimulation()){//turn off vision in simulation
+                m_VisionDevices = VisionDeviceManager.getInstance();//}
 
             // init cancoders
             if (Robot.isReal() && !Constants.isBareboneRobot) {
@@ -122,11 +122,11 @@ public class RobotContainer25 {
                     m_SwerveDrive,
                     m_Elevator,
                     m_ExampleSubsystem,
+                    m_VisionDevices,
+                    m_CoralShooter/* ,
                     m_AlgaeShooter,
-                    // m_VisionDevices,
-                    m_CoralShooter,
                     m_Hang,
-                    m_Funnel
+                    m_Funnel*/
             // Insert instances of additional subsystems here
             );
             // register subsystems to loopers
