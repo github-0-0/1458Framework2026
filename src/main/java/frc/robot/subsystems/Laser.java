@@ -8,6 +8,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Ports;
+import frc.robot.Robot;
 
 public class Laser {    
     public static LaserCan intakeLaser = new LaserCan(Ports.LaserCanIDCoralBack.getDeviceNumber());
@@ -19,15 +20,31 @@ public class Laser {
 
 
     public static double getMeasurementIntake() {
-        return intakeLaser.getMeasurement().distance_mm;
+        if (Robot.isSimulation()) {
+            return 200;
+
+        }
+        else {
+            return intakeLaser.getMeasurement().distance_mm;
+        }
     }
 
     public static double getMeasurementShooter() {
+        if (Robot.isSimulation()) {
+            return 200;
+        }
+        else {
         return shooterLaser.getMeasurement().distance_mm;
+        }
     }
 
     public static double getMeasurementAlgaeShooter() {
+        if (Robot.isSimulation()) {
+            return 200;
+        }
+        else {
         return algaeShooterLaser.getMeasurement().distance_mm;
+        }
     }
 
     public static boolean inRangeIntake() {
