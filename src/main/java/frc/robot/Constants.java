@@ -185,12 +185,12 @@ public final class Constants {
         kLeftVisionDevice.kTableName = "limelight-left";    
         kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(10.5), Units.inchesToMeters(1.23)),
-                Rotation2d.fromDegrees(0));
+                Rotation2d.fromDegrees(-90));
 
         kRightVisionDevice.kTableName = "limelight-right";  
         kRightVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
-                new Translation2d(Units.inchesToMeters(10.78), Units.inchesToMeters(-0.05)),
-                Rotation2d.fromDegrees(0));
+                new Translation2d(Units.inchesToMeters(10.78), Units.inchesToMeters(2)),
+                Rotation2d.fromDegrees(90));
         
         kFrontVisionDevice.kTableName = "limelight-front";
         kFrontVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
