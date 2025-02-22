@@ -21,7 +21,7 @@ import frc.robot.subsystems.DigitalSensor;
 public class Elevator extends Subsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
-  private static Elevator mInstance;
+  private static Elevator mInstance=null;;
   private PeriodicIO mPeriodicIO;
 
   // private static final double kPivotCLRampRate = 0.5;
@@ -90,6 +90,7 @@ public class Elevator extends Subsystem {
   private static class PeriodicIO {
     double elevator_target = 0.0;
     String state = "Ground";
+    double mCurrentPos =0.0;//current encoder reading 
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -124,10 +125,17 @@ public class Elevator extends Subsystem {
 		});
 	}
 
+  @Override
+  public void readPeriodicInputs() {
+    mPeriodicIO.mCurrentPos = mLeftMotor.getPosition().getValueAsDouble();//update elevator current position
+  }
+
 
   @Override
   public void writePeriodicOutputs() {
-    goToTarget();
+    if (!isAtTarget()){
+      goToTarget();
+    }
   }
 
   @Override
@@ -150,7 +158,7 @@ public class Elevator extends Subsystem {
     mLeftMotor.set(speed);
   }
 
-  public void setTarget(String targ) {
+  public synchronized void setTarget(String targ) {
     switch(targ) {
       case "Ground":
         mPeriodicIO.elevator_target = Constants.Elevator.kGroundHeight;
@@ -178,27 +186,28 @@ public class Elevator extends Subsystem {
       case "A2":
         mPeriodicIO.elevator_target = Constants.Elevator.kA2Height;
         mPeriodicIO.state = "A2";
-
     }
   }
 
 
-  public void goToTarget() {
+  private void goToTarget() {
 
     if (Laser.inRangeIntake()) {
-//      System.out.println("Break Laser Check");
+      System.out.println("Break Laser Check");
       return;
     }
-//    System.out.println("Going to Target: " + mPeriodicIO.elevator_target);
+    System.out.println("Elevator: Going to Target: " + mPeriodicIO.elevator_target);
     mLeftMotor.setControl(m_request.withPosition(mPeriodicIO.elevator_target));
 
     
   }
 
-
-  public boolean isAtTarget() {
-    System.out.println("reading");
-    return Math.abs(mLeftMotor.getPosition().getValueAsDouble() - mPeriodicIO.elevator_target) < 0.5;
+  //dc.10.21.25, bugfix, caller usually is from another thread, direct access to elevator motors shall be avoid in this function
+  // instead read the states inside readPeriodicInputs and store them for use here. 
+  //
+  public synchronized boolean isAtTarget() {
+    //System.out.println("reading");
+    return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 0.5;
   }
 
 }
