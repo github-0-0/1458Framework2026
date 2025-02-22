@@ -33,7 +33,6 @@ import frc.robot.lib.util.Util;
 import frc.robot.lib.trajectory.TrajectoryGenerator;
 import frc.robot.Loops.CrashTracker;
 import frc.robot.teleop.Controller;
-import frc.robot.teleop.TeleopActionExecutor;
 /**
  * DC 10.28.2024
  * This class is where the bulk of the robot (for 2025 FRC season) should be
@@ -92,7 +91,7 @@ public class RobotContainer25 {
             m_SwerveDrive = SwerveDrive.getInstance();
             m_Elevator = Elevator.getInstance();
             //m_Shooter = Shooter.getInstance();//replaced by CoralShooter
-            //m_AlgaeShooter = AlgaeShooter.getInstance();
+            m_AlgaeShooter = AlgaeShooter.getInstance();
             m_CoralShooter = CoralShooter.getInstance();
             //m_Hang = Hang.getInstance();
             //m_Funnel = Funnel.getInstance();
@@ -123,8 +122,8 @@ public class RobotContainer25 {
                     m_Elevator,
                     m_ExampleSubsystem,
                     m_VisionDevices,
-                    m_CoralShooter/* ,
-                    m_AlgaeShooter,
+                    m_CoralShooter ,
+                    m_AlgaeShooter/* ,
                     m_Hang,
                     m_Funnel*/
             // Insert instances of additional subsystems here
