@@ -10,14 +10,13 @@ import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.Robot;
 
-public class Laser {    
+public class Laser {
     public static LaserCan intakeLaser = new LaserCan(Ports.LaserCanIDCoralBack.getDeviceNumber());
     public static LaserCan shooterLaser = new LaserCan(Ports.LaserCanIDCoralFront.getDeviceNumber());
     public static LaserCan algaeShooterLaser = new LaserCan(Ports.LaserCanIDAlgae.getDeviceNumber());
 
-
-    public Laser() {}
-
+    public Laser() {
+    }
 
     public static double getMeasurementIntake() {
         if (Robot.isSimulation()) {
@@ -50,17 +49,18 @@ public class Laser {
     public static boolean inRangeIntake() {
         return getMeasurementIntake() < 100;
     }
+
     public static boolean inRangeShooter() {
         return getMeasurementShooter() < 100;
     }
 
     public static boolean inRangeAlgaeShooter() {
-        return getMeasurementAlgaeShooter() < 5;
+        return getMeasurementAlgaeShooter() < 115;
     }
 
     public static void testLaser() {
-        SmartDashboard.putNumber("Laser/Intake sensor",inRangeIntake()?1:0);
-        SmartDashboard.putNumber("Laser/Shooter sensor",inRangeShooter()?1:0);
-        SmartDashboard.putNumber("Laser/Algae sensor",inRangeAlgaeShooter()?1:0);
+        SmartDashboard.putNumber("Laser/Intake sensor", inRangeIntake() ? 1 : 0);
+        SmartDashboard.putNumber("Laser/Shooter sensor", inRangeShooter() ? 1 : 0);
+        SmartDashboard.putNumber("Laser/Algae sensor", inRangeAlgaeShooter() ? 1 : 0);
     }
 }
