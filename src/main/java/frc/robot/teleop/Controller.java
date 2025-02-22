@@ -42,7 +42,6 @@ public class Controller {
         if (mXboxController1.getAButtonPressed()) {
             mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
         }
-        
         if (mXboxController1.getBButtonPressed()) {
             //System.out.println("L2 Called");
             mTeleopAutoMode.runAction(new ElevatorAction("L2"));
@@ -92,14 +91,14 @@ public class Controller {
 
         //Drive train
         if (mXboxController1.getPOV() == 0 && prevPOV != 0) {
-            //mTeleopAutoMode.runAction(new SnapToTag(2));
+            mTeleopAutoMode.runAction(new SnapToTag(2));
             
         }
         if (mXboxController1.getPOV() == 90 && prevPOV != 90) {
-            //mTeleopAutoMode.runAction(new SnapToTag(1));
+            mTeleopAutoMode.runAction(new SnapToTag(1));
         }
         if (mXboxController1.getPOV() == 270 && prevPOV != 270) {
-            //mTeleopAutoMode.runAction(new SnapToTag(0));
+            mTeleopAutoMode.runAction(new SnapToTag(0));
         }
 
         prevPOV = mXboxController1.getPOV();
