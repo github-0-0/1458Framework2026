@@ -21,7 +21,7 @@ public class AlgaeIntakeAction implements Action {
 	@Override
 	public boolean isFinished() {
 		if (Robot.isSimulation()) return true;
-        return !Laser.inRangeIntake();
+        return Laser.inRangeIntake();
 	}
 
 	@Override

@@ -108,27 +108,6 @@ public class VisionDevice extends Subsystem {
 	}
 
 	private void processFrames() {
-  		//try limelight helper to get pose
-		//*		
-		LimelightHelpers.SetRobotOrientation(mConstants.kTableName, 0, 0, 0, 0, 0, 0);	
-		LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(mConstants.kTableName);
-		if (mt2==null){
-			//System.out.println("limelight helper mt2 is null");
-			return;
-		}
-
-		if(mt2.tagCount > 0)
-		{
-			System.out.println("limelight find some tag ========= >" + mt2.tagCount + " , distance=" + mt2.avgTagDist);
-			robotField.setRobotPose(mt2.pose);
-			SmartDashboard.putNumber("VisionDevice/mt2.tagCount", mt2.tagCount);
-			SmartDashboard.putNumber("VisionDevice/mt2.avgTagArea", mt2.avgTagArea);
-			SmartDashboard.putNumber("VisionDevice/mt2.avgTagDist", mt2.avgTagDist);
-			SmartDashboard.putBoolean("VisionDevice/mt2.isMegaTag2", mt2.isMegaTag2);
-		}else{
-			//System.out.println("VisionDevice/mt2 finds zero tag");
-		}	
-
 //		System.out.println("VisionDevice.processFrame");
 		if (mVisible.get() == 0) {
 			return;
