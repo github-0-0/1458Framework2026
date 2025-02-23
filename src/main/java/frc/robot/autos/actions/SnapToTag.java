@@ -78,7 +78,7 @@ public class SnapToTag implements Action {
 		for (PathPlannerTrajectoryState s : mTrajectory.getStates()) {
 			temp.add(fromPathPlannerTrajectoryState(s));
 		}
-		mDrive.m_field.getObject("traj").setTrajectory(new Trajectory(temp));
+		//mDrive.m_field.getObject("traj").setTrajectory(new Trajectory(temp));
 		
 		mAction = new SwerveTrajectoryAction(mTrajectory);
 		System.out.println("Snap to tag "+new Pose2d(initialPosition,initialRotation).toString()+ " -> " + new Pose2d(finalPosition,finalRotation).toString());

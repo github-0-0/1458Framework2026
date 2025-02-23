@@ -221,7 +221,7 @@ public class DriveMotionPlanner {
 
     // check if we complete the current trajectory
     public boolean isDone() {
-		return mCurrentTrajectory != null && mCurrentTrajectory.isDone();
+		return mCurrentTrajectory != null && mCurrentTrajectory.isDone() && getHeadingError().getDegrees() < 3;//TODO: put this magic number in constants
 	}
 
 	//dc. add Twist2d pid_error as input parameter to remove dependency on class property in original citrus code
@@ -325,7 +325,10 @@ public class DriveMotionPlanner {
 		
 		double trueOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > kAdaptivePathMinLookaheadDistance) ? 
 			currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed * Constants.SwerveConstants.maxAutoSpeed : 
-			(mCurrentTrajectory.getRemainingProgress() > 0.0) ? currPoseRotationDelta.getRadians() / mCurrentTrajectory.getRemainingProgress() : 0 ;
+			(mCurrentTrajectory.getRemainingProgress() > 0.0) ? currPoseRotationDelta.getRadians() / mCurrentTrajectory.getRemainingProgress() :
+			mCurrentTrajectory.getLastPoint().poseMeters.getRotation().minus(current_pose.getRotation()).getRadians() * 3 ;//TODO: put magic number in constants
+		trueOmegaRadiansPerSecond = Math.min(trueOmegaRadiansPerSecond, Constants.Swerve.maxAngularVelocity);		
+		trueOmegaRadiansPerSecond = Math.max(trueOmegaRadiansPerSecond, -Constants.Swerve.maxAngularVelocity);
 		SmartDashboard.putNumber("PurePursuit/OmegaRadiansPerSecond",trueOmegaRadiansPerSecond);
 		SmartDashboard.putNumber("PurePursuit/Heading.Error", current_pose.getRotation().minus(mSetpoint.poseMeters.getRotation()).getDegrees());
 

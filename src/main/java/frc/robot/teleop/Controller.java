@@ -108,7 +108,7 @@ public class Controller {
 
 
         //snap2tag
-        /* 
+        
         if (mXboxController1.getPOV() == 0 && prevPOV != 0) {
             mTeleopAutoMode.runAction(new SnapToTag(2));
             
@@ -118,7 +118,7 @@ public class Controller {
         }
         if (mXboxController1.getPOV() == 270 && prevPOV != 270) {
             mTeleopAutoMode.runAction(new SnapToTag(0));
-        }*/
+        }
 
         prevPOV = mXboxController1.getPOV();
     }
