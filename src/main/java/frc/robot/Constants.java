@@ -37,8 +37,8 @@ public final class Constants {
         COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(23.5); 
-        public static final double wheelBase = Units.inchesToMeters(23.5);
+        public static final double trackWidth = Units.inchesToMeters(24); 
+        public static final double wheelBase = Units.inchesToMeters(24);
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
