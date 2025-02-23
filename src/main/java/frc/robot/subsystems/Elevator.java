@@ -141,6 +141,7 @@ public class Elevator extends Subsystem {
       goToTarget();
     }else{
       //System.out.println("it is at target =" );
+      //System.out.println("it is at target =" );
       runElevatorRaw(0.03);
     }
   }
@@ -205,6 +206,7 @@ public class Elevator extends Subsystem {
       return;
     }
     //System.out.println("Elevator: Going to Target: " + mPeriodicIO.elevator_target);
+    //System.out.println("Elevator: Going to Target: " + mPeriodicIO.elevator_target);
     mLeftMotor.setControl(m_request.withPosition(mPeriodicIO.elevator_target));
 
     
@@ -218,7 +220,7 @@ public class Elevator extends Subsystem {
   //  System.out.println("Current Pos: " + mPeriodicIO.mCurrentPos);
   //  System.out.println("Error: " + (mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target));
     
-    return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 1.5;
+    return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 0.05;
   }
 
 }
