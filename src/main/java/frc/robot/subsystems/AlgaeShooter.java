@@ -96,7 +96,8 @@ public class AlgaeShooter extends Subsystem {
 
 	@Override
 	public void outputTelemetry() {
-
+		String stateString = String.valueOf(mPeriodicIO.state);
+		SmartDashboard.putString("AlgaeShooter/State", stateString);
 	}
 
 	/*
