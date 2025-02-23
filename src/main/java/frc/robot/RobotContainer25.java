@@ -170,7 +170,7 @@ public class RobotContainer25 {
             // start TeleopAutoMode, empty for now, to be activated by shortcut keys from controller.
             mTeleopActionExecutor.start();
 
-            SwerveDrive.getInstance().resetOdometry(RobotState.getInstance().getLatestFieldToVehicle());
+            //SwerveDrive.getInstance().resetOdometry(RobotState.getInstance().getLatestFieldToVehicle());
 		} catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -195,7 +195,7 @@ public class RobotContainer25 {
             if (Robot.isSimulation()){initSimulation();}            
             m_AutoModeExecutor.start();
 
-            SwerveDrive.getInstance().resetOdometry(RobotState.getInstance().getLatestFieldToVehicle());
+            //SwerveDrive.getInstance().resetOdometry(RobotState.getInstance().getLatestFieldToVehicle());
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
