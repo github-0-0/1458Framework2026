@@ -67,7 +67,6 @@ public class CoralShooter extends Subsystem {
 ///* dc.2.10.25, commented out to compile so that we can merge GIT
 				switch (mPeriodicIO.state) {
 					case INTAKE:
-						mPeriodicIO.isShooting = false;
 						if (Laser.inRangeIntake()) {
 							spin();
 						} else {
@@ -75,7 +74,6 @@ public class CoralShooter extends Subsystem {
 						}
 						break;
 					case SHOOT:
-						mPeriodicIO.isShooting = true;
 						if (Laser.inRangeShooter()) {
 							spinFast();
 						} else {
@@ -119,10 +117,6 @@ public class CoralShooter extends Subsystem {
 
 	public void shoot() {
 		mPeriodicIO.state = ShooterState.SHOOT;
-	}
-
-	public boolean isShooting() {
-		return mPeriodicIO.isShooting;
 	}
 
 	public void spin() {
