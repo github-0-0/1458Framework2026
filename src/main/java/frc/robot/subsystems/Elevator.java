@@ -218,7 +218,7 @@ public class Elevator extends Subsystem {
     System.out.println("Current Pos: " + mPeriodicIO.mCurrentPos);
     System.out.println("Error: " + (mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target));
     
-    return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 1.5;
+    return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 0.05;
   }
 
 }
