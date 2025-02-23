@@ -54,6 +54,7 @@ public class Pigeon {
 		//todo: move to hardcoded yawAdjustmentAngle to robot init . 
 		Optional<Alliance> ally = DriverStation.getAlliance();
 		if (ally.isPresent() && ally.get() == Alliance.Blue) {
+			System.out.println("Set rotation 180");
 			yawAdjustmentAngle = Rotation2d.fromDegrees(180);
 		}
 	}

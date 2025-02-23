@@ -38,6 +38,7 @@ public class Elevator extends Subsystem {
   private TalonFX mRightMotor; // LEADER
 
   private MotionMagicVoltage m_request;
+  private boolean mSafeStop = true;
   
 
 
@@ -111,7 +112,10 @@ public class Elevator extends Subsystem {
 	public void registerEnabledLoops(ILooper enabledLooper) {
 		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {}
+			public void onStart(double timestamp) {
+        mSafeStop=true;
+        System.out.println("safestop = true;");
+      }
 
 			@Override
 			public void onLoop(double timestamp) {
@@ -133,8 +137,11 @@ public class Elevator extends Subsystem {
 
   @Override
   public void writePeriodicOutputs() {
-    if (!isAtTarget()){
+    if (!isAtTarget() && !mSafeStop){
       goToTarget();
+    }else{
+      System.out.println("it is at target =" );
+      runElevatorRaw(0.03);
     }
   }
 
@@ -159,6 +166,7 @@ public class Elevator extends Subsystem {
   }
 
   public synchronized void setTarget(String targ) {
+    mSafeStop=false;
     switch(targ) {
       case "Ground":
         mPeriodicIO.elevator_target = Constants.Elevator.kGroundHeight;
@@ -207,7 +215,10 @@ public class Elevator extends Subsystem {
   //
   public synchronized boolean isAtTarget() {
     //System.out.println("reading");
-    return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 0.5;
+    System.out.println("Current Pos: " + mPeriodicIO.mCurrentPos);
+    System.out.println("Error: " + (mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target));
+    
+    return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 1.5;
   }
 
 }

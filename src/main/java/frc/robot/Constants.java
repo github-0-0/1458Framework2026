@@ -200,7 +200,7 @@ public final class Constants {
         kBackVisionDevice.kTableName = "limelight-back";
         kBackVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(-0.96)),
-                Rotation2d.fromDegrees(0));
+                Rotation2d.fromDegrees(180));
 }
 
     //dc.10.21.2024, citrus code constants
@@ -318,8 +318,8 @@ public final class Constants {
         public static final double kD = 0.0;
         
     
-        public static final double kCruiseVelocity = 80;
-        public static final double kAcceleration = 240;
+        public static final double kCruiseVelocity = 40;
+        public static final double kAcceleration = 120;
         public static final double kJerk = 1600;
         public static final int CurrentThreshold = 45;
         public static final int kMaxCurrent = 40;
@@ -392,7 +392,7 @@ public final class Constants {
         public static final int kShooterLeftMotorId = 12;
         public static final int kShooterRightMotorId = 13;
         
-        public static final double kShooterIntakeSpeed = 0.05;
+        public static final double kShooterIntakeSpeed = 0.1;
         public static final double kShooterShootSpeed = 0.15;
         
       }

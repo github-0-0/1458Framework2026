@@ -38,19 +38,21 @@ public class Controller {
 
         //elevator
         if (mXboxController1.getYButtonPressed()) {
-            Elevator.getInstance().runElevatorRaw(0.01);
-//            mTeleopAutoMode.runAction(new ElevatorAction("L4"));
+            //Elevator.getInstance().runElevatorRaw(0.1);
+            mTeleopAutoMode.runAction(new ElevatorAction("L4"));
         }
-        if (mXboxController1.getAButtonPressed()) {
-            Elevator.getInstance().runElevatorRaw(-0.01);
-//            mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
+        else if (mXboxController1.getAButtonPressed()) {
+//            Elevator.getInstance().runElevatorRaw(-0.1);
+            mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
         }
-        if (mXboxController1.getBButtonPressed()) {
+        else if (mXboxController1.getBButtonPressed()) {
             //System.out.println("L2 Called");
-//            mTeleopAutoMode.runAction(new ElevatorAction("L2"));
+            mTeleopAutoMode.runAction(new ElevatorAction("L2"));
         }
-        if (mXboxController1.getXButtonPressed()) {
-//            mTeleopAutoMode.runAction(new ElevatorAction("L3"));
+        else if (mXboxController1.getXButtonPressed()) {
+            mTeleopAutoMode.runAction(new ElevatorAction("L3"));
+        }else{
+            
         }
 
         //algae
@@ -92,10 +94,18 @@ public class Controller {
                // new AlgaeIntakeAction()
            // ));
         }
-        if (mXboxController1.getRightBumperButtonPressed()) {
-            
+        if (mXboxController1.getRightBumperButtonPressed()) {            
             mTeleopAutoMode.runAction(new CoralShootAction());
         }
+        //hang            
+        if (mXboxController1.getPOV()==0) {
+            Hang.getInstance().setMotor(0.3);
+        } else if (mXboxController1.getPOV()==180) {
+            Hang.getInstance().setMotor(-0.3);
+        } else {
+            Hang.getInstance().setMotor(-0);
+        }
+
 
         //snap2tag
         /* 

@@ -74,8 +74,6 @@ public class RobotState {
 
 	public double lastTimestamp = 0;
 
-	private Rotation2d rotationZero = new Rotation2d();
-
 	public RobotState() {
 		reset(0.0, new InterpolatingPose2d());
 	}
@@ -123,7 +121,7 @@ public class RobotState {
 
 	public synchronized void addOdometryUpdate(
 			double now, InterpolatingPose2d odometry_pose, Twist2d measured_velocity, Twist2d predicted_velocity) {
-		odometry_to_vehicle.put(new InterpolatingDouble(now), new InterpolatingPose2d(odometry_pose.rotateBy(rotationZero)));
+		odometry_to_vehicle.put(new InterpolatingDouble(now), new InterpolatingPose2d(odometry_pose));
 		mKalmanFilter.predict(
 				VecBuilder.fill(0.0, 0.0), Constants.kLooperDt); // Propagate error of  current vision prediction
 		vehicle_velocity_measured = measured_velocity;
@@ -141,13 +139,12 @@ public class RobotState {
 	public synchronized void addVisionUpdate(VisionUpdate update, Rotation2d rotZero) {
 		// If it's the first update don't do filtering
 		if (mLatestVisionUpdate.isEmpty() || initial_field_to_odom.isEmpty()) {
-			rotationZero = rotZero;
 			double vision_timestamp = update.timestamp;
 			lastTimestamp = update.timestamp;
 			Pose2d proximate_dt_pose = odometry_to_vehicle.getInterpolated(new InterpolatingDouble(vision_timestamp));
 			Translation2d field_to_vision = update.field_to_camera
 					.plus(update.getRobotToCamera()
-							.rotateBy(getLatestOdomToVehicle().getValue().getRotation().plus(rotationZero)).unaryMinus());
+							.rotateBy(getLatestOdomToVehicle().getValue().getRotation()).unaryMinus());
 			Translation2d odom_to_vehicle_translation = proximate_dt_pose.getTranslation();
 			Translation2d field_to_odom = field_to_vision
 					.plus(odom_to_vehicle_translation.unaryMinus());
@@ -168,7 +165,7 @@ public class RobotState {
 					.plus(mLatestVisionUpdate
 							.get()
 							.getRobotToCamera()
-							.rotateBy(proximate_dt_pose.getRotation().plus(rotationZero)).unaryMinus());
+							.rotateBy(proximate_dt_pose.getRotation()).unaryMinus());
 
 			if (mPoseAcceptor.shouldAcceptVision(
 					vision_timestamp,
