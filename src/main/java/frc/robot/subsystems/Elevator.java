@@ -140,7 +140,7 @@ public class Elevator extends Subsystem {
     if (!isAtTarget() && !mSafeStop){
       goToTarget();
     }else{
-      System.out.println("it is at target =" );
+      //System.out.println("it is at target =" );
       runElevatorRaw(0.03);
     }
   }
@@ -201,10 +201,10 @@ public class Elevator extends Subsystem {
   private void goToTarget() {
 
     if (Laser.inRangeIntake()) {
-      System.out.println("Break Laser Check");
+      //System.out.println("Break Laser Check");
       return;
     }
-    System.out.println("Elevator: Going to Target: " + mPeriodicIO.elevator_target);
+    //System.out.println("Elevator: Going to Target: " + mPeriodicIO.elevator_target);
     mLeftMotor.setControl(m_request.withPosition(mPeriodicIO.elevator_target));
 
     
@@ -215,8 +215,8 @@ public class Elevator extends Subsystem {
   //
   public synchronized boolean isAtTarget() {
     //System.out.println("reading");
-    System.out.println("Current Pos: " + mPeriodicIO.mCurrentPos);
-    System.out.println("Error: " + (mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target));
+  //  System.out.println("Current Pos: " + mPeriodicIO.mCurrentPos);
+  //  System.out.println("Error: " + (mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target));
     
     return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 1.5;
   }
