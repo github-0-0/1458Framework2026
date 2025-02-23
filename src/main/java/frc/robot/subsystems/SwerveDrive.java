@@ -420,9 +420,9 @@ public class SwerveDrive extends Subsystem {
 	private void updateSetpoint() {
 		if (mControlState == DriveControlState.FORCE_ORIENT) return;
 
-		SmartDashboard.putNumber("Drive/ChassisSpeeds.vx", mPeriodicIO.des_chassis_speeds.vxMetersPerSecond);
-		SmartDashboard.putNumber("Drive/ChassisSpeeds.vy", mPeriodicIO.des_chassis_speeds.vyMetersPerSecond);
-		SmartDashboard.putNumber("Drive/ChassisSpeeds.omega", mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
+		SmartDashboard.putNumber("Drive/TargetChassisSpeeds.vx", mPeriodicIO.des_chassis_speeds.vxMetersPerSecond);
+		SmartDashboard.putNumber("Drive/TargetChassisSpeeds.vy", mPeriodicIO.des_chassis_speeds.vyMetersPerSecond);
+		SmartDashboard.putNumber("Drive/TargetChassisSpeeds.omega", mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
 
 		Pose2d robot_pose_vel = new Pose2d(
 				mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt * 4.0,
@@ -534,9 +534,9 @@ public class SwerveDrive extends Subsystem {
 //						String.format("%.2f",real_module_setpoints[i].angle.getDegrees()));
 //				}
 //			}
-			SmartDashboard.putNumber("updateSetPoint().wanted_speed.Omega)", wanted_speeds.omegaRadiansPerSecond);
-			SmartDashboard.putNumber("updateSetPoint().wanted_speed.vx)", wanted_speeds.vxMetersPerSecond);
-			SmartDashboard.putNumber("updateSetPoint().wanted_speed.vy)", wanted_speeds.vyMetersPerSecond);
+			SmartDashboard.putNumber("Drive/speed2Module.Omega)", wanted_speeds.omegaRadiansPerSecond);
+			SmartDashboard.putNumber("Drive/speed2Module.vx)", wanted_speeds.vxMetersPerSecond);
+			SmartDashboard.putNumber("Drive/speed2Module.vy)", wanted_speeds.vyMetersPerSecond);
 		}
 
 		SwerveDriveKinematics.desaturateWheelSpeeds(real_module_setpoints, Constants.SwerveConstants.maxSpeed);
