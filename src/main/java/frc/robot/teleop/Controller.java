@@ -80,7 +80,7 @@ public class Controller {
         //Coral
         if (mXboxController1.getLeftBumperButtonPressed()) {
             //mTeleopAutoMode.runAction(new AlgaeShooterAction());
-            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("L3"), new CoralShootAction()));
+            //mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("L3"), new CoralShootAction()));
             /*int tag = FieldLayout.getClosestTag(RobotState.getInstance().getLatestFieldToVehicle().getTranslation());
             boolean isL3 = false;
             for (int num : new int[] {18, 20, 22, 7, 9, 11}) {
