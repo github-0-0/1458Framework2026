@@ -86,47 +86,27 @@ public class VisionDevice extends Subsystem {
 		mConfigTable.getEntry("camera_gain").setDouble(mPeriodicIO.camera_gain);
 	}
 
-	private static Twist2d log(final Pose2d transform) {
-		final double dtheta = transform.getRotation().getRadians();
-		final double half_dtheta = 0.5 * dtheta;
-		final double cos_minus_one = transform.getRotation().getCos() - 1.0;
-		double halftheta_by_tan_of_halfdtheta;
-		if (Math.abs(cos_minus_one) < 1E-9) {
-			halftheta_by_tan_of_halfdtheta = 1.0 - 1.0 / 12.0 * dtheta * dtheta;
-		} else {
-			halftheta_by_tan_of_halfdtheta = -(half_dtheta * transform.getRotation().getSin()) / cos_minus_one;
-		}
-		final Translation2d translation_part = transform.getTranslation()
-				.rotateBy(new Rotation2d(halftheta_by_tan_of_halfdtheta, -half_dtheta));
-		return new Twist2d(translation_part.getX(), translation_part.getY(), dtheta);
-	}
-
-	private Pose2d inverse(Translation2d translation, Rotation2d rotation) {
-		Rotation2d rotation_inverted = Rotation2d.fromRadians(-rotation.getRadians());
-		return new Pose2d(new Translation2d(-translation.getX(), -translation.getY()).rotateBy(rotation_inverted),
-				rotation_inverted);
-	}
-
 	private void processFrames() {
-//		System.out.println("VisionDevice.processFrame");
+		// System.out.println("VisionDevice.processFrame");
 		if (mVisible.get() == 0) {
 			return;
 		}
-//		System.out.println("VisionDevice.processFrame, mVisible is true");
+		// System.out.println("VisionDevice.processFrame, mVisible is true");
 
 		double[] mt2Pose = mObservations.get();
 		double[] stdDevs = mStdDevs.get();
 		double timestamp = Timer.getFPGATimestamp() * Math.pow(10, 6) - VisionDeviceManager.getTimestampOffset();
-		
+
 		if (mt2Pose.length == 0) {
-//			System.out.println("VisionDevice.processFrame, mt2Pose is zero length, mt2 from helper=" );
+			// System.out.println("VisionDevice.processFrame, mt2Pose is zero length, mt2
+			// from helper=" );
 			return;
 		}
 
-//		System.out.println("VisionDevice.processFrame, mt2Pose.length=" + mt2Pose.length);
+		// System.out.println("VisionDevice.processFrame, mt2Pose.length=" +
+		// mt2Pose.length);
 
-
-		LimelightHelpers.SetRobotOrientation(mConstants.kTableName, mPigeon.getYaw().getDegrees(), 0, 0, 0, 0, 0);	
+		LimelightHelpers.SetRobotOrientation(mConstants.kTableName, mPigeon.getYaw().getDegrees(), 0, 0, 0, 0, 0);
 
 		Pose2d botPose = new Pose2d(mt2Pose[0], mt2Pose[1], new Rotation2d(mt2Pose[5] * Math.PI / 180));
 		Vector<N2> stdDevsVec = VecBuilder.fill(stdDevs[6], stdDevs[7]);
@@ -139,8 +119,7 @@ public class VisionDevice extends Subsystem {
 								timestamp,
 								botPose.getTranslation(),
 								new Translation2d(0, 0),
-								stdDevsVec),
-						botPose.getRotation());
+								stdDevsVec));
 	}
 
 	@Override

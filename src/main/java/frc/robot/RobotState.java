@@ -136,7 +136,7 @@ public class RobotState {
 	 *
 	 * @param update Info about vision update.
 	 */
-	public synchronized void addVisionUpdate(VisionUpdate update, Rotation2d rotZero) {
+	public synchronized void addVisionUpdate(VisionUpdate update) {
 		// If it's the first update don't do filtering
 		if (mLatestVisionUpdate.isEmpty() || initial_field_to_odom.isEmpty()) {
 			double vision_timestamp = update.timestamp;
@@ -154,7 +154,7 @@ public class RobotState {
 			mKalmanFilter.setXhat(1, field_to_odom.getY());
 			mLatestVisionUpdate = Optional.ofNullable(update);
 
-			SwerveDrive.getInstance().mWheelTracker.resetModulePoses(new Pose2d(field_to_odom, rotZero));
+			SwerveDrive.getInstance().resetOdometry(new Pose2d(field_to_odom, getLatestOdomToVehicle().getValue().getRotation()));
 		} else {
 			double vision_timestamp = mLatestVisionUpdate.get().timestamp;
 			lastTimestamp = mLatestVisionUpdate.get().timestamp;

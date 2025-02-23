@@ -61,6 +61,8 @@ public class SwerveDrive extends Subsystem {
 	private Pigeon mPigeon = Pigeon.getInstance();
 	public SwerveModule[] mModules;
 
+	public double intendedAngle = 0;
+
 	private PeriodicIO mPeriodicIO = new PeriodicIO();
 	private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
