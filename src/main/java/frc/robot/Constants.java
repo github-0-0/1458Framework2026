@@ -319,7 +319,7 @@ public final class Constants {
         
     
         public static final double kCruiseVelocity = 80;
-        public static final double kAcceleration = 140;
+        public static final double kAcceleration = 135;
         public static final double kJerk = 1600;
         public static final int CurrentThreshold = 45;
         public static final int kMaxCurrent = 40;
@@ -330,7 +330,7 @@ public final class Constants {
         public static final double kGroundHeight = 0.05; //occasionally stalls at bottom
         public static final double kL2Height = 11.229;
         public static final double kL3Height = 23.44;
-        public static final double kL4Height = 44.5;    //stalls at top
+        public static final double kL4Height = 44.1;    //stalls at top
         public static final double kAPHeight = 6.9;
         public static final double kA1Height = 19.4;
         public static final double kA2Height = 32.5; //Unsure
