@@ -3,7 +3,8 @@ package frc.robot.autos.modes;
 public class TestAutoMode3 extends AutoStringAuto {
     public TestAutoMode3()   {        
             //super("S 2 R 6 CS 1 R 6 CS 2 R 3 CS 2 R 1 ");
-            super("S 2 R 6 Elevator L2 CS 1");
+            //super("S 2 R 6 Elevator L2 CS 1");
+            super("S 2 R 1 CS 1 ");//CS 1 R 2 CS 1");
         }
 /*  
          
