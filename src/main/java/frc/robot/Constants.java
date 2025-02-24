@@ -102,7 +102,7 @@ public final class Constants {
         /** Meters per Second */
         public static final double maxSpeed = 1; //TODO: dc 11.9.24, increase max speed so that we can observe amplified drivetrain bahavior 
         /** Radians per Second */
-        public static final double maxAngularVelocity = 3.14/3.0; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = 3.14; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -253,10 +253,10 @@ public final class Constants {
         
         public static TalonFXConfiguration AzimuthFXConfig() {
             TalonFXConfiguration config = new TalonFXConfiguration();
-
-            config.Slot0.kP = .3;
-            config.Slot0.kI = 0.0;
-            config.Slot0.kD = 0.0008;
+            //dc.2.23.25, tuning steering motor to get rid of drifting (mainly rotation)
+            config.Slot0.kP = 0.03;//.3;        //Proportional compensation: small P value to keep motor from drifting, big value will cause oscillation
+            config.Slot0.kI = 0.0007;//0.01;    //Integral compensation: a small I value to help to quickly turning
+            config.Slot0.kD = 0.0001;//0.0008;  //Derivative compenstion: damping oscillation
             config.Slot0.kS = 0.0;
             config.Slot0.kV = 0.0;
 
