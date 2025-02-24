@@ -12,7 +12,7 @@ public class AlgaeIntakeAction implements Action {
 	@Override
 	public void start() {
 		mShooter.intake();
-		System.out.println("Shooter shooting at phenomenally slow speeds!");
+		//System.out.println("Shooter shooting at phenomenally slow speeds!");
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class AlgaeIntakeAction implements Action {
 	@Override
 	public boolean isFinished() {
 		if (Robot.isSimulation()) return true;
-        return Laser.inRangeIntake();
+        return Laser.inRangeAlgaeShooter();
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class Laser {
     }
 
     public static boolean inRangeAlgaeShooter() {
-        return getMeasurementAlgaeShooter() < 115;
+        return getMeasurementAlgaeShooter() < 200;
     }
 
     public static void testLaser() {
