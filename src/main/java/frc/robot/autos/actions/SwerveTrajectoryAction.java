@@ -3,9 +3,13 @@ package frc.robot.autos.actions;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.lib.trajectory.*;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 public class SwerveTrajectoryAction implements Action {
 	private SwerveDrive mDrive = null;
@@ -36,9 +40,20 @@ public class SwerveTrajectoryAction implements Action {
 		this(TrajectoryGenerator.getInstance().getTrajectorySet().loadPathPlannerTrajectory(key),resetPose);
 		name = key;
 	}
+	//
+	//dc.2.23.25, all constructors MUST call this ultimate constructor.
+	//1. we will flip the trajectory for red side alliance here. 
+	//2. will init properties of the object
+	//TODO: we shal remove mResetWheelTracker and related code.  WheelTracker is reset at proper time during mode initialization  
+	//
 	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory, ResetWheelTracker resetPose) {
-		kTrajectory = trajectory;
-		mTrajectory = new TrajectoryIterator(trajectory);
+		Optional<Alliance> ally = DriverStation.getAlliance();
+		if (ally.isPresent() && ally.get() == Alliance.Red) {
+			kTrajectory = trajectory.flip();
+		}else{
+			kTrajectory = trajectory;
+		}
+		//mTrajectory = new TrajectoryIterator(trajectory);//Iterator will be created at Action.start();
 		mDrive = SwerveDrive.getInstance();
 		mResetWheelTracker = resetPose;
 	}
