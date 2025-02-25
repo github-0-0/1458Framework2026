@@ -15,7 +15,7 @@ public class Controller {
     private TeleopAutoMode mTeleopAutoMode = null;
     private int prevPOV = -1;
 
-    private AlgaeIntakeAction mCurrActionAlgaeIntake = null;
+    // private AlgaeIntakeAction mCurrActionAlgaeIntake = null;
     private AlgaeShooterAction mCurrActionAlgaeShoot = null;
 
     // constructor
@@ -66,16 +66,16 @@ public class Controller {
                 }
             }
         } 
-        if (mXboxController1.getRightTriggerAxis()>0.5) {
-             if (mCurrActionAlgaeIntake==null) {
-                mCurrActionAlgaeIntake = new AlgaeIntakeAction();
-                mTeleopAutoMode.runAction(mCurrActionAlgaeIntake);
-             } else {
-                if (mCurrActionAlgaeIntake.isFinished()){
-                    mCurrActionAlgaeIntake=null;
-                }
-             }
-        }
+        // if (mXboxController1.getRightTriggerAxis()>0.5) {
+        //      if (mCurrActionAlgaeIntake==null) {
+        //         mCurrActionAlgaeIntake = new AlgaeIntakeAction();
+        //         mTeleopAutoMode.runAction(mCurrActionAlgaeIntake);
+        //      } else {
+        //         if (mCurrActionAlgaeIntake.isFinished()){
+        //             mCurrActionAlgaeIntake=null;
+        //         }
+        //      }
+        // }
 
         //Coral
         if (mXboxController1.getLeftBumperButtonPressed()) {
