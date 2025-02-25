@@ -136,7 +136,9 @@ public class SwerveDrive extends Subsystem {
 				return;
 			}
 		} else if (mControlState == DriveControlState.HEADING_CONTROL) {
-			if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
+			if (Math.abs(speeds.omegaRadiansPerSecond) > 0.1*Constants.SwerveConstants.maxAngularVelocity) { //original value = 1.0
+				// dc.2.25.2025, swerve button to trig it into OPEN_LOOP mode, per say, heading is no longer locked.
+				// TODO: test on robot to see how much it reduces the sensitivity of swerve button 
 				mControlState = DriveControlState.OPEN_LOOP;
 			} else {
 				double x = speeds.vxMetersPerSecond;
@@ -147,6 +149,16 @@ public class SwerveDrive extends Subsystem {
 			}
 		} else if (mControlState != DriveControlState.OPEN_LOOP) {
 			mControlState = DriveControlState.OPEN_LOOP;
+		}else{	
+			// dc.2.25.2025, bugfix for heading drift 
+			// case for (state == OPEN_LOOP )
+			// add code to trun on HEADING_CONTROL
+			// TODO: test on robot to see how much it wobbles 
+			//
+			if (speeds.omegaRadiansPerSecond==0.0){//swerve button reading 
+				stabilizeHeading(mPeriodicIO.heading);
+			}
+
 		}
 
 		mPeriodicIO.des_chassis_speeds = speeds;
