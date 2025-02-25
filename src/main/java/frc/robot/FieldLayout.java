@@ -32,12 +32,12 @@ public class FieldLayout {
 	public static double kFieldWidth = Units.inchesToMeters(323.277);
 	public static int closestTag = -1;
     public static Translation2d[] offsets = {
-		new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, -0.18),
-		new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, 0.18),
+		new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, -0.20),
+		new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, 0.20),
 		new Translation2d(Constants.Swerve.trackWidth/2 + 0.20,0),
-		new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20, -0.18),
+		new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20, -0.20),
 		new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20,0),
-		new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20,0.18),
+		new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20,0.20),
 	};
 
 	public static final double kApriltagWidth = Units.inchesToMeters(6.50);
