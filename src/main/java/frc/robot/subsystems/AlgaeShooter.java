@@ -73,6 +73,7 @@ public class AlgaeShooter extends Subsystem {
 						break;
 					case SHOOT:
 						spinOut();
+						break;
 					case STOP:
 						stop();
 						break;
@@ -92,6 +93,7 @@ public class AlgaeShooter extends Subsystem {
 	@Override
 	public void writePeriodicOutputs() {
 		mRightAlgaeShooterMotor.set(mPeriodicIO.speed);
+
 	}
 
 	@Override
@@ -108,20 +110,20 @@ public class AlgaeShooter extends Subsystem {
 
 	/*---------------------------------- Custom Public Functions ----------------------------------*/
 
-	public void intake() {
+	public synchronized void intake() {
 		mPeriodicIO.state = AlgaeShooterState.INTAKE;
 	}
 
-	public void shoot() {
+	public synchronized void shoot() {
 		mPeriodicIO.state = AlgaeShooterState.SHOOT;
 	}
 
-	public void stopAlgaeShooter() {
+	public synchronized void stopAlgaeShooter() {
 		mPeriodicIO.state = AlgaeShooterState.STOP;
 	}
 	/*---------------------------------- Custom Private Functions ---------------------------------*/
 
-	public void spinOut() {
+	public void spinOut() {		
 		mPeriodicIO.speed = Constants.AlgaeShooter.kAlgaeShooterSpeed;
 	}
 
