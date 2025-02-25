@@ -255,7 +255,7 @@ public final class Constants {
             TalonFXConfiguration config = new TalonFXConfiguration();
             //dc.2.23.25, tuning steering motor to get rid of drifting (mainly rotation)
             config.Slot0.kP = 0.03;//.3;        //Proportional compensation: small P value to keep motor from drifting, big value will cause oscillation
-            config.Slot0.kI = 0.0007;//0.01;    //Integral compensation: a small I value to help to quickly turning
+            config.Slot0.kI = 0.0; //0.0007;//0.01;    //Integral compensation: a small I value to help to quickly turning
             config.Slot0.kD = 0.0001;//0.0008;  //Derivative compenstion: damping oscillation
             config.Slot0.kS = 0.0;
             config.Slot0.kV = 0.0;

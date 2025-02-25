@@ -137,11 +137,14 @@ public class SwerveDrive extends Subsystem {
 				return;
 			}
 		} else if (mControlState == DriveControlState.HEADING_CONTROL) {
-			if (Math.abs(speeds.omegaRadiansPerSecond) > 0.1*Constants.SwerveConstants.maxAngularVelocity) { //original value = 1.0
-				// dc.2.25.2025, swerve button to trig it into OPEN_LOOP mode, per say, heading is no longer locked.
+			if (Math.abs(speeds.omegaRadiansPerSecond) > 0.0*Constants.SwerveConstants.maxAngularVelocity) { //original value = 0.1
+				// dc.2.25.2025, break from heading locking mode to OPEN_LOOP as soon as swerve button is pressed,.
 				// TODO: test on robot to see how much it reduces the sensitivity of swerve button 
 				mControlState = DriveControlState.OPEN_LOOP;
+				System.out.println("back to Open_Loop");
+
 			} else {
+				// dc.2.25.2025, heading lock mode, actively compensate any heading shifts here. 
 				double x = speeds.vxMetersPerSecond;
 				double y = speeds.vyMetersPerSecond;
 				double omega = mHeadingController.update(mPeriodicIO.heading.getRadians(), Timer.getFPGATimestamp());
@@ -151,14 +154,15 @@ public class SwerveDrive extends Subsystem {
 			}
 		} else if (mControlState != DriveControlState.OPEN_LOOP) {
 			mControlState = DriveControlState.OPEN_LOOP;
-		}else{	
-			// dc.2.25.2025, bugfix for heading drift 
-			// case for (state == OPEN_LOOP )
+		}else{	// already in (state == OPEN_LOOP ) mode
+			// dc.2.25.2025, bugfix for heading drift 			
 			// add code to trun on HEADING_CONTROL
 			// TODO: test on robot to see how much it wobbles 
 			//
-			if (speeds.omegaRadiansPerSecond==0.0){//swerve button reading 
+			if (speeds.omegaRadiansPerSecond==0.0 && 
+				Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)> 0.1*mKinematicLimits.kMaxDriveVelocity ){//swerve button is released and drive button is pressed
 				stabilizeHeading(mPeriodicIO.heading);
+				System.out.println("heading locked to " + mPeriodicIO.heading);
 			}
 
 		}
