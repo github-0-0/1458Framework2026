@@ -4,7 +4,11 @@ public class TestAutoMode3 extends AutoStringAuto {
     public TestAutoMode3()   {        
         //super("S 2 R 6 CS 1 R 6 CS 2 R 3 CS 2 R 1 ");
         //super("S 2 R 6 Elevator L2 CS 1");
-        super("Elevator L2 S 2 R 1 Snap 0 Elevator L3");//CS 1 R 2 CS 1");
+        //super("Elevator L2 S 2 R 1 Snap 0 Elevator L3");//CS 1 R 2 CS 1");
+        //super("S 2 R 1 CS 1 R 1 CS 1 R 2 CS 1 R 3 CS 1 R 4 CS 1 R 5 CS 1 R 6");//CS 1 R 2 CS 1");//left side routine
+        //super("S 3 R 5 CS 2 R 5 CS 2 R 4 CS 2 R 3 CS 2 R 2 CS 2 R 1 CS 2 R 6");//CS 1 R 2 CS 1");//right side routine
+        super("S 4 R 6 CS 2 R 5 CS 2 R 4 CS 2 R 3 CS 2 R 2 CS 2 R 1 CS 2 R 6");//CS 1 R 2 CS 1");//right side routine
+
     }
 /*  
          
