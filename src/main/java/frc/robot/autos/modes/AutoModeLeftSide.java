@@ -8,5 +8,5 @@ public class AutoModeLeftSide extends AutoStringAuto {
     //             "CS 2 Wait 1 " + 
     //             "Elevator DEF R 5 " + 
     //             "Elevator L4 CShoot Wait 1 Elevator DEF ");
-    // }
+    }
 }
