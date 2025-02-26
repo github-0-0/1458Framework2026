@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.781529017857142,
-        "y": 4.828069196428571
+        "x": 7.638238636363636,
+        "y": 4.149644886363635
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.240680803571427,
-        "y": 4.971707589285714
+        "x": 7.118791390728477,
+        "y": 4.148489238410596
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.1960379464285715,
-        "y": 3.920535714285714
+        "x": 5.847578642384105,
+        "y": 4.149644886363635
       },
       "prevControl": {
-        "x": 6.731417410714285,
-        "y": 4.508147321428571
+        "x": 6.465817278747743,
+        "y": 4.169588068181817
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,16 +33,16 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
+    "maxAngularVelocity": 60.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.45184230102203
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Start4ToReef",

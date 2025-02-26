@@ -86,6 +86,7 @@ public class Elevator extends Subsystem {
     AP,
     A1,
     A2,
+    DEF, 
   }
 
   private static class PeriodicIO {
@@ -195,6 +196,9 @@ public class Elevator extends Subsystem {
       case "A2":
         mPeriodicIO.elevator_target = Constants.Elevator.kA2Height;
         mPeriodicIO.state = "A2";
+      case "DEF":
+        mPeriodicIO.elevator_target = Constants.Elevator.KDefaultHeight;
+        mPeriodicIO.state = "DEF";
     }
   }
 

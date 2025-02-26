@@ -159,11 +159,11 @@ public class SwerveDrive extends Subsystem {
 			// add code to trun on HEADING_CONTROL
 			// TODO: test on robot to see how much it wobbles 
 			//
-			if (speeds.omegaRadiansPerSecond==0.0 && 
-				Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)> 0.1*mKinematicLimits.kMaxDriveVelocity ){//swerve button is released and drive button is pressed
-				stabilizeHeading(mPeriodicIO.heading);
-				System.out.println("heading locked to " + mPeriodicIO.heading);
-			}
+// 			if (speeds.omegaRadiansPerSecond==0.0 && 
+// 				Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)> 0.1*mKinematicLimits.kMaxDriveVelocity ){//swerve button is released and drive button is pressed
+// 				stabilizeHeading(mPeriodicIO.heading);
+// 				System.out.println("heading locked to " + mPeriodicIO.heading);
+			// }
 
 		}
 

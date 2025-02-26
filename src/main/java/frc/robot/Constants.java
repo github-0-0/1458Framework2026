@@ -100,9 +100,9 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 1; //TODO: dc 11.9.24, increase max speed so that we can observe amplified drivetrain bahavior 
+        public static final double maxSpeed = 4; //TODO: dc 11.9.24, increase max speed so that we can observe amplified drivetrain bahavior 
         /** Radians per Second */
-        public static final double maxAngularVelocity = 3.14; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = 3.14/3; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -329,11 +329,12 @@ public final class Constants {
         //TODO: Find correct elevator heights for each level
         public static final double kGroundHeight = 0.05; //occasionally stalls at bottom
         public static final double kL2Height = 10.15;
-        public static final double kL3Height = 23.04;
+        public static final double kL3Height = 22.54;
         public static final double kL4Height = 44.0;    //stalls at top
         public static final double kAPHeight = 6.9;
         public static final double kA1Height = 19.4;
         public static final double kA2Height = 32.5; //Unsure
+        public static final double KDefaultHeight = 13;// this height clears the reef but not blocking the front camera;
         
         public static final TalonFXConfiguration ElevatorConfiguration() {
             TalonFXConfiguration config = new TalonFXConfiguration();

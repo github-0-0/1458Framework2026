@@ -97,14 +97,14 @@ public class Controller {
         if (mXboxController1.getRightBumperButtonPressed()) {            
             mTeleopAutoMode.runAction(new CoralShootAction());
         }
-        //hang            
-        if (mXboxController1.getPOV()==0) {
-            Hang.getInstance().setMotor(0.3);
-        } else if (mXboxController1.getPOV()==180) {
-            Hang.getInstance().setMotor(-0.3);
-        } else {
-            Hang.getInstance().setMotor(-0);
-        }
+        // //hang            
+        // if (mXboxController1.getPOV()==0) {
+        //     Hang.getInstance().setMotor(0.3);
+        // } else if (mXboxController1.getPOV()==180) {
+        //     Hang.getInstance().setMotor(-0.3);
+        // } else {
+        //     Hang.getInstance().setMotor(-0);
+        // }
 
 
         //snap2tag
