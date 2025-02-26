@@ -137,6 +137,7 @@ public class RobotContainer25 {
             // set robot to neutral brake
             if (m_SwerveDrive != null)
                 m_SwerveDrive.setNeutralBrake(true);
+
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t); // TODO: CrashTracker needs to be ported. to log crash/exception
             throw t;
@@ -151,10 +152,8 @@ public class RobotContainer25 {
 
     // init manual (teleop) mode
     public void initManualMode() {
-        if (m_AutoModeExecutor != null) {
-			m_AutoModeExecutor.stop();
-		}
-
+        if (m_AutoModeExecutor != null) {m_AutoModeExecutor.stop();	}
+        
    		try {
             // Create an empty TeleopAutoMode and bind it to controller
             mTeleopActionExecutor = new AutoModeExecutor();
@@ -169,8 +168,6 @@ public class RobotContainer25 {
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
             // start TeleopAutoMode, empty for now, to be activated by shortcut keys from controller.
             mTeleopActionExecutor.start();
-
-            //SwerveDrive.getInstance().resetOdometry(RobotState.getInstance().getLatestFieldToVehicle());
 		} catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -178,24 +175,24 @@ public class RobotContainer25 {
 
     }
 
-    // init manual (teleop) mode
+    // init auto mode
     public void initAutoMode() {
-        m_AutoModeSelector.reset();
-        m_AutoModeSelector.updateModeCreator(true);
+        // get current auto mode from its menu selector
         Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
-
-        m_AutoModeExecutor = new AutoModeExecutor();
-        if (autoMode.isPresent() && (autoMode.get() != m_AutoModeExecutor.getAutoMode())) {
+        if (autoMode.isPresent()) {
+            m_AutoModeExecutor = new AutoModeExecutor();
             m_AutoModeExecutor.setAutoMode(autoMode.get());
-        }
+        }        
+        //reset robot heading via gyro. robot has to orient at the right direction
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if (!ally.isPresent()){return;}
+		if (ally.get() == Alliance.Blue) {m_SwerveDrive.zeroGyro(180);
+        }else{m_SwerveDrive.zeroGyro(0);}
+        
         try {
             // RobotState.getInstance().setIsInAuto(false);
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
-            // init simulation
-            if (Robot.isSimulation()){initSimulation();}            
             m_AutoModeExecutor.start();
-
-            //SwerveDrive.getInstance().resetOdometry(RobotState.getInstance().getLatestFieldToVehicle());
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -203,11 +200,16 @@ public class RobotContainer25 {
 
     }
 
-    // init manual (teleop) mode
+    // init diabled  mode, this is the staging place to get ready for other modes, such as auto
     public void initDisabledMode() {
+        //close current auto mode
         if (m_AutoModeExecutor != null) {
             m_AutoModeExecutor.stop();
         }
+		// Reset all auto mode menu items.
+		m_AutoModeSelector.reset();
+		m_AutoModeSelector.updateModeCreator(true);
+        // turn on loopers
         try {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
         } catch (Throwable t) {
@@ -303,10 +305,10 @@ public class RobotContainer25 {
             return;
         }
 		if (ally.get() == Alliance.Blue) {
-//            m_SwerveDrive.zeroGyro(180);
+            m_SwerveDrive.zeroGyro(180);
             m_SwerveDrive.resetOdometry(new Pose2d(new Translation2d(8.0,7.0), Rotation2d.fromDegrees(0)));
         }else{
-//            m_SwerveDrive.zeroGyro(0);
+            m_SwerveDrive.zeroGyro(0);
             m_SwerveDrive.resetOdometry(new Pose2d(new Translation2d(9.5,1.26), Rotation2d.fromDegrees(0)));
         }
     }
