@@ -304,10 +304,10 @@ public class DriveMotionPlanner {
 
 		// The Default Cook is the minimum speed to use. So if a feedforward speed is less than defaultCook, the robot
 		// will drive at the defaultCook speed
-		if (normalizedSpeed > defaultCook || mSetpoint.timeSeconds > (mCurrentTrajectoryLength / 2.0)) {
-			useDefaultCook = false;
-		}
-		if (useDefaultCook) {normalizedSpeed = defaultCook;	}
+		// if (normalizedSpeed > defaultCook || mSetpoint.timeSeconds > (mCurrentTrajectoryLength / 2.0)) {
+		// 	useDefaultCook = false;
+		// }
+		//if (useDefaultCook) {normalizedSpeed = defaultCook;	}
 
 		// Convert the Polar Coordinate (speed, direction) into a Rectangular Coordinate (Vx, Vy) in Robot Frame
 		final Translation2d steeringVector =
