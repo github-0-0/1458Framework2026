@@ -50,8 +50,8 @@ public class Controller {
         }
         else if (mXboxController1.getAButtonPressed()) {
 //            Elevator.getInstance().runElevatorRaw(-0.1);
-            //mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
-            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new SnapToTag(2)));
+            mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
+            //mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new SnapToTag(2)));
         }
         else if (mXboxController1.getBButtonPressed()) {
             //System.out.println("L2 Called");
@@ -64,19 +64,19 @@ public class Controller {
         }
         else if (mXboxController1.getPOV() == 0 && POVReset) {
             POVReset = false;
-            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("A2"), new SnapToTag(2), new AlgaeAction("Intake")));
+           // mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("A2"), new SnapToTag(2), new AlgaeAction("Intake")));
         }
         else if (mXboxController1.getPOV() == 180 && POVReset) {
             POVReset = false;
-            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("A1"), new SnapToTag(2), new AlgaeAction("Intake")));
+            //mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("A1"), new SnapToTag(2), new AlgaeAction("Intake")));
         }
         else if (mXboxController1.getRightBumperButtonPressed()) {
             //mTeleopAutoMode.runAction(new CoralShootAction());
-            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("AP"), new SnapToTag(2), new AlgaeAction("Shoot"), new ElevatorAction("L2")));
+            //mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("AP"), new SnapToTag(2), new AlgaeAction("Shoot"), new ElevatorAction("L2")));
         }
         else if(mXboxController1.getLeftBumperButtonPressed()) {
             
-            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new AlgaeAction("Intake"), new ElevatorAction("L2")));
+            //mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new AlgaeAction("Intake"), new ElevatorAction("L2")));
         }
         else if(mXboxController1.getBackButton()) {
             mTeleopAutoMode.runAction(new ElevatorAction("L2"));
