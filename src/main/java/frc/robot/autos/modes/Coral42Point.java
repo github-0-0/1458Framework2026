@@ -11,3 +11,4 @@ public class Coral42Point extends AutoStringAuto {
         "[ ( R 6 Snap 0 ) ( Elevator 4 ) ] CShoot CS 1 CIntake Elevator 0 ");
     }
 }
+// Paths used: S1-R1, R1-CS1, CS1-R2, R2-CS1, ..., CS1-R6, R6-CS1

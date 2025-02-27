@@ -15,3 +15,4 @@ public class LMiddleCoralScoreAutoMode extends AutoStringAuto {
                    + "( CS 1 CIntake R 2 Elevator 3 CShoot )"); // Third iteration: 4 seconds
     }
 }
+// Paths used: S2-R1, R1-CS1, CS1-R2, R2-CS1, CS1-R2, R2-CS1, CS1-R2
