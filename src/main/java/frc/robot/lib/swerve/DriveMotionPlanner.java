@@ -26,7 +26,8 @@ public class DriveMotionPlanner {
 	public static final double kPathLookaheadTime = 0.1; // From 1323 (2019)
 	public static final double kPathMinLookaheadDistance = 0.3; // From 1323 (2019), not used in team1458 code
 	public static final double kAdaptivePathMinLookaheadDistance = 0.05;//0.15;
-	public static final double kAdaptivePathMaxLookaheadDistance = 0.61;
+	public static final double kAdaptivePathMaxLookaheadDistance = 0.20
+	;//0.61;
 	public static final double kAdaptiveErrorLookaheadCoefficient = 0.01;
 	/*
 	* dc.1.24.2025, bugfix: PurePursuit often stucks/oscilates around sharp turning point on trajectory
