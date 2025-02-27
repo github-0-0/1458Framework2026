@@ -45,41 +45,41 @@ public class Controller {
         //elevator
         if (mXboxController1.getYButtonPressed()) {
             //Elevator.getInstance().runElevatorRaw(0.1);
-            mTeleopAutoMode.runAction(new ElevatorAction("L4"));
-            //mTeleopAutoMode.runAction(new SeriesAction(new ParallelAction(Arrays.asList(new ElevatorAction("L4"), new SnapToTag(snapTo))), new CoralShootAction(), new ElevatorAction("L2")));
+            //mTeleopAutoMode.runAction(new ElevatorAction("L4"));
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("L4"), new SnapToTag(snapTo), new CoralShootAction(), new ElevatorAction("L3")));
         }
         else if (mXboxController1.getAButtonPressed()) {
 //            Elevator.getInstance().runElevatorRaw(-0.1);
-            mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
-            //mTeleopAutoMode.runAction(new SeriesAction(new ParallelAction(Arrays.asList(new ElevatorAction("Ground"), new SnapToTag(0)))));
+            //mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new SnapToTag(2)));
         }
         else if (mXboxController1.getBButtonPressed()) {
             //System.out.println("L2 Called");
-            mTeleopAutoMode.runAction(new ElevatorAction("L2"));
-            //mTeleopAutoMode.runAction(new SeriesAction(new ParallelAction(Arrays.asList(new ElevatorAction("L2"), new SnapToTag(snapTo))), new CoralShootAction()));
+            //mTeleopAutoMode.runAction(new ElevatorAction("L2"));
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("L2"), new SnapToTag(snapTo), new CoralShootAction()));
         }
         else if (mXboxController1.getXButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction("L3"));
-            //mTeleopAutoMode.runAction(new SeriesAction(new ParallelAction(Arrays.asList(new ElevatorAction("L3"), new SnapToTag(snapTo))), new CoralShootAction(), new ElevatorAction("L2")));
+            //mTeleopAutoMode.runAction(new ElevatorAction("L3"));
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("L3"), new SnapToTag(snapTo), new CoralShootAction(), new ElevatorAction("L3")));
         }
         else if (mXboxController1.getPOV() == 0 && POVReset) {
             POVReset = false;
-            //mTeleopAutoMode.runAction(new SeriesAction(new ParallelAction(Arrays.asList(new ElevatorAction("A2"), new SnapToTag(0))), new AlgaeAction("Intake")));
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("A2"), new SnapToTag(2), new AlgaeAction("Intake")));
         }
         else if (mXboxController1.getPOV() == 180 && POVReset) {
             POVReset = false;
-            //mTeleopAutoMode.runAction(new SeriesAction(new ParallelAction(Arrays.asList(new ElevatorAction("A1"), new SnapToTag(0))), new AlgaeAction("Intake")));
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("A1"), new SnapToTag(2), new AlgaeAction("Intake")));
         }
         else if (mXboxController1.getRightBumperButtonPressed()) {
-            mTeleopAutoMode.runAction(new CoralShootAction());
-            //mTeleopAutoMode.runAction(new SeriesAction(new ParallelAction(Arrays.asList(new ElevatorAction("AP"), new SnapToTag(0))), new AlgaeAction("Shoot"), new ElevatorAction("L2")));
+            //mTeleopAutoMode.runAction(new CoralShootAction());
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("AP"), new SnapToTag(2), new AlgaeAction("Shoot"), new ElevatorAction("L2")));
         }
         else if(mXboxController1.getLeftBumperButtonPressed()) {
             
-            //mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new AlgaeAction("Intake"), new ElevatorAction("L2")));
+            mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new AlgaeAction("Intake"), new ElevatorAction("L2")));
         }
         else if(mXboxController1.getBackButton()) {
-            //mTeleopAutoMode.runAction(new ElevatorAction("L2"));
+            mTeleopAutoMode.runAction(new ElevatorAction("L2"));
         }
         else {
             POVReset = true;
@@ -89,7 +89,7 @@ public class Controller {
             snapTo = 1;
         }
         if(mXboxController2.getPOV() == 270) {
-            snapTo = 2;
+            snapTo = 0;
         }
 
         //algae
@@ -135,8 +135,10 @@ public class Controller {
            // ));
         }
         if (mXboxController1.getRightBumperButtonPressed()) {            
-            mTeleopAutoMode.runAction(new CoralShootAction());
-            
+            mTeleopAutoMode.runAction(new CoralShootAction());   
+        }
+        if(mXboxController2.getBButton()) {
+            mTeleopAutoMode.runAction(new ElevatorAction("L3"));
         }
         // //hang            
         // if (mXboxController1.getPOV()==0) {
