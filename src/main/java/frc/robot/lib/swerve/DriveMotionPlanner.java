@@ -25,7 +25,7 @@ public class DriveMotionPlanner {
 	// Pure Pursuit Constants
 	public static final double kPathLookaheadTime = 0.1; // From 1323 (2019)
 	public static final double kPathMinLookaheadDistance = 0.3; // From 1323 (2019), not used in team1458 code
-	public static final double kAdaptivePathMinLookaheadDistance = 0.15;//0.15;
+	public static final double kAdaptivePathMinLookaheadDistance = 0.05;//0.15;
 	public static final double kAdaptivePathMaxLookaheadDistance = 0.61;
 	public static final double kAdaptiveErrorLookaheadCoefficient = 0.01;
 	/*
@@ -51,7 +51,7 @@ public class DriveMotionPlanner {
 		mFollowerType = type;
 	}
 
-	private double defaultCook = 0.5;
+	private double defaultCook = 0.05; //0.5;//bugfix: we need defaultCook to start robot on trajectory starting with zero speed
 	private boolean useDefaultCook = true;
 
 	public void setDefaultCook(double new_value) {
@@ -197,7 +197,7 @@ public class DriveMotionPlanner {
 					while (distanceToTrajectory(current_pose, previewQuantity + searchStepSize * searchDirection) 
 							< distanceToTrajectory(current_pose, previewQuantity)) { 		/* continue search if next step trajectory point is closer to current_pose than current trajectory point */ 
 								previewQuantity += searchStepSize * searchDirection;	/* continue to next point */
-					}
+					}					
 					searchStepSize /= 10.0;	//reduce search step size by one factor
 					searchDirection *= -1;	//reverse the search direction
 				}				
@@ -221,7 +221,7 @@ public class DriveMotionPlanner {
 
     // check if we complete the current trajectory
     public boolean isDone() {
-		return mCurrentTrajectory != null && mCurrentTrajectory.isDone() && getHeadingError().getDegrees() < 3;//TODO: put this magic number in constants
+		return mCurrentTrajectory != null && mCurrentTrajectory.isDone() && getHeadingError().getDegrees() < 3;//TODO: put this magic number in constants, this could cause
 	}
 
 	//dc. add Twist2d pid_error as input parameter to remove dependency on class property in original citrus code
@@ -302,12 +302,14 @@ public class DriveMotionPlanner {
 		// Use the Velocity Feedforward of the Closest Point on the Trajectory
 		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond) / Constants.SwerveConstants.maxAutoSpeed; 
 
-		// The Default Cook is the minimum speed to use. So if a feedforward speed is less than defaultCook, the robot
-		// will drive at the defaultCook speed
-		// if (normalizedSpeed > defaultCook || mSetpoint.timeSeconds > (mCurrentTrajectoryLength / 2.0)) {
-		// 	useDefaultCook = false;
-		// }
-		//if (useDefaultCook) {normalizedSpeed = defaultCook;	}
+		// Use Default Cook at the begining of the trajectory until path speed exceeds it or robot progresses far enough 
+		// It is also bugfix for zero speed at the beginning of trajectory
+		// The applicable progress length is calculated based on that robot reached max speed no later than the middle point of path
+		// For the rest of the path, use path predefined speed will provide smooth movement
+		if (normalizedSpeed > defaultCook || mSetpoint.timeSeconds > (mCurrentTrajectoryLength / (defaultCook/2))) {
+			useDefaultCook = false;
+		}
+		if (useDefaultCook) {normalizedSpeed = defaultCook;	}
 
 		// Convert the Polar Coordinate (speed, direction) into a Rectangular Coordinate (Vx, Vy) in Robot Frame
 		final Translation2d steeringVector =
@@ -342,7 +344,7 @@ public class DriveMotionPlanner {
 		//output debug info as we get close to the end of path
 		if (actual_lookahead_distance < adaptive_lookahead_distance) {
 
-		//* Temporary removal
+		/* Temporary removal*/
 			System.out.println("PurePursuit() remaining (s) =" + mCurrentTrajectory.getRemainingProgress() 
 				+ ", err.distance=" + current_pose.relativeTo(mSetpoint.poseMeters).getTranslation().getNorm()
 				+ ", err.angle=" + currPoseRotationDelta.getDegrees() 
@@ -352,7 +354,7 @@ public class DriveMotionPlanner {
 				+ ", OmegaRPS =" + trueOmegaRadiansPerSecond
 				);
 
-		//*/
+		
 		}			
 		
 		

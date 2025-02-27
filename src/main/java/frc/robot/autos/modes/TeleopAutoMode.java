@@ -1,6 +1,7 @@
 package frc.robot.autos.modes;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -18,38 +19,44 @@ public class TeleopAutoMode extends AutoModeBase{
     private List<Action> m_runningActions = new ArrayList<Action>();
 
     //constructor
-    public void TeleopAutoMode(){}
+    public TeleopAutoMode() {}
     
     //callback from the executor thread 
     @Override
 	protected void routine() throws AutoModeEndedException {
-        // update action progress, takes no time
-		for (Action action : m_runningActions) {
-			if (!action.isFinished()) {
-				action.update();
-			} else {
-				action.done();
-                m_runningActions.remove(action);//remove completed actions from the list
-			}
-		}
-        //sleep for a cycle, in milli seconds
-		long waitTime = (long) (m_update_rate * 1000.0);
-		try {Thread.sleep(waitTime);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while(true) {
+            //System.out.println("routined");
+            // update action progress, takes no time
+            Iterator<Action> iterator = m_runningActions.iterator();
+            while (iterator.hasNext()) {
+                Action action = iterator.next();
+                if (action.isFinished()) {
+                    action.done();
+                    iterator.remove(); // Safe removal
+                } else {
+                    action.update();
+                }
+            }
+            //sleep for a cycle, in milli seconds
+            long waitTime = (long) (m_update_rate * 1000.0);
+            try {
+                Thread.sleep(waitTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     // start a new action
-    public void runAction(Action action) {
-        if (action !=null){
+    public synchronized void runAction(Action action) {
+        if (action != null){
             action.start();
             m_runningActions.add(action);
         }
     }
 
     // abort the all active actions 
-   	public void abort() {		
+   	public synchronized void abort() {		
 		if (m_runningActions.isEmpty()) {
 			System.out.println("No running actions to abort");
 			return;

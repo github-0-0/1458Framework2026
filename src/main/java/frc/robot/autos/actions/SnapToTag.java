@@ -15,6 +15,7 @@ import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -36,7 +37,7 @@ public class SnapToTag implements Action {
 
 	private PathPlannerTrajectory mTrajectory = null;
 	private Action mAction = null;
-	private int tag = 0;
+	private AprilTag tag = null;
 	private int mNum = 0;
 	protected static boolean isRunning = false;
 	/**
@@ -55,7 +56,7 @@ public class SnapToTag implements Action {
 				new Waypoint(null,initialPosition,finalPosition),
 				new Waypoint(initialPosition,finalPosition,null)
 			),
-			new PathConstraints(Constants.SwerveConstants.maxSpeed, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, Constants.Swerve.maxAngularVelocity, Constants.Swerve.kMaxAngularAcceleration),
+			new PathConstraints(Constants.SwerveConstants.maxSpeed / 3, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 3, Constants.Swerve.maxAngularVelocity, Constants.Swerve.kMaxAngularAcceleration),
 			new IdealStartingState(initialSpeed,initialRotation),
 			new GoalEndState(kFinalSpeed,finalRotation)
 		);
@@ -66,22 +67,22 @@ public class SnapToTag implements Action {
 		}
 		mTrajectory = generatedPath.getIdealTrajectory(Constants.PathPlannerRobotConfig.config).get();
 
-		// Create the trajectory to follow in autonomous. It is best to initialize
-		// trajectories here to avoid wasting time in autonomous.
+		// // Create the trajectory to follow in autonomous. It is best to initialize
+		// // trajectories here to avoid wasting time in autonomous.
 	
-		// Create and push Field2d to SmartDashboard.
+		// // Create and push Field2d to SmartDashboard.
 
-		SmartDashboard.putData(mDrive.m_field);
+		// SmartDashboard.putData(mDrive.m_field);
 	
-		// Push the trajectory to Field2d.
-		ArrayList<Trajectory.State> temp = new ArrayList<>();
-		for (PathPlannerTrajectoryState s : mTrajectory.getStates()) {
-			temp.add(fromPathPlannerTrajectoryState(s));
-		}
-		//mDrive.m_field.getObject("traj").setTrajectory(new Trajectory(temp));
+		// // Push the trajectory to Field2d.
+		// ArrayList<Trajectory.State> temp = new ArrayList<>();
+		// for (PathPlannerTrajectoryState s : mTrajectory.getStates()) {
+		// 	temp.add(fromPathPlannerTrajectoryState(s));
+		// }
+		// //mDrive.m_field.getObject("traj").setTrajectory(new Trajectory(temp));
 		
 		mAction = new SwerveTrajectoryAction(mTrajectory);
-		System.out.println("Snap to tag "+new Pose2d(initialPosition,initialRotation).toString()+ " -> " + new Pose2d(finalPosition,finalRotation).toString());
+		System.out.println("Snap to tag "+tag.ID+" at "+new Pose2d(initialPosition,initialRotation).toString()+ " -> " + new Pose2d(finalPosition,finalRotation).toString());
 	
 		mAction.start();
 	}
@@ -117,14 +118,14 @@ public class SnapToTag implements Action {
 		boolean shouldFlip = false;
 		tag = FieldLayout.getClosestTag(initialPosition);
 		for (int num : new int[] {1, 2, 12, 13}) {
-			if (num == tag) {
+			if (num == tag.ID) {
 				shouldFlip = true;
 				break;
 			}
 		}
-		Rotation2d aprilTagRotation = FieldLayout.getClosestTagPos(initialPosition).getRotation().toRotation2d().rotateBy(Rotation2d.fromDegrees(0));//TODO: check if flipped 180 deg
-		finalRotation = aprilTagRotation.minus(new Rotation2d(shouldFlip?0.0:Math.PI));
-		finalPosition = FieldLayout.getClosestTagPos(initialPosition).getTranslation().toTranslation2d().plus(FieldLayout.offsets[mNum].rotateBy(aprilTagRotation));
+		Rotation2d aprilTagRotation = FieldLayout.getClosestTag(initialPosition).pose.getRotation().toRotation2d();
+		finalRotation = aprilTagRotation.minus(new Rotation2d(shouldFlip ? 0.0 : Math.PI));
+		finalPosition = FieldLayout.getClosestTag(initialPosition).pose.getTranslation().toTranslation2d().plus(FieldLayout.offsets[mNum].rotateBy(aprilTagRotation));
 		
 	}
 	public Trajectory.State fromPathPlannerTrajectoryState(PathPlannerTrajectoryState state) {
