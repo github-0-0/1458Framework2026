@@ -51,12 +51,7 @@ public class Pigeon {
 	private Pigeon(int port) {
 		mGyro = new Pigeon2(port, "CV"); //TODO: ADD TO CONSTANTS
 		mGyro.getConfigurator().apply(new Pigeon2Configuration());
-		//todo: move to hardcoded yawAdjustmentAngle to robot init . 
-		Optional<Alliance> ally = DriverStation.getAlliance();
-		if (ally.isPresent() && ally.get() == Alliance.Blue) {
-			System.out.println("Set rotation 180");
-			yawAdjustmentAngle = Rotation2d.fromDegrees(180);
-		}
+		//todo: move to hardcoded yawAdjustmentAngle to robot init .
 	}
 
 	public Rotation2d getYaw() {

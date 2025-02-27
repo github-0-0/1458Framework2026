@@ -57,7 +57,7 @@ public class RobotState {
 	private static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(
 			Math.pow(0.02, 1), // vision
 			Math.pow(0.02, 1));
-	private Optional<VisionUpdate> mLatestVisionUpdate;
+	public Optional<VisionUpdate> mLatestVisionUpdate;
 
 	private Optional<InterpolatingTranslation2d> initial_field_to_odom = Optional.empty();
 	private InterpolatingTreeMap<InterpolatingDouble, InterpolatingPose2d> odometry_to_vehicle;

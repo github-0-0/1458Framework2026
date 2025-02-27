@@ -47,6 +47,8 @@ public class RobotContainer25 {
     public static boolean is_red_alliance = false;  //TODO: code the update logic for this property
 
     private Controller m_Controller;
+    
+    private Boolean foundStation = false;
 
     /* Controllers */
     private final Joystick m_JoyStick = new Joystick(0);
@@ -152,7 +154,7 @@ public class RobotContainer25 {
 
     // init manual (teleop) mode
     public void initManualMode() {
-        if (m_AutoModeExecutor != null) {m_AutoModeExecutor.stop();	}
+        if (m_AutoModeExecutor != null) {m_AutoModeExecutor.stop();	}     
         
    		try {
             // Create an empty TeleopAutoMode and bind it to controller
@@ -216,6 +218,22 @@ public class RobotContainer25 {
             CrashTracker.logThrowableCrash(t);
             throw t;
         }
+    }
+
+    public void disabledPeriodicMode() {
+        //reset robot heading via gyro. robot has to orient at the right direction
+        if (foundStation) {return;}
+
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if (!ally.isPresent()){return;}
+        if (ally.get() == Alliance.Blue) {m_SwerveDrive.zeroGyro(180);
+        }else{m_SwerveDrive.zeroGyro(0);}
+
+        if (RobotState.getInstance().mLatestVisionUpdate.isPresent()) {
+            m_SwerveDrive.getInstance().resetOdometry(new Pose2d(RobotState.getInstance().mLatestVisionUpdate.get().getFieldToVehicle(), Rotation2d.fromDegrees(180)));
+        }
+
+        foundStation = true;
     }
 
     // init manual (teleop) mode
