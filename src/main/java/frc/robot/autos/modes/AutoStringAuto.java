@@ -86,7 +86,7 @@ public class AutoStringAuto extends AutoModeBase {
                     }
                     break;
                 case ("R"):
-                    point = actionStrings[i] + actionStrings[++i];
+                    point = actionStrings[i] + actionStrings[++i]+actionStrings[++i];
                     System.out.println("Trajectory Action: "+lastPoint+"-"+point);
                     if(lastPoint == null) {lastPoint = point;}
                     else {
