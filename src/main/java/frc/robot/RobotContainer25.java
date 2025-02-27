@@ -160,7 +160,7 @@ public class RobotContainer25 {
             mTeleopActionExecutor = new AutoModeExecutor();
             TeleopAutoMode teleopAutoMode = new TeleopAutoMode();
             mTeleopActionExecutor.setAutoMode(teleopAutoMode);
-            m_Controller = new Controller(xboxController, teleopAutoMode);            
+            m_Controller = new Controller(xboxController, xboxController2, teleopAutoMode);            
             // turn on the looper
             //RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
