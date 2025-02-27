@@ -56,7 +56,7 @@ public class SnapToTag implements Action {
 				new Waypoint(null,initialPosition,finalPosition),
 				new Waypoint(initialPosition,finalPosition,null)
 			),
-			new PathConstraints(Constants.SwerveConstants.maxSpeed, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, Constants.Swerve.maxAngularVelocity, Constants.Swerve.kMaxAngularAcceleration),
+			new PathConstraints(Constants.SwerveConstants.maxSpeed / 3, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 3, Constants.Swerve.maxAngularVelocity, Constants.Swerve.kMaxAngularAcceleration),
 			new IdealStartingState(initialSpeed,initialRotation),
 			new GoalEndState(kFinalSpeed,finalRotation)
 		);

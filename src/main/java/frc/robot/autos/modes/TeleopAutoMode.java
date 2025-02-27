@@ -25,7 +25,7 @@ public class TeleopAutoMode extends AutoModeBase{
     @Override
 	protected void routine() throws AutoModeEndedException {
         while(true) {
-            System.out.println("routined");
+            //System.out.println("routined");
             // update action progress, takes no time
             Iterator<Action> iterator = m_runningActions.iterator();
             while (iterator.hasNext()) {

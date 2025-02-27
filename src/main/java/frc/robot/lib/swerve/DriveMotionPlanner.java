@@ -25,7 +25,7 @@ public class DriveMotionPlanner {
 	// Pure Pursuit Constants
 	public static final double kPathLookaheadTime = 0.1; // From 1323 (2019)
 	public static final double kPathMinLookaheadDistance = 0.3; // From 1323 (2019), not used in team1458 code
-	public static final double kAdaptivePathMinLookaheadDistance = 0.15;//0.15;
+	public static final double kAdaptivePathMinLookaheadDistance = 0.05;//0.15;
 	public static final double kAdaptivePathMaxLookaheadDistance = 0.61;
 	public static final double kAdaptiveErrorLookaheadCoefficient = 0.01;
 	/*
@@ -344,17 +344,17 @@ public class DriveMotionPlanner {
 		//output debug info as we get close to the end of path
 		if (actual_lookahead_distance < adaptive_lookahead_distance) {
 
-		//* Temporary removal
-// 			System.out.println("PurePursuit() remaining (s) =" + mCurrentTrajectory.getRemainingProgress() 
-// 				+ ", err.distance=" + current_pose.relativeTo(mSetpoint.poseMeters).getTranslation().getNorm()
-// 				+ ", err.angle=" + currPoseRotationDelta.getDegrees() 
-// 				+ ", lookahead=" + lookaheadTranslation.getNorm()
-// //				+ ", OmegaRPS orig=" + mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond 
-// //				+ ", OmegaRPS comp=" + deltaOmegaRadiansPerSecond
-// 				+ ", OmegaRPS =" + trueOmegaRadiansPerSecond
-// 				);
+		/* Temporary removal*/
+			System.out.println("PurePursuit() remaining (s) =" + mCurrentTrajectory.getRemainingProgress() 
+				+ ", err.distance=" + current_pose.relativeTo(mSetpoint.poseMeters).getTranslation().getNorm()
+				+ ", err.angle=" + currPoseRotationDelta.getDegrees() 
+				+ ", lookahead=" + lookaheadTranslation.getNorm()
+//				+ ", OmegaRPS orig=" + mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond 
+//				+ ", OmegaRPS comp=" + deltaOmegaRadiansPerSecond
+				+ ", OmegaRPS =" + trueOmegaRadiansPerSecond
+				);
 
-		//*/
+		
 		}			
 		
 		
