@@ -13,7 +13,6 @@ public class ElevatorAction implements Action {
 	public void start() {
 		mElevator = Elevator.getInstance();
 		mElevator.setTarget(target);
-		System.out.println("Eleveator action started to go to "+ target);
 	}
 
 	@Override
@@ -24,9 +23,6 @@ public class ElevatorAction implements Action {
 	@Override
 	public boolean isFinished() {
 		if (Robot.isSimulation()) return true;
-		if ( mElevator.isAtTarget()){
-			System.out.println("Eleveator Action finished " +  target);
-		}
 		return mElevator.isAtTarget();
 	}
 
