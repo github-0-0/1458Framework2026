@@ -30,7 +30,6 @@ import edu.wpi.first.math.util.Units;
 public class FieldLayout {
 	public static double kFieldLength = Units.inchesToMeters(651.223);
 	public static double kFieldWidth = Units.inchesToMeters(323.277);
-	public static int closestTag = -1;
     public static Translation2d[] offsets = {
 		new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, -0.20),
 		new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, 0.20),
@@ -82,30 +81,22 @@ public class FieldLayout {
 		return x_coordinate;
 	}
 
-	public static Pose3d getClosestTagPos(Translation2d robot_position) {
-		Pose3d closest_tag = new Pose3d();
+	public static AprilTag getClosestTag(Translation2d robot_position) {
+		AprilTag closest_tag = null;
 		double closest_distance = Double.MAX_VALUE;
 		for (AprilTag tag : kTagMap.getTags()) {
 			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
+			for (int num : new int[] {14,4,15,5}) {
+				if (num == tag.ID) {
+					distance = Double.POSITIVE_INFINITY;
+					break;
+				}
+			}
 			if (distance < closest_distance) {
-				closest_tag = tag.pose;
+				closest_tag = tag;
 				closest_distance = distance;
 			}
 		}
-		return closest_tag;
-	}
-
-	public static int getClosestTag(Translation2d robot_position) {
-		int closest_tag = -1;
-		double closest_distance = Double.MAX_VALUE;
-		for (AprilTag tag : kTagMap.getTags()) {
-			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
-			if (distance < closest_distance) {
-				closest_tag = tag.ID;
-				closest_distance = distance;
-			}
-		}
-		closestTag = closest_tag;
 		return closest_tag;
 	}
 }

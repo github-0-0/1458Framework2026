@@ -345,14 +345,14 @@ public class DriveMotionPlanner {
 		if (actual_lookahead_distance < adaptive_lookahead_distance) {
 
 		//* Temporary removal
-			System.out.println("PurePursuit() remaining (s) =" + mCurrentTrajectory.getRemainingProgress() 
-				+ ", err.distance=" + current_pose.relativeTo(mSetpoint.poseMeters).getTranslation().getNorm()
-				+ ", err.angle=" + currPoseRotationDelta.getDegrees() 
-				+ ", lookahead=" + lookaheadTranslation.getNorm()
-//				+ ", OmegaRPS orig=" + mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond 
-//				+ ", OmegaRPS comp=" + deltaOmegaRadiansPerSecond
-				+ ", OmegaRPS =" + trueOmegaRadiansPerSecond
-				);
+// 			System.out.println("PurePursuit() remaining (s) =" + mCurrentTrajectory.getRemainingProgress() 
+// 				+ ", err.distance=" + current_pose.relativeTo(mSetpoint.poseMeters).getTranslation().getNorm()
+// 				+ ", err.angle=" + currPoseRotationDelta.getDegrees() 
+// 				+ ", lookahead=" + lookaheadTranslation.getNorm()
+// //				+ ", OmegaRPS orig=" + mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond 
+// //				+ ", OmegaRPS comp=" + deltaOmegaRadiansPerSecond
+// 				+ ", OmegaRPS =" + trueOmegaRadiansPerSecond
+// 				);
 
 		//*/
 		}			
