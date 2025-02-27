@@ -10,4 +10,5 @@ public class AutoModeCenter extends AutoStringAuto {
                 "Elevator DEF R 1 " + 
                 "Elevator L4 CShoot Wait 1 Elevator DEF ");
     }
+    // Paths used: S3-R6, R6-R6, R6-CS1, CS1-R1
 }

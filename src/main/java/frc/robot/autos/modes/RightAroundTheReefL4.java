@@ -8,3 +8,4 @@ public class RightAroundTheReefL4 extends AutoStringAuto {
                    + "( CS 2 CIntake R 4 Elevator 4 CShoot Elevator 0 )");
     }
 }
+// Paths used: S1-R1, R1-CS1, CS1-R2, R2-CS1, CS1-R3, R3-CS2, CS2-R4

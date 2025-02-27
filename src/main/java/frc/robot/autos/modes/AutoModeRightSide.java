@@ -9,3 +9,4 @@ public class AutoModeRightSide extends AutoStringAuto {
                 "Elevator L4 CShoot Wait 1 Elevator DEF ");
     }
 }
+// Paths used: S2-R1, R1-CS1, CS1-R1
