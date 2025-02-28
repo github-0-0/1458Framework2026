@@ -39,7 +39,7 @@ public class AutoStringAuto extends AutoModeBase {
         
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("TestAutoMode: Running test auto mode!");
+        System.out.println("AutoStringAuto: run auto =" + autoString);
         lastPoint = null; //last point on field
         isFirstTrajectory = true;
         runAction(new SeriesAction(parseAuto(autoString)));
@@ -86,7 +86,7 @@ public class AutoStringAuto extends AutoModeBase {
                     }
                     break;
                 case ("R"):
-                    point = actionStrings[i] + actionStrings[++i]+actionStrings[++i];
+                    point = actionStrings[i] + actionStrings[++i];//+actionStrings[++i];
                     System.out.println("Trajectory Action: "+lastPoint+"-"+point);
                     if(lastPoint == null) {lastPoint = point;}
                     else {

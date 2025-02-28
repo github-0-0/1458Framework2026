@@ -180,11 +180,17 @@ public class RobotContainer25 {
     // init auto mode
     public void initAutoMode() {
         // get current auto mode from its menu selector
+        // Reset all auto mode menu items.
+		m_AutoModeSelector.reset();
+		m_AutoModeSelector.updateModeCreator(true);
         Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
         if (autoMode.isPresent()) {
+            System.out.println("InitAuto mode =" + autoMode);
             m_AutoModeExecutor = new AutoModeExecutor();
             m_AutoModeExecutor.setAutoMode(autoMode.get());
-        }        
+        }else{
+            System.out.println("automode is NOT present");
+        }
         //reset robot heading via gyro. robot has to orient at the right direction
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (!ally.isPresent()){return;}
@@ -208,9 +214,6 @@ public class RobotContainer25 {
         if (m_AutoModeExecutor != null) {
             m_AutoModeExecutor.stop();
         }
-		// Reset all auto mode menu items.
-		m_AutoModeSelector.reset();
-		m_AutoModeSelector.updateModeCreator(true);
         // turn on loopers
         try {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
