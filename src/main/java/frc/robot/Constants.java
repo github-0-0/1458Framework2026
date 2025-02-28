@@ -102,7 +102,7 @@ public final class Constants {
         /** Meters per Second */
         public static final double maxSpeed = 4; //TODO: dc 11.9.24, increase max speed so that we can observe amplified drivetrain bahavior 
         /** Radians per Second */
-        public static final double maxAngularVelocity = 3.14/3; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = 3.14; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -444,6 +444,11 @@ public final class Constants {
         public static final double kHoldSpeed = 0.02;
     }
     
+    public static final class LEDS { //TODO: make constants correct
+        public static final int ledStart = 0;
+        public static final int ledLength =  117;
+    }
+
 
     /* dc.10.21.2024 extra constants needed during porting of citrus SwerveModule.java code */
 
