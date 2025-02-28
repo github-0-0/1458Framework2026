@@ -188,8 +188,6 @@ public class RobotContainer25 {
             System.out.println("InitAuto mode =" + autoMode);
             m_AutoModeExecutor = new AutoModeExecutor();
             m_AutoModeExecutor.setAutoMode(autoMode.get());
-        }else{
-            System.out.println("automode is NOT present");
         }
         //reset robot heading via gyro. robot has to orient at the right direction
         Optional<Alliance> ally = DriverStation.getAlliance();

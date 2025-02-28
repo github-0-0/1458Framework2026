@@ -1,7 +1,7 @@
 package frc.robot.autos.modes;
 
 public class AutoModeCenter extends AutoStringAuto {
-    public AutoModeCenter() {
+    public AutoModeCenter() { 
         super("Elevator DEF S 2 [ ( R 6l ) ] "+
                 "[ ( Wait 2 Elevator L2 ) ] CShoot Wait 1 "+
                 "[ ( R 6c ) ] [ ( Wait 2 Elevator A1 ) ] " + 
