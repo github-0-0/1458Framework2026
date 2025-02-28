@@ -2,7 +2,7 @@ package frc.robot.autos.modes;
 
 public class TestAutoMode3 extends AutoStringAuto {
     public TestAutoMode3()   {     
-       super("S 1 R 1l CS 1 R 1r");//Elevator L4 CShoot Wait 1 Elevator DEF CS 1 R 6");
+       super("S 2o S 2");//Elevator L4 CShoot Wait 1 Elevator DEF CS 1 R 6");
     }
 
 /*  
