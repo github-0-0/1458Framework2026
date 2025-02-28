@@ -52,7 +52,7 @@ public class DriveMotionPlanner {
 		mFollowerType = type;
 	}
 
-	private double defaultCook = 0.05; //0.5;//bugfix: we need defaultCook to start robot on trajectory starting with zero speed
+	private double defaultCook = 0.2; //0.5;//bugfix: we need defaultCook to start robot on trajectory starting with zero speed
 	private boolean useDefaultCook = true;
 
 	public void setDefaultCook(double new_value) {
