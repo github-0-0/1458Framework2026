@@ -75,6 +75,8 @@ public class RobotContainer25 {
     private CoralShooter m_CoralShooter;
     private Funnel m_Funnel;
     private Hang m_Hang;
+    private LED m_Led;
+
 
     public AutoModeExecutor m_AutoModeExecutor;
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
@@ -95,6 +97,8 @@ public class RobotContainer25 {
             //m_Shooter = Shooter.getInstance();//replaced by CoralShooter
             m_AlgaeShooter = AlgaeShooter.getInstance();
             m_CoralShooter = CoralShooter.getInstance();
+            m_Led = LED.getInstance();
+
             //m_Hang = Hang.getInstance();
             //m_Funnel = Funnel.getInstance();
 
@@ -157,6 +161,7 @@ public class RobotContainer25 {
         if (m_AutoModeExecutor != null) {m_AutoModeExecutor.stop();	}     
         
    		try {
+            
             // Create an empty TeleopAutoMode and bind it to controller
             mTeleopActionExecutor = new AutoModeExecutor();
             TeleopAutoMode teleopAutoMode = new TeleopAutoMode();
@@ -274,6 +279,10 @@ public class RobotContainer25 {
                 double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
                 double rotationVal = MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
 
+                if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+                    translationVal = -translationVal;
+                    strafeVal = -strafeVal;
+                }
                 m_Controller.processKeyCommand();
 
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
