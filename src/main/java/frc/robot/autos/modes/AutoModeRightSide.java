@@ -7,7 +7,7 @@ public class AutoModeRightSide extends AutoStringAuto {
                 "CS 1 Wait 1 " + 
                 "R 2r Elevator L4 CShoot Wait 1 Elevator Ground " +
                 "CS 1 Wait 1 " + 
-                "R 2r Elevator L3 CShoot Wait 1 Elevator Ground ");
+                "R 2l Elevator L4 CShoot Wait 1 Elevator Ground ");
     }
 }
 
