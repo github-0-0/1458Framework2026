@@ -319,7 +319,7 @@ public final class Constants {
         
     
         public static final double kCruiseVelocity = 80;
-        public static final double kAcceleration = 135;
+        public static final double kAcceleration = 145;
         public static final double kJerk = 1600;
         public static final int CurrentThreshold = 45;
         public static final int kMaxCurrent = 40;
@@ -327,11 +327,11 @@ public final class Constants {
         public static final double kMaxPowerDown = 0.1;
         
         //TODO: Find correct elevator heights for each level
-        public static final double kGroundHeight = 0.05; //occasionally stalls at bottom
+        public static final double kGroundHeight = 0.1; //occasionally stalls at bottom
         public static final double kL2Height = 10.15;
         public static final double kL3Height = 22.54;
         
-        public static final double kL4Height = 44.0;    //stalls at top
+        public static final double kL4Height = 43.5;    //stalls at top
         public static final double kAPHeight = 6.9;
         public static final double kA1Height = 25.7;  //19.4
         public static final double kA2Height = 32.5; //Unsure
@@ -394,8 +394,9 @@ public final class Constants {
         public static final int kShooterLeftMotorId = 12;
         public static final int kShooterRightMotorId = 13;
         
-        public static final double kShooterIntakeSpeed = 0.04;
-        public static final double kShooterShootSpeed = 0.15;
+        public static final double kShooterIntakeSpeed = 0.05;
+        public static final double kShooterShootSpeed = 0.175;
+        ;
         
       }
 

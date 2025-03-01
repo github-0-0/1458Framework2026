@@ -227,6 +227,7 @@ public class RobotContainer25 {
     }
 
     public void disabledPeriodicMode() {
+    m_Led.rainbowPulse();
         //reset robot heading via gyro. robot has to orient at the right direction
         if (foundStation) {return;}
 
