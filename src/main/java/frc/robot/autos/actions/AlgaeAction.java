@@ -4,11 +4,11 @@ import frc.robot.subsystems.AlgaeShooter;
 import frc.robot.subsystems.Laser;
 
 public class AlgaeAction implements Action {
-    private AlgaeShooter mShooter;
+    private AlgaeShooter mShooter=null;
 	private String dir;
 	
 	public AlgaeAction(String dir) {
-		mShooter = AlgaeShooter.getInstance();
+//		mShooter = AlgaeShooter.getInstance();
 		this.dir = dir;
 	}
 	@Override
