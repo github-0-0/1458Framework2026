@@ -91,10 +91,10 @@ public class Controller {
         }
 
         if(mXboxController2.getPOV() == 90) {
-            snapTo = 1;
+            mTeleopAutoMode.runAction(new ElevatorAction("A1"));
         }
         if(mXboxController2.getPOV() == 270) {
-            snapTo = 0;
+            mTeleopAutoMode.runAction(new ElevatorAction("A2"));
         }
 
         //algae
