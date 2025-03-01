@@ -134,10 +134,10 @@ public class AutoStringAuto extends AutoModeBase {
                     listOfActions.add(new CoralShootAction());
                     break;
                 case "AShoot":
-                    listOfActions.add(new AlgaeAction("Shoot"));
+                    // listOfActions.add(new AlgaeAction("Shoot"));
                     break;
                 case "AIntake":
-                    listOfActions.add(new AlgaeAction("Intake"));
+                    // listOfActions.add(new AlgaeAction("Intake"));
                     break;
                 case "Elevator":
                     listOfActions.add(new ElevatorAction(actionStrings[++i]));

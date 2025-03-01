@@ -73,10 +73,10 @@ public class Controller {
         else if (mXboxController1.getRightBumperButtonPressed()) {
             mTeleopAutoMode.runAction(new CoralShootAction());
             // mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("AP"), new SnapToTag(2), new AlgaeAction("Shoot"), new ElevatorAction("L2")));
-            mTeleopAutoMode.runAction(new AlgaeAction("Shoot"));
+            // mTeleopAutoMode.runAction(new AlgaeAction("Shoot"));
         }
         else if(mXboxController1.getLeftBumperButtonPressed()) {
-            mTeleopAutoMode.runAction(new AlgaeAction("Intake"));
+            // mTeleopAutoMode.runAction(new AlgaeAction("Intake"));
 
             // mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new AlgaeAction("Intake"), new ElevatorAction("L2")));
         }
