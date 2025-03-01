@@ -17,7 +17,7 @@
     "Start4ToReef"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 1.0,
+  "defaultMaxVel": 4.0,
   "defaultMaxAccel": 4.0,
   "defaultMaxAngVel": 60.0,
   "defaultMaxAngAccel": 720.0,
