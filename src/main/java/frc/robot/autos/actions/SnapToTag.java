@@ -54,7 +54,7 @@ public class SnapToTag implements Action {
     public void start() {
         getInitialState();
         getTagPosition();
-		Pose2d intermediatePose = poseBehind(finalPose,((shouldFlip) ? -1 : 1) * 0.5 );
+		Pose2d intermediatePose = poseBehind(finalPose,((shouldFlip) ? -1 : 1) * (Math.min(0.5,initialPose.minus(finalPose).getTranslation().getDistance(new Translation2d())/2)));
 		generatedPath = new PathPlannerPath(
 			PathPlannerPath.waypointsFromPoses(
 				initialPose,
