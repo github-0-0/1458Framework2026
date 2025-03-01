@@ -65,7 +65,7 @@ public class TrajectoryIterator {
         return fromPathPlannerTrajectoryState(current_sample_);
     }
 
-    public Trajectory.State fromPathPlannerTrajectoryState(PathPlannerTrajectoryState state) {
+    public static Trajectory.State fromPathPlannerTrajectoryState(PathPlannerTrajectoryState state) {
         Trajectory.State converted = new Trajectory.State(state.timeSeconds,state.linearVelocity,0,state.pose,state.fieldSpeeds.omegaRadiansPerSecond/state.linearVelocity);
         return converted;
     }
