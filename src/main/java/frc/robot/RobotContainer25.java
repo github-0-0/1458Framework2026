@@ -71,7 +71,7 @@ public class RobotContainer25 {
     private Elevator m_Elevator;
     //private Shooter m_Shooter; //replaced by CoralShooter
     private Cancoders m_Cancoders;
-    private AlgaeShooter m_AlgaeShooter;
+    //private AlgaeShooter m_AlgaeShooter;
     private CoralShooter m_CoralShooter;
     private Funnel m_Funnel;
     private Hang m_Hang;
