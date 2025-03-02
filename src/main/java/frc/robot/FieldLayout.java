@@ -31,9 +31,9 @@ public class FieldLayout {
 	public static double kFieldLength = Units.inchesToMeters(651.223);
 	public static double kFieldWidth = Units.inchesToMeters(323.277);
     public static Translation2d[] offsets = {
-		new Translation2d(Constants.Swerve.trackWidth/2 + 0.18, -0.18),//left bar, 
-		new Translation2d(Constants.Swerve.trackWidth/2 + 0.18, 0.10),//right bar
-		new Translation2d(Constants.Swerve.trackWidth/2 + 0.18,0),//center of reef
+		new Translation2d(Constants.Swerve.trackWidth/2 + 0.089, -0.166),//left bar, 
+		new Translation2d(Constants.Swerve.trackWidth/2 + 0.089, 0),//right bar
+		new Translation2d(Constants.Swerve.trackWidth/2 + 0.089,0.166),//center of reef
 		new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20, -0.16),//left CS
 		new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20,0),//center CS
 		new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20,0.16),//right CS
