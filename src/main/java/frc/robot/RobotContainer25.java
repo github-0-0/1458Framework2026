@@ -54,7 +54,7 @@ public class RobotContainer25 {
     private final Joystick m_JoyStick = new Joystick(0);
 
     private final XboxController xboxController = new XboxController(0);
-    private final XboxController xboxController2 = new XboxController(1);
+    //private final XboxController xboxController2 = new XboxController(1);
     /* button key-value */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
@@ -166,7 +166,7 @@ public class RobotContainer25 {
             mTeleopActionExecutor = new AutoModeExecutor();
             TeleopAutoMode teleopAutoMode = new TeleopAutoMode();
             mTeleopActionExecutor.setAutoMode(teleopAutoMode);
-            m_Controller = new Controller(xboxController, xboxController2, teleopAutoMode);            
+            m_Controller = new Controller(xboxController, null, teleopAutoMode);            
             // turn on the looper
             //RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");

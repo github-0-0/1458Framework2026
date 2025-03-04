@@ -54,11 +54,19 @@ public class SnapToTag implements Action {
     public void start() {
         getInitialState();
         getTagPosition();
-		Pose2d intermediatePose = poseBehind(finalPose,((shouldFlip) ? -1 : 1) * (Math.min(0.5,initialPose.minus(finalPose).getTranslation().getDistance(new Translation2d())/2)));
+		Pose2d intermediatePose = poseBehind(
+            finalPose,
+            ((shouldFlip) ? -1 : 1) * 
+            (Math.min(
+                0.5,
+                initialPose.minus(finalPose).
+                getTranslation().getNorm() / 2)
+            )
+        );
 		generatedPath = new PathPlannerPath(
 			PathPlannerPath.waypointsFromPoses(
 				initialPose,
-				intermediatePose,
+				//intermediatePose,
 				finalPose
 			),
 			List.of(
@@ -67,11 +75,17 @@ public class SnapToTag implements Action {
 			List.of(), 
 			List.of(
 				new ConstraintsZone(0.5, 15, 
-					new PathConstraints(Constants.Swerve.maxSpeed / 4, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 4, Constants.Swerve.maxAngularVelocity, Constants.Swerve.kMaxAngularAcceleration)
+					new PathConstraints(Constants.Swerve.maxSpeed / 2, 
+                                        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 3, 
+                                        Constants.Swerve.maxAngularVelocity/4, 
+                                        Constants.Swerve.kMaxAngularAcceleration/2)
 				)
 			), 
 			List.of(), 
-			new PathConstraints(Constants.Swerve.maxSpeed, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, Constants.Swerve.maxAngularVelocity, Constants.Swerve.kMaxAngularAcceleration), 
+			new PathConstraints(Constants.Swerve.maxSpeed/2, 
+                                Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, 
+                                Constants.Swerve.maxAngularVelocity/2, 
+                                Constants.Swerve.kMaxAngularAcceleration), 
 			new IdealStartingState(Util.twist2dMagnitude(initialSpeed), initialPose.getRotation()), 
 			new GoalEndState(0, finalPose.getRotation()), false);
         if(generatedPath.getAllPathPoints().size() == 1) {

@@ -90,12 +90,12 @@ public class Controller {
             POVReset = true;
         }
 
-        if(mXboxController2.getPOV() == 90) {
-            mTeleopAutoMode.runAction(new ElevatorAction("A1"));
-        }
-        if(mXboxController2.getPOV() == 270) {
-            mTeleopAutoMode.runAction(new ElevatorAction("A2"));
-        }
+        // if(mXboxController2.getPOV() == 90) {
+        //     mTeleopAutoMode.runAction(new ElevatorAction("A1"));
+        // }
+        // if(mXboxController2.getPOV() == 270) {
+        //     mTeleopAutoMode.runAction(new ElevatorAction("A2"));
+        // }
 
         //algae
         /*
@@ -142,9 +142,9 @@ public class Controller {
         if (mXboxController1.getRightBumperButtonPressed()) {            
             mTeleopAutoMode.runAction(new CoralShootAction());   
         }
-        if(mXboxController2.getBButton()) {
-            mTeleopAutoMode.runAction(new ElevatorAction("L3"));
-        }
+        // if(mXboxController2.getBButton()) {
+        //     mTeleopAutoMode.runAction(new ElevatorAction("L3"));
+        // }
         // //hang            
         // if (mXboxController1.getPOV()==0) {
         //     Hang.getInstance().setMotor(0.3);

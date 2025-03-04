@@ -25,8 +25,8 @@ public class DriveMotionPlanner {
 	// Pure Pursuit Constants
 	public static final double kPathLookaheadTime = 0.1; // From 1323 (2019)
 	public static final double kPathMinLookaheadDistance = 0.3; // From 1323 (2019), not used in team1458 code
-	public static final double kAdaptivePathMinLookaheadDistance = 0.05;//0.15;
-	public static final double kAdaptivePathMaxLookaheadDistance = 0.20
+	public static final double kAdaptivePathMinLookaheadDistance = 0.05;//0.05;//0.15;
+	public static final double kAdaptivePathMaxLookaheadDistance = 0.15;//0.2
 	;//0.61;
 	public static final double kAdaptiveErrorLookaheadCoefficient = 0.01;
 	/*
@@ -133,7 +133,8 @@ public class DriveMotionPlanner {
 //			mError = current_pose.relativeTo(mSetpoint.poseMeters);
 			mError = mSetpoint.poseMeters.relativeTo(current_pose);	//delta = mSetpoint - current_pose, in robot's local frame, dc.12.7.2024 bugfix, error shall = target - current
 			pid_error = current_pose.log(mSetpoint.poseMeters);//* calculate the Twist2d delta/error between actual pose and the desired pose.  citrus original code is //Pose2d.log(mError);			
-//dc.10.21.2024			mErrorTracker.addObservation(mError);
+			SmartDashboard.putNumber("PurePursuit/mError.norm", mError.getTranslation().getNorm());
+			//dc.10.21.2024			mErrorTracker.addObservation(mError);
 			if (mFollowerType == FollowerType.FEEDFORWARD_ONLY) {
 				sample_point = mCurrentTrajectory.advance(mDt);
 				// RobotState.getInstance().setDisplaySetpointPose(Pose2d.fromTranslation(RobotState.getInstance().getFieldToOdom(timestamp)).transformBy(sample_point.state().state().getPose()));
@@ -338,21 +339,21 @@ public class DriveMotionPlanner {
 		SmartDashboard.putNumber("PurePursuit/normalizedSpeed", normalizedSpeed);		
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
 				steeringVector.getX() * Constants.SwerveConstants.maxAutoSpeed,
-				steeringVector.getY() * Constants.SwerveConstants.maxAutoSpeed,				
+				steeringVector.getY() * Constants.SwerveConstants.maxAutoSpeed,
+				// mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond);				
 //				mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond - deltaOmegaRadiansPerSecond);		
 				trueOmegaRadiansPerSecond);
 
 		//output debug info as we get close to the end of path
 		if (actual_lookahead_distance < adaptive_lookahead_distance) {
-
-		/* Temporary removal*/
+			Trajectory.State endPoint = mCurrentTrajectory.getLastPoint();
 			System.out.println("PurePursuit() remaining (s) =" + mCurrentTrajectory.getRemainingProgress() 
-				+ ", err.distance=" + current_pose.relativeTo(mSetpoint.poseMeters).getTranslation().getNorm()
+				+ ", err.distance=" + current_pose.relativeTo(endPoint.poseMeters).getTranslation().getNorm()
 				+ ", err.angle=" + currPoseRotationDelta.getDegrees() 
-				+ ", lookahead=" + lookaheadTranslation.getNorm()
+				// + ", lookahead=" + lookaheadTranslation.getNorm()
 //				+ ", OmegaRPS orig=" + mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond 
 //				+ ", OmegaRPS comp=" + deltaOmegaRadiansPerSecond
-				+ ", OmegaRPS =" + trueOmegaRadiansPerSecond
+				// + ", OmegaRPS =" + trueOmegaRadiansPerSecond
 				);
 
 		
