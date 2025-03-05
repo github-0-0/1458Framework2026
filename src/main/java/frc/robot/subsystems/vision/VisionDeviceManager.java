@@ -73,6 +73,13 @@ public class VisionDeviceManager extends Subsystem {
 			&& mBackCamera.isConnected();
 	}
 
+	public synchronized boolean inRange () {
+		return mLeftCamera.inSnapRange()
+			|| mRightCamera.inSnapRange()
+			|| mFrontCamera.inSnapRange()
+			|| mBackCamera.inSnapRange();
+	}
+
 	public synchronized VisionDevice getLeftVision() {
 		return mLeftCamera;
 	}

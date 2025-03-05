@@ -293,6 +293,17 @@ public class RobotContainer25 {
                 for(int i = 0; i < 4;  i++) {
                     //SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
                 }
+
+                Twist2d velocity = RobotState.getInstance().getMeasuredVelocity();
+
+                if (
+                    m_VisionDevices.inRange() &&
+                    Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1
+                ) {
+                    xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
+                } else {
+                    xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+                }
                 
 
             // mDriverControls.oneControllerMode();

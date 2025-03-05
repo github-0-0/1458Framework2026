@@ -8,6 +8,7 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.VisionUpdate;
 import frc.robot.lib.drivers.Pigeon;
 import frc.robot.subsystems.Subsystem;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -43,6 +44,7 @@ public class VisionDevice extends Subsystem {
 	private IntegerSubscriber mFPS;
 
 	public Field2d robotField;
+	private boolean inSnapRange;
 
 	public VisionDevice(VisionDeviceConstants constants) {
 		robotField = new Field2d();
@@ -84,6 +86,8 @@ public class VisionDevice extends Subsystem {
 		mConfigTable.getEntry("camera_exposure").setDouble(mPeriodicIO.camera_exposure);
 		mConfigTable.getEntry("camera_auto_exposure").setDouble(mPeriodicIO.camera_auto_exposure ? 0.0 : 1.0);
 		mConfigTable.getEntry("camera_gain").setDouble(mPeriodicIO.camera_gain);
+	
+		inSnapRange = false;
 	}
 
 	private void processFrames() {
@@ -120,6 +124,18 @@ public class VisionDevice extends Subsystem {
 								botPose.getTranslation(),
 								new Translation2d(0, 0),
 								stdDevsVec));
+		
+		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
+
+		if (
+			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
+			&& MathUtil.inputModulus(targetSpace_pose.getRotation().getDegrees(), -180, 180) + 15 < 30) {
+			inSnapRange = true;
+		}
+	}
+
+	public boolean inSnapRange() {
+		return inSnapRange;
 	}
 
 	@Override
