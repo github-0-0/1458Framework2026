@@ -221,6 +221,8 @@ public class RobotContainer25 {
         // turn on loopers
         try {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
+            
+            xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;

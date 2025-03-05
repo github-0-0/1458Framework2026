@@ -45,6 +45,7 @@ public class VisionDevice extends Subsystem {
 
 	public Field2d robotField;
 	private boolean inSnapRange;
+	private boolean hasTarget;
 
 	public VisionDevice(VisionDeviceConstants constants) {
 		robotField = new Field2d();
@@ -88,12 +89,16 @@ public class VisionDevice extends Subsystem {
 		mConfigTable.getEntry("camera_gain").setDouble(mPeriodicIO.camera_gain);
 	
 		inSnapRange = false;
+		hasTarget = false;
 	}
 
 	private void processFrames() {
 		// System.out.println("VisionDevice.processFrame");
 		if (mVisible.get() == 0) {
+			hasTarget = false;
 			return;
+		} else {
+			hasTarget = true;
 		}
 		// System.out.println("VisionDevice.processFrame, mVisible is true");
 
@@ -104,6 +109,7 @@ public class VisionDevice extends Subsystem {
 		if (mt2Pose.length == 0) {
 			// System.out.println("VisionDevice.processFrame, mt2Pose is zero length, mt2
 			// from helper=" );
+			hasTarget = false;
 			return;
 		}
 
@@ -136,6 +142,10 @@ public class VisionDevice extends Subsystem {
 
 	public boolean inSnapRange() {
 		return inSnapRange;
+	}
+
+	public boolean hasTarget() {
+		return hasTarget;
 	}
 
 	@Override
