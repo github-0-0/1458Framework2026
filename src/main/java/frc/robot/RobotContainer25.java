@@ -286,9 +286,33 @@ public class RobotContainer25 {
                 }
                 m_Controller.processKeyCommand();
 
+
+                if (xboxController.getPOV()==90) {
+                m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromRobotRelativeSpeeds(
+                    0, 0.4, 0,m_SwerveDrive.getHeading()));
+                }
+               else if (xboxController.getPOV()==0) {
+                    m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromRobotRelativeSpeeds(
+                        -0.4, 0, 0,m_SwerveDrive.getHeading()));
+                    }
+                    else if (xboxController.getPOV()==270) {
+                        m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromRobotRelativeSpeeds(
+                            0, -0.4, 0,m_SwerveDrive.getHeading()));
+                        }
+                       else if (xboxController.getPOV()==180) {
+                            m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromRobotRelativeSpeeds(
+                                0.4, 0, 0,m_SwerveDrive.getHeading()));
+                            }
+        
+
+                else {
+
                 m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationVal, strafeVal, rotationVal,
                     Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
+                }
+
+                
 
                 for(int i = 0; i < 4;  i++) {
                     //SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
