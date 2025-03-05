@@ -129,7 +129,7 @@ public class VisionDevice extends Subsystem {
 
 		if (
 			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
-			&& MathUtil.inputModulus(targetSpace_pose.getRotation().getDegrees(), -180, 180) + 15 < 30) {
+			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180) + 15 < 30) {
 			inSnapRange = true;
 		}
 	}
