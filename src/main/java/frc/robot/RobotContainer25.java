@@ -84,6 +84,8 @@ public class RobotContainer25 {
     public AutoModeExecutor mTeleopActionExecutor;
 	
     private VisionDeviceManager m_VisionDevices;
+    
+    private boolean isFieldRelative = true;
 
     // contructor
     public RobotContainer25() {
@@ -229,15 +231,20 @@ public class RobotContainer25 {
     public void disabledPeriodicMode() {
     m_Led.rainbowPulse();
         //reset robot heading via gyro. robot has to orient at the right direction
-        if (foundStation) {return;}
+        if (foundStation) return;
 
         Optional<Alliance> ally = DriverStation.getAlliance();
-        if (!ally.isPresent()){return;}
-        if (ally.get() == Alliance.Blue) {m_SwerveDrive.zeroGyro(180);
-        }else{m_SwerveDrive.zeroGyro(0);}
+
+        if (!ally.isPresent()){
+            return;
+        } if (ally.get() == Alliance.Blue) {
+            m_SwerveDrive.zeroGyro(180);
+        } else {
+            m_SwerveDrive.zeroGyro(0);
+        }
 
         if (RobotState.getInstance().mLatestVisionUpdate.isPresent()) {
-            m_SwerveDrive.getInstance().resetOdometry(new Pose2d(RobotState.getInstance().mLatestVisionUpdate.get().getFieldToVehicle(), Rotation2d.fromDegrees(180)));
+            m_SwerveDrive.resetOdometry(new Pose2d(RobotState.getInstance().mLatestVisionUpdate.get().getFieldToVehicle(), Rotation2d.fromDegrees(180)));
         }
 
         foundStation = true;
@@ -276,17 +283,20 @@ public class RobotContainer25 {
                     m_SwerveDrive.zeroGyro(0);
 			}
                 //dc.11.9.24, to scale up joystick input to max-speed
-                double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
+                double translationVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
                 double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
-                double rotationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
+                double rotationVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
 
-                if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+                if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
                     translationVal = -translationVal;
                     strafeVal = -strafeVal;
                 }
+
                 m_Controller.processKeyCommand();
 
-
+                if (xboxController.getStartButton()) {
+                    isFieldRelative ^= true;
+                }
 
                 if (xboxController.getPOV() == 90) {
                     m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
@@ -301,9 +311,14 @@ public class RobotContainer25 {
                     m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
                         -0.4, 0, 0));
                 } else {
-                    m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-                        translationVal, strafeVal, rotationVal,
-                        Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
+                    if (isFieldRelative) {
+                        m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+                            translationVal, strafeVal, rotationVal,
+                            Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
+                    } else {
+                        m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                            translationVal, strafeVal, rotationVal));
+                    }
                 }
 
                 // for(int i = 0; i < 4;  i++) {
