@@ -8,6 +8,7 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.VisionUpdate;
 import frc.robot.lib.drivers.Pigeon;
 import frc.robot.subsystems.Subsystem;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import edu.wpi.first.math.Vector;
 
@@ -43,6 +45,8 @@ public class VisionDevice extends Subsystem {
 	private IntegerSubscriber mFPS;
 
 	public Field2d robotField;
+	private boolean inSnapRange;
+	private boolean hasTarget;
 
 	public VisionDevice(VisionDeviceConstants constants) {
 		robotField = new Field2d();
@@ -84,12 +88,18 @@ public class VisionDevice extends Subsystem {
 		mConfigTable.getEntry("camera_exposure").setDouble(mPeriodicIO.camera_exposure);
 		mConfigTable.getEntry("camera_auto_exposure").setDouble(mPeriodicIO.camera_auto_exposure ? 0.0 : 1.0);
 		mConfigTable.getEntry("camera_gain").setDouble(mPeriodicIO.camera_gain);
+	
+		inSnapRange = false;
+		hasTarget = false;
 	}
 
 	private void processFrames() {
 		// System.out.println("VisionDevice.processFrame");
 		if (mVisible.get() == 0) {
+			hasTarget = false;
 			return;
+		} else {
+			hasTarget = true;
 		}
 		// System.out.println("VisionDevice.processFrame, mVisible is true");
 
@@ -100,6 +110,7 @@ public class VisionDevice extends Subsystem {
 		if (mt2Pose.length == 0) {
 			// System.out.println("VisionDevice.processFrame, mt2Pose is zero length, mt2
 			// from helper=" );
+			hasTarget = false;
 			return;
 		}
 
@@ -120,6 +131,24 @@ public class VisionDevice extends Subsystem {
 								botPose.getTranslation(),
 								new Translation2d(0, 0),
 								stdDevsVec));
+		
+		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
+		int[] validIds = {17, 18, 19, 20, 21, 22, 12, 13, 2, 3, 6, 7, 8, 9, 10, 11};
+
+		if (
+			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
+			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180) + 15 < 30
+			&& Arrays.asList(validIds).contains(LimelightHelpers.getRawFiducials(mConstants.kTableName)[0].id)) {
+			inSnapRange = true;
+		}
+	}
+
+	public boolean inSnapRange() {
+		return inSnapRange;
+	}
+
+	public boolean hasTarget() {
+		return hasTarget;
 	}
 
 	@Override
