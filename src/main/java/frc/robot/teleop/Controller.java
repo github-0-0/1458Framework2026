@@ -80,11 +80,11 @@ public class Controller {
 
             // mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new AlgaeAction("Intake"), new ElevatorAction("L2")));
         }
-        else if(mXboxController1.getPOV() == 90) {
-            //mTeleopAutoMode.runAction(new SnapToTag(1));
+        else if (mXboxController1.getLeftTriggerAxis()> 0.5) {
+            mTeleopAutoMode.runAction(new SnapToTag(1));
         }
-        else if(mXboxController1.getPOV() == 270) {
-            //mTeleopAutoMode.runAction(new SnapToTag(0));
+        else if (mXboxController1.getRightTriggerAxis()>0.5) {
+            mTeleopAutoMode.runAction(new SnapToTag(0));
         }
         else {
             POVReset = true;

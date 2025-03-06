@@ -129,7 +129,7 @@ public class SwerveDrive extends Subsystem {
 	 */
 	public void feedTeleopSetpoint(ChassisSpeeds speeds) {
 		if (mControlState == DriveControlState.PATH_FOLLOWING) {
-			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)> mKinematicLimits.kMaxDriveVelocity * 0.1 || 
+			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)> mKinematicLimits.kMaxDriveVelocity * 0.05 || 
 				Math.abs(speeds.omegaRadiansPerSecond)> 0.1*Constants.SwerveConstants.maxAngularVelocity) { 
 				//dc.2.25.2025, bugfix, break from auto mode (PATH_FOLLOWING) back to OPEN_LOOP if either translational or angular speed exceeds threshold
 				mControlState = DriveControlState.OPEN_LOOP;

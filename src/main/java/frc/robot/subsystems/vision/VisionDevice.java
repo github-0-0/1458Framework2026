@@ -138,7 +138,8 @@ public class VisionDevice extends Subsystem {
 		if (
 			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
 			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180) + 15 < 30
-			&& Arrays.asList(validIds).contains(LimelightHelpers.getRawFiducials(mConstants.kTableName)[0].id)) {
+			// && Arrays.asList(validIds).contains(LimelightHelpers.getRawFiducials(mConstants.kTableName)[0].id)
+		) {
 			inSnapRange = true;
 		}
 	}
