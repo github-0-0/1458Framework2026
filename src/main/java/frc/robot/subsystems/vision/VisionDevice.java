@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import edu.wpi.first.math.Vector;
 
@@ -132,10 +133,12 @@ public class VisionDevice extends Subsystem {
 								stdDevsVec));
 		
 		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
+		int[] validIds = {17, 18, 19, 20, 21, 22, 12, 13, 2, 3, 6, 7, 8, 9, 10, 11};
 
 		if (
 			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
-			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180) + 15 < 30) {
+			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180) + 15 < 30
+			&& Arrays.asList(validIds).contains(LimelightHelpers.getRawFiducials(mConstants.kTableName)[0].id)) {
 			inSnapRange = true;
 		}
 	}
