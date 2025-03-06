@@ -365,17 +365,17 @@ public class DriveMotionPlanner {
 		}			
 		
 		
-/* 
+ 
 		// Use the PD-Controller for To Follow the Time-Parametrized Heading
 		final double kThetakP = 0.0; //TODO: TB restored, dc.12.7.24, turn off PD controller, citrus orignal value = 3.5;
 		final double kThetakD = 0.0;
-		final double kPositionkP = 0.0; //TODO: TB restored, dc.12.7.24, turn off PD controller,  citrus orignal value = 2.0;
+		final double kPositionkP = 1.0; //TODO: TB restored, dc.12.7.24, turn off PD controller,  citrus orignal value = 2.0;
 
 		chassisSpeeds.vxMetersPerSecond = chassisSpeeds.vxMetersPerSecond
 				+ kPositionkP * mError.getTranslation().getX();
 		chassisSpeeds.vyMetersPerSecond = chassisSpeeds.vyMetersPerSecond
 				+ kPositionkP * mError.getTranslation().getY();
-		chassisSpeeds.omegaRadiansPerSecond = chassisSpeeds.omegaRadiansPerSecond
+/*		chassisSpeeds.omegaRadiansPerSecond = chassisSpeeds.omegaRadiansPerSecond
 				+ (kThetakP * mError.getRotation().getRadians())
 				+ kThetakD * ((mError.getRotation().getRadians() - mPrevHeadingError.getRadians()) / mDt);
 */
