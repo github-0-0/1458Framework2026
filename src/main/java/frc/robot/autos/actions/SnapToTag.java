@@ -75,14 +75,14 @@ public class SnapToTag implements Action {
 			List.of(), 
 			List.of(
 				new ConstraintsZone(0.5, 15, 
-					new PathConstraints(Constants.Swerve.maxSpeed / 2, 
-                                        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 3, 
+					new PathConstraints(Constants.Swerve.maxSpeed, 
+                                        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2, 
                                         Constants.Swerve.maxAngularVelocity/4, 
                                         Constants.Swerve.kMaxAngularAcceleration/2)
 				)
 			), 
 			List.of(), 
-			new PathConstraints(Constants.Swerve.maxSpeed/2, 
+			new PathConstraints(Constants.Swerve.maxSpeed, 
                                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, 
                                 Constants.Swerve.maxAngularVelocity/2, 
                                 Constants.Swerve.kMaxAngularAcceleration), 
