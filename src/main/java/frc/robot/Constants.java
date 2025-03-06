@@ -83,7 +83,7 @@ public final class Constants {
         public static final double closedLoopRamp = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = chosenModule.angleKP;
+        public static final double angleKP = 15.0;
         public static final double angleKI = chosenModule.angleKI;
         public static final double angleKD = chosenModule.angleKD;
 
@@ -254,9 +254,9 @@ public final class Constants {
         public static TalonFXConfiguration AzimuthFXConfig() {
             TalonFXConfiguration config = new TalonFXConfiguration();
             //dc.2.23.25, tuning steering motor to get rid of drifting (mainly rotation)
-            config.Slot0.kP = 0.03;//.3;        //Proportional compensation: small P value to keep motor from drifting, big value will cause oscillation
+            config.Slot0.kP = 0.09;//.3;        //Proportional compensation: small P value to keep motor from drifting, big value will cause oscillation
             config.Slot0.kI = 0.0; //0.0007;//0.01;    //Integral compensation: a small I value to help to quickly turn
-            config.Slot0.kD = 0.0008;//0.0008;  //Derivative compenstion: damping oscillation
+            config.Slot0.kD = 0.0016;//0.0008;  //Derivative compenstion: damping oscillation
             config.Slot0.kS = 0.0;
             config.Slot0.kV = 0.0;
 

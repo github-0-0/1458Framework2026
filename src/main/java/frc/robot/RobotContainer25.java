@@ -289,12 +289,24 @@ public class RobotContainer25 {
                 }
                 m_Controller.processKeyCommand();
 
-                m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-                    translationVal, strafeVal, rotationVal,
-                    Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
 
-                for(int i = 0; i < 4;  i++) {
-                    //SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
+
+                if (xboxController.getPOV() == 90) {
+                    m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                        0, -0.4, 0));
+                } else if (xboxController.getPOV() == 0) {
+                    m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                        0.4, 0, 0));
+                } else if (xboxController.getPOV() == 270) {
+                    m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                        0, 0.4, 0));
+                } else if (xboxController.getPOV() == 180) {
+                    m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                        -0.4, 0, 0));
+                } else {
+                    m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        translationVal, strafeVal, rotationVal,
+                        Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
                 }
 
                 Twist2d velocity = RobotState.getInstance().getMeasuredVelocity();
@@ -307,6 +319,10 @@ public class RobotContainer25 {
                 } else {
                     xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
                 }
+          
+                // for(int i = 0; i < 4;  i++) {
+                //     SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
+                // }
                 
 
             // mDriverControls.oneControllerMode();
