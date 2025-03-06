@@ -280,11 +280,11 @@ public class RobotContainer25 {
 
             /* Drive */
             
-            if (xboxController.getStartButton()) {
-                System.out.println("keyY is pressed, zero the wheels!");
-                if (m_SwerveDrive != null)
-                    m_SwerveDrive.zeroGyro(0);
-			}
+            // if (xboxController.getStartButton()) {
+            //     System.out.println("keyY is pressed, zero the wheels!");
+            //     if (m_SwerveDrive != null)
+            //         m_SwerveDrive.zeroGyro(0);
+			// }
                 //dc.11.9.24, to scale up joystick input to max-speed
                 double translationVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
                 double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
@@ -298,7 +298,7 @@ public class RobotContainer25 {
                 m_Controller.processKeyCommand();
 
                 if (xboxController.getRawButton(7)) {
-                    isFieldRelative ^= true;
+                    isFieldRelative = !isFieldRelative;
                 }
 
                 if (xboxController.getPOV() == 90) {
