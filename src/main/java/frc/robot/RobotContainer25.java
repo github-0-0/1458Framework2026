@@ -7,6 +7,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -222,6 +223,8 @@ public class RobotContainer25 {
         // turn on loopers
         try {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
+            
+            xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -321,6 +324,17 @@ public class RobotContainer25 {
                     }
                 }
 
+                Twist2d velocity = RobotState.getInstance().getMeasuredVelocity();
+
+                if (
+                    m_VisionDevices.inRange() &&
+                    Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1
+                ) {
+                    xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
+                } else {
+                    xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+                }
+          
                 // for(int i = 0; i < 4;  i++) {
                 //     SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
                 // }
