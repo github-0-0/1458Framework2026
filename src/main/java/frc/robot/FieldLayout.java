@@ -86,7 +86,7 @@ public class FieldLayout {
 		double closest_distance = Double.MAX_VALUE;
 		for (AprilTag tag : kTagMap.getTags()) {
 			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
-			for (int num : new int[] {14,4,15,5}) {
+			for (int num : new int[] {14,4,15,5,13,12,2,1,16,3}) {
 				if (num == tag.ID) {
 					distance = Double.POSITIVE_INFINITY;
 					break;
