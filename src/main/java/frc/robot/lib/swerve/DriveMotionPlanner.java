@@ -25,8 +25,8 @@ public class DriveMotionPlanner {
 	// Pure Pursuit Constants
 	public static final double kPathLookaheadTime = 0.1; // From 1323 (2019)
 	public static final double kPathMinLookaheadDistance = 0.3; // From 1323 (2019), not used in team1458 code
-	public static final double kAdaptivePathMinLookaheadDistance = 0.05;//0.05;//0.15;
-	public static final double kAdaptivePathMaxLookaheadDistance = 0.15;//0.2
+	public static final double kAdaptivePathMinLookaheadDistance = 0.10;//0.05;//0.15;
+	public static final double kAdaptivePathMaxLookaheadDistance = 0.30;//0.2
 	;//0.61;
 	public static final double kAdaptiveErrorLookaheadCoefficient = 0.01;
 	/*
@@ -289,6 +289,8 @@ public class DriveMotionPlanner {
 
 		// Find the vector between robot's current position and the lookahead state = lookahead_state - current_pose
 		Translation2d lookaheadTranslation = lookahead_state.poseMeters.getTranslation().minus(current_pose.getTranslation());//dc.12.7.24, bugfix, flip the vector
+		SmartDashboard.putNumber("PurePursuit/Pose/current.y",current_pose.getY());
+		SmartDashboard.putNumber("PurePursuit/Pose/lookahead.y",lookahead_state.poseMeters.getY());
 		/* original citrus code = "new Translation2d(
 				current_pose.getTranslation(), lookahead_state.state().getTranslation());"*/		
 
@@ -301,18 +303,20 @@ public class DriveMotionPlanner {
 		SmartDashboard.putNumber("PurePursuit/lookaheadTranslation.x",lookaheadTranslation.getX());
 		SmartDashboard.putNumber("PurePursuit/lookaheadTranslation.y",lookaheadTranslation.getY());
 
-		// Use the Velocity Feedforward of the Closest Point on the Trajectory
-		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond) / Constants.SwerveConstants.maxAutoSpeed; 
+		// use avergae of scalar speed of current and lookahead sample points as the driving speed. 
+		// No directions used here as we just want to make sure the scalar value of the speed 
+		// Assume scalar speed on the trajectory maintain continuity 
+		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond + lookahead_state.velocityMetersPerSecond) /2.0/ Constants.SwerveConstants.maxAutoSpeed; 
 
 		// Use Default Cook at the begining of the trajectory until path speed exceeds it or robot progresses far enough 
 		// It is also bugfix for zero speed at the beginning of trajectory
 		// The applicable progress length is calculated based on that robot reached max speed no later than the middle point of path
 		// For the rest of the path, use path predefined speed will provide smooth movement
-		if (normalizedSpeed > defaultCook || mSetpoint.timeSeconds > (mCurrentTrajectoryLength / (defaultCook/2))) {
+		if (normalizedSpeed > defaultCook || mSetpoint.timeSeconds > mCurrentTrajectoryLength / 2) {
 			useDefaultCook = false;
 		}
 		if (useDefaultCook) {normalizedSpeed = defaultCook;	}
-
+				
 		// Convert the Polar Coordinate (speed, direction) into a Rectangular Coordinate (Vx, Vy) in Robot Frame
 		final Translation2d steeringVector =
 				new Translation2d(steeringDirection.getCos() * normalizedSpeed, steeringDirection.getSin() * normalizedSpeed);
@@ -336,7 +340,8 @@ public class DriveMotionPlanner {
 		SmartDashboard.putNumber("PurePursuit/OmegaRadiansPerSecond",trueOmegaRadiansPerSecond);
 		SmartDashboard.putNumber("PurePursuit/Heading.Error", current_pose.getRotation().minus(mSetpoint.poseMeters.getRotation()).getDegrees());
 
-		SmartDashboard.putNumber("PurePursuit/normalizedSpeed", normalizedSpeed);		
+		SmartDashboard.putNumber("PurePursuit/steeringVector.vx", steeringVector.getX());		
+		SmartDashboard.putNumber("PurePursuit/steeringVector.vy", steeringVector.getY());		
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
 				steeringVector.getX() * Constants.SwerveConstants.maxAutoSpeed,
 				steeringVector.getY() * Constants.SwerveConstants.maxAutoSpeed,
