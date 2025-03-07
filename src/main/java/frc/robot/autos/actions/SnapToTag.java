@@ -41,13 +41,14 @@ public class SnapToTag implements Action {
     private PathPlannerTrajectory mTrajectory = null;
     private Action mAction = null;
     private int tag = 0;
-    private int mNum = 0;
+    private String mOffset;
     protected static boolean isRunning = false;
+    
     /**
-     * @param isLeft - if the robot is on the left side of the field
+     * @param offset LEFTBAR, RIGHTBAR, CENTER, CS, HANG
      */
-    public SnapToTag(int num) {
-        mNum = num;
+    public SnapToTag(String offset) {
+        mOffset = offset;
     }
 
     @Override
@@ -68,20 +69,17 @@ public class SnapToTag implements Action {
 				initialPose,
 				//intermediatePose,
 				finalPose
-			),
-			List.of(
+			), List.of(
 				new RotationTarget(0.5, finalPose.getRotation())
-			), 
-			List.of(), 
-			List.of(
+			), List.of(), 
+            List.of(
 				new ConstraintsZone(0.5, 15, 
 					new PathConstraints(Constants.Swerve.maxSpeed, 
                                         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, 
                                         Constants.Swerve.maxAngularVelocity/4, 
                                         Constants.Swerve.kMaxAngularAcceleration/2)
 				)
-			), 
-			List.of(), 
+			), List.of(), 
 			new PathConstraints(Constants.Swerve.maxSpeed, 
                                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared, 
                                 Constants.Swerve.maxAngularVelocity/2, 
@@ -138,17 +136,20 @@ public class SnapToTag implements Action {
     
     private void getTagPosition() {
         tag = FieldLayout.getClosestTag(initialPose.getTranslation()).ID;
+
         for (int num : new int[] {1, 2, 12, 13}) {
             if (num == tag) {
                 shouldFlip = true;
                 break;
             }
         }
+
         Rotation2d aprilTagRotation = FieldLayout.getClosestTag(initialPose.getTranslation()).pose.getRotation().toRotation2d();//TODO: check if flipped 180 deg
-        finalPose = new Pose2d(FieldLayout.getClosestTag(initialPose.getTranslation()).pose
-								.getTranslation().toTranslation2d().
-								plus(FieldLayout.offsets[mNum].rotateBy(aprilTagRotation)),
-								aprilTagRotation.minus(new Rotation2d(shouldFlip ? 0.0 : Math.PI)));
+        finalPose = new Pose2d(
+            FieldLayout.getClosestTag(initialPose.getTranslation()).pose
+            .getTranslation().toTranslation2d().
+            plus(FieldLayout.offsets.get(mOffset).rotateBy(aprilTagRotation)),
+            aprilTagRotation.minus(new Rotation2d(shouldFlip ? 0.0 : Math.PI)));
 
     }
     
@@ -166,6 +167,4 @@ public class SnapToTag implements Action {
 			nextControlPoint = anchor.plus(new Translation2d(nextControlLength, Rotation2d.fromDegrees(nextControlHeading)));
 		return new Waypoint(prevControlPoint, anchor, nextControlPoint);
 	}
-
-
 }
