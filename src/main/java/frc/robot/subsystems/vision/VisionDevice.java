@@ -142,11 +142,14 @@ public class VisionDevice extends Subsystem {
 
 		if (
 			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
-			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180) + 15 < 30
+			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees() + 15, -180, 180) < 30
 			&& Arrays.stream(validIds).anyMatch(n->n==(int) mID.get())
 		) {
-			System.out.println(mID.get());
+			// System.out.println(mID.get());
 			inSnapRange = true;
+		} else {
+			// System.out.println(MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180));
+			inSnapRange = false;
 		}
 	}
 
