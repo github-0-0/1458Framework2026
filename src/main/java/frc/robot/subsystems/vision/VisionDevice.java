@@ -43,6 +43,7 @@ public class VisionDevice extends Subsystem {
 	private DoubleArraySubscriber mObservations;
 	private DoubleArraySubscriber mStdDevs;
 	private IntegerSubscriber mFPS;
+	private IntegerSubscriber mID;
 
 	public Field2d robotField;
 	private boolean inSnapRange;
@@ -73,6 +74,10 @@ public class VisionDevice extends Subsystem {
 
 		mFPS = mOutputTable
 				.getIntegerTopic("fps")
+				.subscribe(0, PubSubOption.keepDuplicates(true), PubSubOption.sendAll(true));
+
+		mID = mOutputTable
+				.getIntegerTopic("tid")
 				.subscribe(0, PubSubOption.keepDuplicates(true), PubSubOption.sendAll(true));
 
 		mConfigTable.getDoubleTopic("fiducial_size_m").publish().set(FieldLayout.kApriltagWidth);
@@ -133,14 +138,18 @@ public class VisionDevice extends Subsystem {
 								stdDevsVec));
 		
 		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
-		int[] validIds = {17, 18, 19, 20, 21, 22, 12, 13, 2, 3, 6, 7, 8, 9, 10, 11};
+		int[] validIds = {17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11};
 
 		if (
 			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
-			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180) + 15 < 30
-			// && Arrays.asList(validIds).contains(LimelightHelpers.getRawFiducials(mConstants.kTableName)[0].id)
+			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees() + 15, -180, 180) < 30
+			&& Arrays.stream(validIds).anyMatch(n->n==(int) mID.get())
 		) {
+			// System.out.println(mID.get());
 			inSnapRange = true;
+		} else {
+			// System.out.println(MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180));
+			inSnapRange = false;
 		}
 	}
 
