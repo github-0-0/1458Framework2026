@@ -36,11 +36,11 @@ public class Controller {
         if ( mTeleopAutoMode==null) return;
         
         //abort
-        if (mXboxController1.getRawButton(7)) {
-            System.out.println("attempted to abort actions");
-            mTeleopAutoMode.abort();
-            return;
-        }
+        // if (mXboxController1.getRawButton(7)) {
+        //     System.out.println("attempted to abort actions");
+        //     mTeleopAutoMode.abort();
+        //     return;
+        // }
 
         //elevator
         if (mXboxController1.getYButtonPressed()) {
