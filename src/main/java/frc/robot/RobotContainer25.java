@@ -297,8 +297,9 @@ public class RobotContainer25 {
 
                 m_Controller.processKeyCommand();
 
-                if (xboxController.getRawButton(7)) {
+                if (xboxController.getStartButtonPressed()) {
                     isFieldRelative = !isFieldRelative;
+                    System.out.println("isFieldRelative ="+isFieldRelative);
                 }
 
                 if (xboxController.getPOV() == 90) {
