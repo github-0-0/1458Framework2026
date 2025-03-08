@@ -398,7 +398,7 @@ public class SwerveDrive extends Subsystem {
 		if (mMotionPlanner == null || mControlState != DriveControlState.PATH_FOLLOWING) {
 			return false;
 		}
-		return mMotionPlanner.isDone() || mOverrideTrajectory;
+		return mMotionPlanner.isDone(getPose()) || mOverrideTrajectory;
 	}
 
 	/**
