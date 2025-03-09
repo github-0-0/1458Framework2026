@@ -331,7 +331,7 @@ public class RobotContainer25 {
                     m_VisionDevices.inRange() &&
                     Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1
                 ) {
-                    xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
+                    xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.25);
                     m_Led.green();
                 } else {
                     xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
