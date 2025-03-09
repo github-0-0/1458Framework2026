@@ -57,9 +57,6 @@ public class RobotContainer25 {
     private final XboxController xboxController = new XboxController(0);
     //private final XboxController xboxController2 = new XboxController(1);
     /* button key-value */
-    private final int translationAxis = XboxController.Axis.kLeftY.value;
-    private final int strafeAxis = XboxController.Axis.kLeftX.value;
-    private final int rotationAxis = XboxController.Axis.kRightX.value;
     /* JoyStick Buttons */
     
     /* loop framework objects */
@@ -85,8 +82,6 @@ public class RobotContainer25 {
     public AutoModeExecutor mTeleopActionExecutor;
 	
     private VisionDeviceManager m_VisionDevices;
-    
-    private boolean isFieldRelative = true;
 
     // contructor
     public RobotContainer25() {
@@ -169,7 +164,7 @@ public class RobotContainer25 {
             mTeleopActionExecutor = new AutoModeExecutor();
             TeleopAutoMode teleopAutoMode = new TeleopAutoMode();
             mTeleopActionExecutor.setAutoMode(teleopAutoMode);
-            m_Controller = new Controller(xboxController, null, teleopAutoMode);            
+            m_Controller = new Controller(xboxController, teleopAutoMode, m_JoyStick);            
             // turn on the looper
             //RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
@@ -286,57 +281,7 @@ public class RobotContainer25 {
             //         m_SwerveDrive.zeroGyro(0);
 			// }
                 //dc.11.9.24, to scale up joystick input to max-speed
-                double translationVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
-                double strafeVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)*Constants.SwerveConstants.maxSpeed;
-                double rotationVal = - MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)* Constants.Swerve.maxAngularVelocity;
-
-                if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-                    translationVal = -translationVal;
-                    strafeVal = -strafeVal;
-                }
-
                 m_Controller.processKeyCommand();
-
-                if (xboxController.getStartButtonPressed()) {
-                    isFieldRelative = !isFieldRelative;
-                    System.out.println("isFieldRelative ="+isFieldRelative);
-                }
-
-                if (xboxController.getPOV() == 90) {
-                    m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
-                        0, -0.4, 0));
-                } else if (xboxController.getPOV() == 0) {
-                    m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
-                        0.4, 0, 0));
-                } else if (xboxController.getPOV() == 270) {
-                    m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
-                        0, 0.4, 0));
-                } else if (xboxController.getPOV() == 180) {
-                    m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
-                        -0.4, 0, 0));
-                } else {
-                    if (isFieldRelative) {
-                        m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
-                            translationVal, strafeVal, rotationVal,
-                            Util.robotToFieldRelative(m_SwerveDrive.getHeading(), is_red_alliance)));
-                    } else {
-                        m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
-                            translationVal, strafeVal, rotationVal));
-                    }
-                }
-
-                Twist2d velocity = RobotState.getInstance().getMeasuredVelocity();
-
-                if (
-                    m_VisionDevices.inRange() &&
-                    Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1
-                ) {
-                    xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.25);
-                    m_Led.green();
-                } else {
-                    xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
-                    m_Led.red();
-                }
           
                 // for(int i = 0; i < 4;  i++) {
                 //     SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));

@@ -1,85 +1,134 @@
 package frc.robot.teleop;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.vision.VisionDeviceManager;
+import frc.robot.Constants;
 import frc.robot.FieldLayout;
 import frc.robot.RobotState;
 import frc.robot.autos.actions.*;
 import frc.robot.autos.modes.TeleopAutoMode;
+import frc.robot.lib.util.Util;
+
 /**
  * A class that contains the controls for the robot.
  */
 public class Controller {
     private XboxController mXboxController1 = null;
-    private XboxController mXboxController2 = null;
     private TeleopAutoMode mTeleopAutoMode = null;
-    private boolean POVReset = true;
-    private boolean lTriggerReset = true;
-    private boolean rTriggerReset = true;
+    private Joystick m_JoyStick = null;
+    private SwerveDrive m_SwerveDrive = null;
+    private VisionDeviceManager m_VisionDevices = null;
+    private LED m_LED = null;
 
-    // constructor
-    public Controller(XboxController xboxController1, XboxController xboxController2, TeleopAutoMode teleopAutoMode) {
+    private final EventLoop m_loop = new EventLoop();
+    
+    private boolean isFieldRelative = true;
+
+    private final int translationAxis = XboxController.Axis.kLeftY.value;
+    private final int strafeAxis = XboxController.Axis.kLeftX.value;
+    private final int rotationAxis = XboxController.Axis.kRightX.value;
+
+    public Controller(
+        XboxController xboxController1, 
+        TeleopAutoMode teleopAutoMode,
+        Joystick joystick
+    ) {
         mXboxController1 = xboxController1;
-        mXboxController2 = xboxController2;
         mTeleopAutoMode = teleopAutoMode;
+        m_JoyStick = joystick;
+        m_SwerveDrive = SwerveDrive.getInstance();
+        m_VisionDevices = VisionDeviceManager.getInstance();
+        m_LED = LED.getInstance();
+
+        mXboxController1.a(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("Ground")));
+        mXboxController1.b(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L2")));
+        mXboxController1.x(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L3")));
+        mXboxController1.y(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L4")));
+        mXboxController1.leftBumper(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new SnapToTag("LEFTBAR", "R")));
+        mXboxController1.rightBumper(m_loop).rising().ifHigh(
+                () -> {
+                    mTeleopAutoMode.runAction(new SnapToTag("RIGHTBAR", "R"));
+                });
+        mXboxController1.rightTrigger(0.5, m_loop).ifHigh(
+                () -> mTeleopAutoMode.runAction(new CoralShootAction()));
+        mXboxController1.leftTrigger(0.5, m_loop).rising().ifHigh(
+            () -> mTeleopAutoMode.runAction(new SnapToTag("CS", "CS"))
+        );
+        mXboxController1.start(m_loop).ifHigh(
+            () -> isFieldRelative = !isFieldRelative
+        );
     }
 
-    // key event handling in manual mode periodic 
     public void processKeyCommand() {
-        if (mTeleopAutoMode == null) return;
-        
-        //PAGE: CS snap
-        if (mXboxController1.getRawButton(7)) {
-            mTeleopAutoMode.runAction(new SnapToTag("CS","CS"));
+        if (mTeleopAutoMode == null)
+            return;
+
+        m_loop.poll();
+
+        double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)
+                * Constants.SwerveConstants.maxSpeed;
+        double strafeVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)
+                * Constants.SwerveConstants.maxSpeed;
+        double rotationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)
+                * Constants.Swerve.maxAngularVelocity;
+
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            translationVal = -translationVal;
+            strafeVal = -strafeVal;
         }
 
-        //XYAB: elevator
-        if (mXboxController1.getYButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction("L4"));
-        } else if (mXboxController1.getAButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction("Ground"));
-        } else if (mXboxController1.getBButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction("L2"));
-        } else if (mXboxController1.getXButtonPressed()) {
-            mTeleopAutoMode.runAction(new ElevatorAction("L3"));
-        }
-
-        //POVs: reserved for nudge
-        if (mXboxController1.getPOV() == 0 && POVReset) {
-            POVReset = false;
-        } else if (mXboxController1.getPOV() == 90 && POVReset) {
-            POVReset = false;
-        } else if (mXboxController1.getPOV() == 180 && POVReset) {
-            POVReset = false;
-        } else if (mXboxController1.getPOV() == 270 && POVReset) {
-            POVReset = false;
+        if (mXboxController1.getPOV() == 90) {
+            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                    0, -0.4, 0));
+        } else if (mXboxController1.getPOV() == 0) {
+            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                    0.4, 0, 0));
+        } else if (mXboxController1.getPOV() == 270) {
+            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                    0, 0.4, 0));
+        } else if (mXboxController1.getPOV() == 180) {
+            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                    -0.4, 0, 0));
         } else {
-            POVReset = true;
-        }
-        
-        //BUMPERS: snap
-        if (mXboxController1.getLeftBumperButtonPressed()) {
-            mTeleopAutoMode.runAction(new SnapToTag("LEFTBAR", "R"));
-        } else if(mXboxController1.getRightBumperButtonPressed()) {
-            mTeleopAutoMode.runAction(new SnapToTag("RIGHTBAR", "R"));
-        }
-
-        //TRIGGER AXES: shooting
-        if (mXboxController1.getLeftTriggerAxis()> 0.5 && lTriggerReset) {
-            lTriggerReset = false;
-        } else {
-            lTriggerReset = true;
+            if (isFieldRelative) {
+                m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        translationVal, strafeVal, rotationVal,
+                        Util.robotToFieldRelative(m_SwerveDrive.getHeading(), DriverStation.getAlliance().get() == Alliance.Red)));
+            } else {
+                m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                        translationVal, strafeVal, rotationVal));
+            }
         }
 
-        if (mXboxController1.getRightTriggerAxis()>0.5 && rTriggerReset) {
-            mTeleopAutoMode.runAction(new CoralShootAction());
-            rTriggerReset = false;
+        Twist2d velocity = RobotState.getInstance().getMeasuredVelocity();
+
+        if (m_VisionDevices.inRange() &&
+                Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1) {
+            mXboxController1.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
+            m_LED.green();
         } else {
-            rTriggerReset = true;
+            mXboxController1.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+            m_LED.red();
         }
+
     }
 }
