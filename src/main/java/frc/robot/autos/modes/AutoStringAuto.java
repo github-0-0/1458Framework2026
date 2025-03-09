@@ -16,21 +16,23 @@ public class AutoStringAuto extends AutoModeBase {
 
     /**
      * Syntax:
-     * Space between each command (including brackets, parentheses, etc.)
-     * Space between each command and its argument
-     * S, P, R, CS, and the following number denotes a point (REMEMBER TO ADD A SPACE BETWEEN THE LETTER AND THE NUMBER). See {@link Robot2025\src\main\deploy\pathplanner\Naming}
-     * After stating a point the robot will try to move to that point
-     * Always check if the trajectory exists in the set
-     * [ actions ] denote a parallel action, where actions are run in parallel
-     * ( actions ) denote a series action, where actions are run one by one
-     * { actions } denote a repeat action, where actions are repeated a number of times denoted by the number after the closing bracket
-     * Wait and the following number denotes a wait action for that number of seconds
-     * CIntake denotes a coral intake action
-     * CShoot denotes a coral shoot action
-     * AIntake denotes an algae intake action
-     * AShoot denotes an algae shoot action
-     * Elevator and the following number denotes an elevator action to that height index
-     * Snap and the follwing number denotes a snap to nearest apriltag, where the number is 1 if we are aiming for the right reef and 0 if we are aiming for the left reef.
+     * <ul>
+     * <li> Space between each command (including brackets, parentheses, etc.) </li>
+     * <li> Space between each command and its argument </li>
+     * <li> S, P, R, CS, and the following number denotes a point (REMEMBER TO ADD A SPACE BETWEEN THE LETTER AND THE NUMBER). See {@link Naming} </li>
+     * <li> After stating a point the robot will try to move to that point </li>
+     * <li> Always check if the trajectory exists in the set </li>
+     * <li> [ actions ] denote a parallel action, where actions are run in parallel </li>
+     * <li> ( actions ) denote a series action, where actions are run one by one </li>
+     * <li> { actions } denote a repeat action, where actions are repeated a number of times denoted by the number after the closing bracket </li>
+     * <li> Wait and the following number denotes a wait action for that number of seconds </li>
+     * <li> CIntake denotes a coral intake action </li>
+     * <li> CShoot denotes a coral shoot action </li>
+     * <li> AIntake denotes an algae intake action </li>
+     * <li> AShoot denotes an algae shoot action </li>
+     * <li> Elevator and the following number denotes an elevator action to that height index </li>
+     * <li> Snap and following offset ({@link SnapToTag#SnapToTag(String)}) </li>
+     * </ul>
      */
     
     public AutoStringAuto(String string) {
@@ -144,7 +146,7 @@ public class AutoStringAuto extends AutoModeBase {
                     break;
                     
                 case "Snap":
-                    listOfActions.add(new SnapToTag(Integer.parseInt(actionStrings[++i])));
+                    listOfActions.add(new SnapToTag(actionStrings[++i]));
                     break;
                 default:
                     System.out.println("Unknown action: " + curString);
