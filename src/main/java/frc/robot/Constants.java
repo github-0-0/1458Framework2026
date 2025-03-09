@@ -328,8 +328,8 @@ public final class Constants {
         
         //TODO: Find correct elevator heights for each level
         public static final double kGroundHeight = 0.1; //occasionally stalls at bottom
-        public static final double kL2Height = 10.15;
-        public static final double kL3Height = 22.54;
+        public static final double kL2Height = 9.15;
+        public static final double kL3Height = 22;
         
         public static final double kL4Height = 43.5;    //stalls at top
         public static final double kAPHeight = 6.9;

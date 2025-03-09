@@ -129,7 +129,7 @@ public class VisionDevice extends Subsystem {
 
 		robotField.setRobotPose(botPose);
 		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
-		Vector<N2> betterDevs = VecBuilder.fill(0.002 * targetSpace_pose.getX(), 0.002 * targetSpace_pose.getY());
+		Vector<N2> betterDevs = VecBuilder.fill(0.005 * targetSpace_pose.getX(), 0.005 * targetSpace_pose.getY());
 
 		RobotState.getInstance()
 				.addVisionUpdate(
@@ -137,14 +137,14 @@ public class VisionDevice extends Subsystem {
 								timestamp,
 								botPose.getTranslation(),
 								new Translation2d(0, 0),
-								betterDevs));
+								stdDevsVec));
 		
 		//Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
 		int[] validIds = {17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11};
 
 		if (
 			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
-			&& MathUtil.inputModulus(mPigeon.getYaw().getDegrees() + 15, -180, 180) < 30
+			&& MathUtil.inputModulus(targetSpace_pose.getRotation().getDegrees() + 15, -180, 180) < 30
 			&& Arrays.stream(validIds).anyMatch(n->n==(int) mID.get())
 		) {
 			// System.out.println(mID.get());
