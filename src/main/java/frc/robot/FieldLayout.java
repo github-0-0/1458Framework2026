@@ -31,10 +31,9 @@ import edu.wpi.first.math.util.Units;
 public class FieldLayout {
 	public static double kFieldLength = Units.inchesToMeters(651.223);
 	public static double kFieldWidth = Units.inchesToMeters(323.277);
+
     public static HashMap<String, Translation2d> offsets = new HashMap<>();
-
 	public static HashMap<String, int[]> presets = new HashMap<>();
-
 
 	public static final double kApriltagWidth = Units.inchesToMeters(6.50);
 	public static final AprilTagFieldLayout kTagMap;
@@ -58,6 +57,7 @@ public class FieldLayout {
 			presets.put("ANY", new int[] {});
 			presets.put("BARGE", new int[] {4, 5, 14, 15});
 			presets.put("NOBARGE", new int[] {-4, -5, -14, -15});
+
 			kTagMap = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -94,7 +94,11 @@ public class FieldLayout {
 		}
 		return x_coordinate;
 	}
-
+	/**
+	 * Default is no barge
+	 * @param robot_position
+	 * @return
+	 */
 	public static AprilTag getClosestTag(Translation2d robot_position) {
 		return getClosestTag(robot_position, presets.get("NOBARGE"));
 	}
@@ -116,7 +120,7 @@ public class FieldLayout {
 
 				if (num == absNum) {
 					distance -= 1000000000; //hopefully there is no situation where this is insufficient
-				} else if (num == tag.ID) {
+				} else if (absNum == tag.ID) {
 					distance = Double.POSITIVE_INFINITY;
 				}
 			}
