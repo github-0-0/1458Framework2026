@@ -74,21 +74,21 @@ public class Controller {
             // mTeleopAutoMode.runAction(new CoralShootAction());
             // mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("AP"), new SnapToTag(2), new AlgaeAction("Shoot"), new ElevatorAction("L2")));
             // mTeleopAutoMode.runAction(new AlgaeAction("Shoot"));
-            System.out.println("right  bumper fired");
+            // System.out.println("right  bumper fired");
             mTeleopAutoMode.runAction(new SnapToTag(1));
         }
         else if(mXboxController1.getLeftBumperButtonPressed()) {
             // mTeleopAutoMode.runAction(new AlgaeAction("Intake"));
             // mTeleopAutoMode.runAction(new SeriesAction(new ElevatorAction("Ground"), new AlgaeAction("Intake"), new ElevatorAction("L2")));
-            System.out.println("Left bumper fired");
+            // System.out.println("Left bumper fired");
             mTeleopAutoMode.runAction(new SnapToTag(0));
         }
         else if (mXboxController1.getLeftTriggerAxis()> 0.5) {
-            System.out.println("Left trigger fired");
+            // System.out.println("Left trigger fired");
             
         }
         else if (mXboxController1.getRightTriggerAxis()>0.5) {
-            System.out.println("right trigger fired");
+            // System.out.println("right trigger fired");
             mTeleopAutoMode.runAction(new CoralShootAction());
         }
         else {
