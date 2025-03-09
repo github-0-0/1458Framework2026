@@ -18,6 +18,7 @@ import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -40,16 +41,28 @@ public class SnapToTag implements Action {
 
     private PathPlannerTrajectory mTrajectory = null;
     private Action mAction = null;
-    private int tag = 0;
+    private AprilTag tag = null;
     private String mOffset;
+    private String mPreset;
     protected static boolean isRunning = false;
     
     /**
      * @param offset LEFTBAR, RIGHTBAR, CENTER, CS, HANG
      */
     public SnapToTag(String offset) {
-        mOffset = offset;
+        this(offset, "NOBARGE");
     }
+
+    /**
+     * @param offset LEFTBAR, RIGHTBAR, CENTER, CS, HANG
+     * @param preset R, CS, P, BARGE, NOBARGE, ANY
+     */
+    public SnapToTag(String offset, String preset) {
+        mOffset = offset;
+        mPreset = preset;
+    }
+
+
 
     @Override
     public void start() {
@@ -102,7 +115,7 @@ public class SnapToTag implements Action {
 		// mDrive.m_field.getObject("traj").setTrajectory(new Trajectory(temp));
 		
         mAction = new SwerveTrajectoryAction(mTrajectory);
-        System.out.println("Snap to tag "+toString()+ " -> " + toString());
+        System.out.println("Snap to tag -> " + tag);
     
         mAction.start();
     }
@@ -135,19 +148,18 @@ public class SnapToTag implements Action {
     }
     
     private void getTagPosition() {
-        tag = FieldLayout.getClosestTag(initialPose.getTranslation()).ID;
+        tag = FieldLayout.getClosestTag(initialPose.getTranslation(), mPreset);
 
         for (int num : new int[] {1, 2, 12, 13}) {
-            if (num == tag) {
+            if (num == tag.ID) {
                 shouldFlip = true;
                 break;
             }
         }
 
-        Rotation2d aprilTagRotation = FieldLayout.getClosestTag(initialPose.getTranslation()).pose.getRotation().toRotation2d();//TODO: check if flipped 180 deg
+        Rotation2d aprilTagRotation = tag.pose.toPose2d().getRotation();//TODO: check if flipped 180 deg
         finalPose = new Pose2d(
-            FieldLayout.getClosestTag(initialPose.getTranslation()).pose
-            .getTranslation().toTranslation2d().
+            tag.pose.getTranslation().toTranslation2d().
             plus(FieldLayout.offsets.get(mOffset).rotateBy(aprilTagRotation)),
             aprilTagRotation.minus(new Rotation2d(shouldFlip ? 0.0 : Math.PI)));
 

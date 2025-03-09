@@ -65,9 +65,9 @@ public class Controller {
         
         //BUMPERS: snap
         if (mXboxController1.getLeftBumperButtonPressed()) {
-            mTeleopAutoMode.runAction(new SnapToTag("LEFTBAR"));
+            mTeleopAutoMode.runAction(new SnapToTag("LEFTBAR", "R"));
         } else if(mXboxController1.getRightBumperButtonPressed()) {
-            mTeleopAutoMode.runAction(new SnapToTag("RIGHTBAR"));
+            mTeleopAutoMode.runAction(new SnapToTag("RIGHTBAR", "R"));
         }
 
         //TRIGGER AXES: shooting

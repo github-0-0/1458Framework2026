@@ -108,7 +108,7 @@ public class FieldLayout {
 	 * @param ids Positive for whitelist, negative for blacklist
 	 * @return The closest apriltag on the field
 	 */
-	public static AprilTag getClosestTag(Translation2d robot_position, int... ids) {
+	public static AprilTag getClosestTag(Translation2d robot_position, int[] ids) {
 		AprilTag closest_tag = null;
 		double closest_distance = Double.MAX_VALUE;
 
@@ -117,11 +117,14 @@ public class FieldLayout {
 
 			for (int num : ids) {
 				int absNum = Math.abs(num);
-
-				if (num == absNum) {
-					distance -= 1000000000; //hopefully there is no situation where this is insufficient
-				} else if (absNum == tag.ID) {
-					distance = Double.POSITIVE_INFINITY;
+				if (tag.ID == absNum) {
+					if (num == absNum) {
+						distance -= 1000000000;
+						break; //hopefully there is no situation where this is insufficient
+					} else {
+						distance = Double.MAX_VALUE;
+						break;
+					}
 				}
 			}
 
