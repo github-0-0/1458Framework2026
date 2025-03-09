@@ -42,11 +42,11 @@ public class FieldLayout {
 	static {
 		try {	
 			offsets.put("LEFTBAR",
-				new Translation2d(Constants.Swerve.trackWidth/2 + 0.189, -0.166));
+				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, -0.166));
 			offsets.put("RIGHTBAR",
-				new Translation2d(Constants.Swerve.trackWidth/2 + 0.189, 0.166));
+				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, 0.166));
 			offsets.put("CENTER",
-				new Translation2d(Constants.Swerve.trackWidth/2 + 0.189,0.0));
+				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20,0.0));
 			offsets.put("CS",
 				new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20, 0));
 			offsets.put("HANG",

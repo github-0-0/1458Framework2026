@@ -297,8 +297,9 @@ public class RobotContainer25 {
 
                 m_Controller.processKeyCommand();
 
-                if (xboxController.getRawButton(7)) {
+                if (xboxController.getStartButtonPressed()) {
                     isFieldRelative = !isFieldRelative;
+                    System.out.println("isFieldRelative ="+isFieldRelative);
                 }
 
                 if (xboxController.getPOV() == 90) {
@@ -331,8 +332,10 @@ public class RobotContainer25 {
                     Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1
                 ) {
                     xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
+                    m_Led.green();
                 } else {
                     xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+                    m_Led.red();
                 }
           
                 // for(int i = 0; i < 4;  i++) {
