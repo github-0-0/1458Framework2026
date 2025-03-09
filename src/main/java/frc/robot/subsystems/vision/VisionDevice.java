@@ -128,6 +128,8 @@ public class VisionDevice extends Subsystem {
 		Vector<N2> stdDevsVec = VecBuilder.fill(stdDevs[6], stdDevs[7]);
 
 		robotField.setRobotPose(botPose);
+		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
+		Vector<N2> betterDevs = VecBuilder.fill(0.002 * targetSpace_pose.getX(), 0.002 * targetSpace_pose.getY());
 
 		RobotState.getInstance()
 				.addVisionUpdate(
@@ -135,9 +137,9 @@ public class VisionDevice extends Subsystem {
 								timestamp,
 								botPose.getTranslation(),
 								new Translation2d(0, 0),
-								stdDevsVec));
+								betterDevs));
 		
-		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
+		//Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
 		int[] validIds = {17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11};
 
 		if (
