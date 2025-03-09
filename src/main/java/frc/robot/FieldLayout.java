@@ -47,7 +47,7 @@ public class FieldLayout {
 			offsets.put("CENTER",
 				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20,0.0));
 			offsets.put("CS",
-				new Translation2d(-Constants.Swerve.trackWidth/2 - 0.20, 0));
+				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, 0));
 			offsets.put("HANG",
 				new Translation2d(0,0));
 			

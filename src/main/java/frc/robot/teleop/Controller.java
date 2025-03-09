@@ -32,11 +32,9 @@ public class Controller {
     public void processKeyCommand() {
         if (mTeleopAutoMode == null) return;
         
-        //abort
+        //PAGE: CS snap
         if (mXboxController1.getRawButton(7)) {
-            // System.out.println("attempted to abort actions");
-            // mTeleopAutoMode.abort();
-            // return;
+            mTeleopAutoMode.runAction(new SnapToTag("CS","CS"));
         }
 
         //XYAB: elevator
