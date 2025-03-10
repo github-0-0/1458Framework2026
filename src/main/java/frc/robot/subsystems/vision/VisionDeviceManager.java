@@ -36,7 +36,7 @@ public class VisionDeviceManager extends Subsystem {
 		mRightCamera = new VisionDevice(Constants.kRightVisionDevice);
 		mFrontCamera = new VisionDevice(Constants.kFrontVisionDevice);
 		mBackCamera = new VisionDevice(Constants.kBackVisionDevice);
-		mAllCameras = List.of(mLeftCamera, mRightCamera, mFrontCamera, mBackCamera);
+		mAllCameras = List.of(mLeftCamera, mFrontCamera, mBackCamera);
 	}
 
 	@Override
@@ -67,10 +67,10 @@ public class VisionDeviceManager extends Subsystem {
 	}
 
 	public synchronized boolean fullyConnected() {
-		return mLeftCamera.isConnected() ;
-			// && mRightCamera.isConnected()
-			// && mFrontCamera.isConnected()
-			// && mBackCamera.isConnected();
+		return mLeftCamera.isConnected()
+			&& mRightCamera.isConnected()
+			&& mFrontCamera.isConnected()
+			&& mBackCamera.isConnected();
 	}
 
 	public synchronized VisionDevice getLeftVision() {

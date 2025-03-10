@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,8 @@ public class WheelTracker {
 	private boolean mIsEnabled = false;
 
 	private OdometryThread mOdometryThread;
+
+	private Field2d mRobotField = new Field2d();
 
 	public WheelTracker(SwerveModule[] modules) {
 		if (modules.length != 4) {
@@ -65,6 +68,10 @@ public class WheelTracker {
 		mOdometryThread = new OdometryThread();
 		mOdometryThread.setDaemon(true);
 		mOdometryThread.start();
+
+		mRobotField.setRobotPose(mRobotPose);
+
+		SmartDashboard.putData("WheelTracker", mRobotField);
 	}
 
 	public void start() {
@@ -164,6 +171,9 @@ public class WheelTracker {
 		}
 
 		mRobotPose = new_pose;
+
+		mRobotField.setRobotPose(new_pose);
+
 		resetModulePoses(mRobotPose);
 	}
 
@@ -219,7 +229,7 @@ public class WheelTracker {
 		props.previousEncDistance = currentEncDistance;
 	}
 
-	private void resetModulePoses(Pose2d mRobotPose) {
+	public void resetModulePoses(Pose2d mRobotPose) {
 		for (int i = 0; i < mModules.length; i++) {
 			WheelProperties props = WheelProperties[i];
 			Translation2d modulePosition = new Pose2d(mRobotPose.getTranslation().plus(props.startingPosition),mRobotPose.getRotation())
