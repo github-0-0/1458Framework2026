@@ -12,6 +12,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -49,6 +50,30 @@ public class Elevator extends Subsystem {
 
   private TalonFX mLeftMotor;
   private TalonFX mRightMotor; // LEADER
+
+  // Simulation classes help us simulate the elevator.
+  // Create an ElevatorSim to model the elevator
+  private final ElevatorSim elevatorSim =
+      new ElevatorSim(
+        LinearSystemId.createElevatorSystem(
+          DCMotor.getKrakenX60Foc(2), 5.0, Units.inchesToMeters(5.0),10.0),
+        DCMotor.getKrakenX60Foc(2),
+        0.5,
+        5.0,
+        true,
+        1.0);
+
+  private final double elevatorTravelPerRotation = 0.055;
+
+  // Create a Mechanism2d visualization of the elevator
+  private final Mechanism2d mech = new Mechanism2d(1.0, 1.0);
+  private final MechanismRoot2d elevator = mech.getRoot("Elevator", 0.5, 0);
+  private final MechanismLigament2d elevatorViz =
+      elevator.append(
+          new MechanismLigament2d(
+            "Shaft", 0.5, 90, 25.0, new Color8Bit(Color.kYellow)
+        )
+      );
 
   private MotionMagicVoltage m_request;
   private double prevUpdateTime = Timer.getFPGATimestamp();
@@ -96,6 +121,8 @@ public class Elevator extends Subsystem {
     mLeftMotor.setControl(new DutyCycleOut(mLeftMotor.getDutyCycle().getValue()));
 
     m_request = new MotionMagicVoltage(0);
+
+    SmartDashboard.putData("Elevator", mech);
   }
 
   public enum ElevatorState {
@@ -224,7 +251,6 @@ public class Elevator extends Subsystem {
       default:
         targetRot = 0.1;
         break;
-
     }
   }
 
@@ -267,6 +293,7 @@ public class Elevator extends Subsystem {
       System.out.println("Break Laser Check");
       return false;
     }
+
     mLeftMotor.setControl(m_request.withPosition(targetRot));
 
     if (Math.abs(Math.abs(currentRot) - Math.abs(targetRot)) < 0.5) {
@@ -318,6 +345,31 @@ public class Elevator extends Subsystem {
   // mPeriodicIO.elevator_target = Constants.Elevator.kL4Height;
   // mPeriodicIO.state = ElevatorState.L4;
   // }
+
+  // /** Advance the simulation of the elevator. */
+  public void updateSimPeriodic() {
+    // In this method, we update our simulation of what our elevator is doing
+    TalonFXSimState mLeftMotorSim = mLeftMotor.getSimState();
+    mLeftMotorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+    // First, we set our "inputs" (voltages)
+    elevatorSim.setInputVoltage(mLeftMotorSim.getMotorVoltage());
+
+    // Next, we update it for the standard loop time
+    elevatorSim.update(TimedRobot.kDefaultPeriod);
+
+    // Finally, we set our simulated encoder's readings and simulated battery voltage
+    // Convert elevator position to rotations for the motor
+    mLeftMotorSim.setRawRotorPosition(elevatorSim.getPositionMeters() / elevatorTravelPerRotation);
+    mLeftMotorSim.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond());
+
+    // SimBattery estimates loaded battery voltages
+    RoboRioSim.setVInVoltage(
+      BatterySim.calculateDefaultBatteryLoadedVoltage(elevatorSim.getCurrentDrawAmps()));
+
+    elevatorViz.setLength(elevatorViz.getLength()
+      + elevatorSim.getVelocityMetersPerSecond() * TimedRobot.kDefaultPeriod);
+  }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 }

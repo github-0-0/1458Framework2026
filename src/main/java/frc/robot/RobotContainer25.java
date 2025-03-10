@@ -337,6 +337,11 @@ public class RobotContainer25 {
 
             // mDriverControls.oneControllerMode();
 
+            if (Robot.isSimulation()) {
+                m_Elevator.updateSimPeriodic();
+                m_Shooter.updateSimPeriodic();
+            }
+
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
