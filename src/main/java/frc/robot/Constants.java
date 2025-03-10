@@ -439,6 +439,13 @@ public final class Constants {
         public static final int kAlgaeShooterLimitSwitchId = 32;
         public static final double kAlgaeShooterSpeed = 0.4;
     }
+// WIP PLS CHANGE SOON I DONT THINK THIS IS CORRECT - AARUSH
+    public static final class AlgaeSmth { //TODO: make constants correct
+        public static final int kAlgaeSmthLeftMotorId = 28;
+        public static final int kAlgaeSmthRightMotorId = 29;
+        public static final int kAlgaeSmthLimitSwitchId = 33;
+        public static final double kAlgaeSmthSpeed = 0.4;
+    }
 
     public static final class Hang { //TODO: make constants correct
         public static final int kHangMotorId = 51;

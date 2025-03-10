@@ -43,7 +43,7 @@ public class AlgaeShooter extends Subsystem {
 	private TalonFX mLeftAlgaeShooterMotor;
 	private TalonFX mRightAlgaeShooterMotor;
 
-	private AlgaeShooter() {
+	AlgaeShooter() {
 		// super("AlgaeShooter");
 		mLeftAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterLeftMotorId);
 		mRightAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterRightMotorId); // LEADER
