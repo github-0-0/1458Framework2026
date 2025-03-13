@@ -43,7 +43,7 @@ public class AlgaeShooter extends Subsystem {
 	private TalonFX mLeftAlgaeShooterMotor;
 	private TalonFX mRightAlgaeShooterMotor;
 
-	private AlgaeShooter() {
+	AlgaeShooter() {
 		// super("AlgaeShooter");
 		mLeftAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterLeftMotorId);
 		mRightAlgaeShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterRightMotorId); // LEADER
@@ -66,13 +66,20 @@ public class AlgaeShooter extends Subsystem {
 				switch (mPeriodicIO.state) {
 					case INTAKE:
 						if (!Laser.inRangeAlgaeShooter()) {
-							spinIn();
+							//spinIn();
+							mPeriodicIO.speed = -Constants.AlgaeShooter.kAlgaeShooterSpeed;
 						} else {
 							stop();
 						}
 						break;
 					case SHOOT:
-						spinOut();
+						if (Laser.inRangeAlgaeShooter()) {
+							//spinOut()
+							mPeriodicIO.speed = Constants.AlgaeShooter.kAlgaeShooterSpeed;
+						}else{
+							stop();
+						}
+						break;
 					case STOP:
 						stop();
 						break;
@@ -92,6 +99,7 @@ public class AlgaeShooter extends Subsystem {
 	@Override
 	public void writePeriodicOutputs() {
 		mRightAlgaeShooterMotor.set(mPeriodicIO.speed);
+
 	}
 
 	@Override
@@ -108,26 +116,26 @@ public class AlgaeShooter extends Subsystem {
 
 	/*---------------------------------- Custom Public Functions ----------------------------------*/
 
-	public void intake() {
+	public synchronized void intake() {
 		mPeriodicIO.state = AlgaeShooterState.INTAKE;
 	}
 
-	public void shoot() {
+	public synchronized void shoot() {
 		mPeriodicIO.state = AlgaeShooterState.SHOOT;
 	}
 
-	public void stopAlgaeShooter() {
+	public synchronized void stopAlgaeShooter() {
 		mPeriodicIO.state = AlgaeShooterState.STOP;
 	}
 	/*---------------------------------- Custom Private Functions ---------------------------------*/
 
-	public void spinOut() {
-		mPeriodicIO.speed = Constants.AlgaeShooter.kAlgaeShooterSpeed;
-	}
+	// public void spinOut() {		
+	// 	mPeriodicIO.speed = Constants.AlgaeShooter.kAlgaeShooterSpeed;
+	// }
 
-	public void spinIn() {
-		mPeriodicIO.speed = -Constants.AlgaeShooter.kAlgaeShooterSpeed;
-	}
+	// public void spinIn() {
+	// 	mPeriodicIO.speed = -Constants.AlgaeShooter.kAlgaeShooterSpeed;
+	// }
 
 	@Override
 	public void stop() {

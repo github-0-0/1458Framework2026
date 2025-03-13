@@ -57,9 +57,11 @@ public class SwerveDrive extends Subsystem {
 	}
 
 	public WheelTracker mWheelTracker;
-	private final Field2d m_field = new Field2d();
+	public final Field2d m_field = new Field2d();
 	private Pigeon mPigeon = Pigeon.getInstance();
 	public SwerveModule[] mModules;
+
+	public double intendedAngle = 0;
 
 	private PeriodicIO mPeriodicIO = new PeriodicIO();
 	private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
@@ -110,7 +112,7 @@ public class SwerveDrive extends Subsystem {
 		mMotionPlanner = new DriveMotionPlanner();
 		mHeadingController = new SwerveHeadingController();
 
-		mPigeon.setYaw(0.0);
+		//mPigeon.setYaw(0.0); //dc.2.21.25, pigeon could have starting angle such as FRC 2025 game, in which pigeon will face backward on blue side
 		mWheelTracker = new WheelTracker(mModules);
 
 		SmartDashboard.putData("Field", m_field);
@@ -127,24 +129,42 @@ public class SwerveDrive extends Subsystem {
 	 */
 	public void feedTeleopSetpoint(ChassisSpeeds speeds) {
 		if (mControlState == DriveControlState.PATH_FOLLOWING) {
-			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
-					> mKinematicLimits.kMaxDriveVelocity * 0.1) {
+			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)> mKinematicLimits.kMaxDriveVelocity * 0.05 || 
+				Math.abs(speeds.omegaRadiansPerSecond)> 0.1*Constants.SwerveConstants.maxAngularVelocity) { 
+				//dc.2.25.2025, bugfix, break from auto mode (PATH_FOLLOWING) back to OPEN_LOOP if either translational or angular speed exceeds threshold
 				mControlState = DriveControlState.OPEN_LOOP;
 			} else {
 				return;
 			}
 		} else if (mControlState == DriveControlState.HEADING_CONTROL) {
-			if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
+			if (Math.abs(speeds.omegaRadiansPerSecond) > 0.0*Constants.SwerveConstants.maxAngularVelocity) { //original value = 0.1
+				// dc.2.25.2025, break from heading locking mode to OPEN_LOOP as soon as swerve button is pressed,.
+				// TODO: test on robot to see how much it reduces the sensitivity of swerve button 
 				mControlState = DriveControlState.OPEN_LOOP;
+				System.out.println("back to Open_Loop");
+
 			} else {
+				// dc.2.25.2025, heading lock mode, actively compensate any heading shifts here. 
 				double x = speeds.vxMetersPerSecond;
 				double y = speeds.vyMetersPerSecond;
 				double omega = mHeadingController.update(mPeriodicIO.heading.getRadians(), Timer.getFPGATimestamp());
 				mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(x, y, omega);
+				SmartDashboard.putNumber("Drive/feedTeleop/StabilizingOmega =",omega);
 				return;
 			}
 		} else if (mControlState != DriveControlState.OPEN_LOOP) {
 			mControlState = DriveControlState.OPEN_LOOP;
+		}else{	// already in (state == OPEN_LOOP ) mode
+			// dc.2.25.2025, bugfix for heading drift 			
+			// add code to trun on HEADING_CONTROL
+			// TODO: test on robot to see how much it wobbles 
+			//
+// 			if (speeds.omegaRadiansPerSecond==0.0 && 
+// 				Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)> 0.1*mKinematicLimits.kMaxDriveVelocity ){//swerve button is released and drive button is pressed
+// 				stabilizeHeading(mPeriodicIO.heading);
+// 				System.out.println("heading locked to " + mPeriodicIO.heading);
+			// }
+
 		}
 
 		mPeriodicIO.des_chassis_speeds = speeds;
@@ -378,7 +398,7 @@ public class SwerveDrive extends Subsystem {
 		if (mMotionPlanner == null || mControlState != DriveControlState.PATH_FOLLOWING) {
 			return false;
 		}
-		return mMotionPlanner.isDone() || mOverrideTrajectory;
+		return mMotionPlanner.isDone(getPose()) || mOverrideTrajectory;
 	}
 
 	/**
@@ -418,9 +438,9 @@ public class SwerveDrive extends Subsystem {
 	private void updateSetpoint() {
 		if (mControlState == DriveControlState.FORCE_ORIENT) return;
 
-		SmartDashboard.putNumber("Drive/ChassisSpeeds.vx", mPeriodicIO.des_chassis_speeds.vxMetersPerSecond);
-		SmartDashboard.putNumber("Drive/ChassisSpeeds.vy", mPeriodicIO.des_chassis_speeds.vyMetersPerSecond);
-		SmartDashboard.putNumber("Drive/ChassisSpeeds.omega", mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
+		SmartDashboard.putNumber("Drive/ChassisSpeeds/Target/vx", mPeriodicIO.des_chassis_speeds.vxMetersPerSecond);
+		SmartDashboard.putNumber("Drive/ChassisSpeeds/Target/vy", mPeriodicIO.des_chassis_speeds.vyMetersPerSecond);
+		SmartDashboard.putNumber("Drive/ChassisSpeeds/Target/omega", mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
 
 		Pose2d robot_pose_vel = new Pose2d(
 				mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt * 4.0,
@@ -532,9 +552,9 @@ public class SwerveDrive extends Subsystem {
 //						String.format("%.2f",real_module_setpoints[i].angle.getDegrees()));
 //				}
 //			}
-			SmartDashboard.putNumber("updateSetPoint().wanted_speed.Omega)", wanted_speeds.omegaRadiansPerSecond);
-			SmartDashboard.putNumber("updateSetPoint().wanted_speed.vx)", wanted_speeds.vxMetersPerSecond);
-			SmartDashboard.putNumber("updateSetPoint().wanted_speed.vy)", wanted_speeds.vyMetersPerSecond);
+			SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/Omega)", wanted_speeds.omegaRadiansPerSecond);
+			SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/vx)", wanted_speeds.vxMetersPerSecond);
+			SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/vy)", wanted_speeds.vyMetersPerSecond);
 		}
 
 		SwerveDriveKinematics.desaturateWheelSpeeds(real_module_setpoints, Constants.SwerveConstants.maxSpeed);
@@ -775,7 +795,7 @@ public class SwerveDrive extends Subsystem {
 	}
 */
 	@Override
-	public void stop() {
+	public synchronized void stop() {
 		mPeriodicIO.des_chassis_speeds = new ChassisSpeeds();
 		mControlState = DriveControlState.OPEN_LOOP;
 	}

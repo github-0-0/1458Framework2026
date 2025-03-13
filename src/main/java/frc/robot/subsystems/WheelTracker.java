@@ -63,7 +63,7 @@ public class WheelTracker {
 		mAllSignals[mAllSignals.length - 1] = mPigeon.getRateStatusSignal();
 
 		for (BaseStatusSignal sig : mAllSignals) {
-			sig.setUpdateFrequency(250);
+			sig.setUpdateFrequency(50);
 		}
 		mOdometryThread = new OdometryThread();
 		mOdometryThread.setDaemon(true);

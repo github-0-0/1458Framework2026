@@ -92,18 +92,12 @@ public class TrajectoryGenerator {
 
     //constructor code
     public TrajectoryGenerator (){
-        //dc.to be implemented
-        //TODO: finish trajectory generator constructor
-    }
-
-    //actually create the trajectory object
-    public void generateTrajectories (){
         if (mTrajectorySet == null) {
 			System.out.println("Generating trajectories...");
 			mTrajectorySet = new TrajectorySet();
 			System.out.println("Finished trajectory generation");
 		}
-    }    
+    }
 
     //access to the trajectory set 
 	public TrajectorySet getTrajectorySet() {

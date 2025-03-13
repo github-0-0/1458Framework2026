@@ -37,8 +37,8 @@ public final class Constants {
         COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(23.5); 
-        public static final double wheelBase = Units.inchesToMeters(23.5);
+        public static final double trackWidth = Units.inchesToMeters(24); 
+        public static final double wheelBase = Units.inchesToMeters(24);
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -83,7 +83,7 @@ public final class Constants {
         public static final double closedLoopRamp = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = chosenModule.angleKP;
+        public static final double angleKP = 15.0;
         public static final double angleKI = chosenModule.angleKI;
         public static final double angleKD = chosenModule.angleKD;
 
@@ -102,7 +102,7 @@ public final class Constants {
         /** Meters per Second */
         public static final double maxSpeed = 4; //TODO: dc 11.9.24, increase max speed so that we can observe amplified drivetrain bahavior 
         /** Radians per Second */
-        public static final double maxAngularVelocity = 3.14; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = 3.14 * 2; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -114,7 +114,7 @@ public final class Constants {
             public static final int driveMotorID = 8;
             public static final int angleMotorID = 10;
             public static final int canCoderID = 7;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.142334);//0.1521);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.142334);//0.147705);//0.142334);
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
             public static final SwerveModuleConstants constants = 
@@ -128,7 +128,7 @@ public final class Constants {
             public static final int canCoderID = 6;
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.419434);//0.4243);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.427246);//430420);//0.419434);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
@@ -140,7 +140,7 @@ public final class Constants {
             public static final int canCoderID = 0;
             public static final boolean isDriveInverted = true;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.175781);//0.1643);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.174316);//173340);//0.175781);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
@@ -152,7 +152,7 @@ public final class Constants {
             public static final int canCoderID = 1;
             public static final boolean isDriveInverted = false;
             public static final boolean isAngleInverted = false;
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.417236);//0.4148);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.413330);//416748);//0.417236);
             public static final SwerveModuleConstants constants =
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
@@ -185,12 +185,12 @@ public final class Constants {
         kLeftVisionDevice.kTableName = "limelight-left";    
         kLeftVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(10.5), Units.inchesToMeters(1.23)),
-                Rotation2d.fromDegrees(0));
+                Rotation2d.fromDegrees(-90));
 
         kRightVisionDevice.kTableName = "limelight-right";  
         kRightVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
-                new Translation2d(Units.inchesToMeters(10.78), Units.inchesToMeters(-0.05)),
-                Rotation2d.fromDegrees(0));
+                new Translation2d(Units.inchesToMeters(10.78), Units.inchesToMeters(2)),
+                Rotation2d.fromDegrees(90));
         
         kFrontVisionDevice.kTableName = "limelight-front";
         kFrontVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
@@ -200,7 +200,7 @@ public final class Constants {
         kBackVisionDevice.kTableName = "limelight-back";
         kBackVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(-0.96)),
-                Rotation2d.fromDegrees(0));
+                Rotation2d.fromDegrees(180));
 }
 
     //dc.10.21.2024, citrus code constants
@@ -253,10 +253,10 @@ public final class Constants {
         
         public static TalonFXConfiguration AzimuthFXConfig() {
             TalonFXConfiguration config = new TalonFXConfiguration();
-
-            config.Slot0.kP = .3;
-            config.Slot0.kI = 0.0;
-            config.Slot0.kD = 0.0008;
+            //dc.2.23.25, tuning steering motor to get rid of drifting (mainly rotation)
+            config.Slot0.kP = 0.09;//.3;        //Proportional compensation: small P value to keep motor from drifting, big value will cause oscillation
+            config.Slot0.kI = 0.0; //0.0007;//0.01;    //Integral compensation: a small I value to help to quickly turn
+            config.Slot0.kD = 0.0016;//0.0008;  //Derivative compenstion: damping oscillation
             config.Slot0.kS = 0.0;
             config.Slot0.kV = 0.0;
 
@@ -310,27 +310,32 @@ public final class Constants {
         //TODO: tune elevator constants to bot
         public static final int kElevatorLeftMotorId = 20;
         public static final int kElevatorRightMotorId = 21;
-    
-        public static final double kP = 0.15;
-        public static final double kI = 0;
+        
+        public static final double kS = 0.125;
+        public static final double kV = 0.0;
+        public static final double kP = 5.0;
+        public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kIZone = 5.0;
-        public static final double kG = 0.5;
+        
     
-        public static final double kMaxVelocity = 65;
-        public static final double kMaxAcceleration = 200;
-        public static final int kCurrentThreshold = 45;
+        public static final double kCruiseVelocity = 40;
+        public static final double kAcceleration = 72.5;
+        public static final double kJerk = 1600;
+        public static final int CurrentThreshold = 45;
         public static final int kMaxCurrent = 40;
         public static final double kMaxPowerUp = 0.1;
         public static final double kMaxPowerDown = 0.1;
         
         //TODO: Find correct elevator heights for each level
-        public static final double kGROUNDHeight = 0.0;
-        public static final double kL1Height = 5.0; //Most likely wrong
-        public static final double kL2Height = 9.0;
-        public static final double kL3Height = 25.14;
-        public static final double kL4Height = 52.0;
-        public static final double kMaxHeight = 56.2;
+        public static final double kGroundHeight = 0.1; //occasionally stalls at bottom
+        public static final double kL2Height = 9.15;
+        public static final double kL3Height = 22;
+        
+        public static final double kL4Height = 43.5;    //stalls at top
+        public static final double kAPHeight = 6.9;
+        public static final double kA1Height = 25.7;  //19.4
+        public static final double kA2Height = 32.5; //Unsure
+        public static final double KDefaultHeight = 13;// this height clears the reef but not blocking the front camera;
         
         public static final TalonFXConfiguration ElevatorConfiguration() {
             TalonFXConfiguration config = new TalonFXConfiguration();
@@ -389,7 +394,10 @@ public final class Constants {
         public static final int kShooterLeftMotorId = 12;
         public static final int kShooterRightMotorId = 13;
         
-        public static final double kShooterSpeed = 0.1;
+        public static final double kShooterIntakeSpeed = 0.05;
+        public static final double kShooterShootSpeed = 0.175;
+        ;
+        
       }
 
       //dc.2.11.25, keey the shooter class for now, TODO: remove when CoralShooter is QAed.
@@ -431,6 +439,13 @@ public final class Constants {
         public static final int kAlgaeShooterLimitSwitchId = 32;
         public static final double kAlgaeShooterSpeed = 0.4;
     }
+// WIP PLS CHANGE SOON I DONT THINK THIS IS CORRECT - AARUSH
+    public static final class AlgaeSmth { //TODO: make constants correct
+        public static final int kAlgaeSmthLeftMotorId = 28;
+        public static final int kAlgaeSmthRightMotorId = 29;
+        public static final int kAlgaeSmthLimitSwitchId = 33;
+        public static final double kAlgaeSmthSpeed = 0.4;
+    }
 
     public static final class Hang { //TODO: make constants correct
         public static final int kHangMotorId = 51;
@@ -438,6 +453,11 @@ public final class Constants {
         public static final double kHoldSpeed = 0.02;
     }
     
+    public static final class LEDS { //TODO: make constants correct
+        public static final int ledStart = 0;
+        public static final int ledLength =  117;
+    }
+
 
     /* dc.10.21.2024 extra constants needed during porting of citrus SwerveModule.java code */
 

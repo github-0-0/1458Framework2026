@@ -51,11 +51,7 @@ public class Pigeon {
 	private Pigeon(int port) {
 		mGyro = new Pigeon2(port, "CV"); //TODO: ADD TO CONSTANTS
 		mGyro.getConfigurator().apply(new Pigeon2Configuration());
-
-		Optional<Alliance> ally = DriverStation.getAlliance();
-		if (ally.isPresent() && ally.get() == Alliance.Blue) {
-			yawAdjustmentAngle = Rotation2d.fromDegrees(180);
-		}
+		//todo: move to hardcoded yawAdjustmentAngle to robot init .
 	}
 
 	public Rotation2d getYaw() {
@@ -126,13 +122,15 @@ public class Pigeon {
 		return mGyro.getAngularVelocityZDevice(); // dc. update to 2025 API, return measure in DPS (degree per second)
 	}
 
+	//dc.2.21.25, bugfix for pigeon simulation
+	// new angle shall be based on adjustedYaw.
 	public void updateSimPeriodic(double angularVelocity) {
 		Pigeon2SimState gyroSimState = mGyro.getSimState();
 
 		gyroSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
 		Rotation2d angleChange = Rotation2d.fromRadians(angularVelocity * TimedRobot.kDefaultPeriod);
-		Rotation2d angle = getYaw().plus(angleChange);
+		Rotation2d angle = getUnadjustedYaw().plus(angleChange);
 		gyroSimState.setRawYaw(angle.getDegrees());
 	}
 }

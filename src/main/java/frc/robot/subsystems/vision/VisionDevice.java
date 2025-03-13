@@ -8,6 +8,7 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.VisionUpdate;
 import frc.robot.lib.drivers.Pigeon;
 import frc.robot.subsystems.Subsystem;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import edu.wpi.first.math.Vector;
 
@@ -41,12 +43,15 @@ public class VisionDevice extends Subsystem {
 	private DoubleArraySubscriber mObservations;
 	private DoubleArraySubscriber mStdDevs;
 	private IntegerSubscriber mFPS;
+	private IntegerSubscriber mID;
 
 	public Field2d robotField;
+	private boolean inSnapRange;
+	private boolean hasTarget;
 
 	public VisionDevice(VisionDeviceConstants constants) {
 		robotField = new Field2d();
-		SmartDashboard.putData(constants.kTableName + "/Vision Measurement", robotField);
+		SmartDashboard.putData("VisionDevice/" + constants.kTableName, robotField);
 
 		mPigeon = Pigeon.getInstance();
 
@@ -71,6 +76,10 @@ public class VisionDevice extends Subsystem {
 				.getIntegerTopic("fps")
 				.subscribe(0, PubSubOption.keepDuplicates(true), PubSubOption.sendAll(true));
 
+		mID = mOutputTable
+				.getIntegerTopic("tid")
+				.subscribe(0, PubSubOption.keepDuplicates(true), PubSubOption.sendAll(true));
+
 		mConfigTable.getDoubleTopic("fiducial_size_m").publish().set(FieldLayout.kApriltagWidth);
 		try {
 			mConfigTable
@@ -84,48 +93,43 @@ public class VisionDevice extends Subsystem {
 		mConfigTable.getEntry("camera_exposure").setDouble(mPeriodicIO.camera_exposure);
 		mConfigTable.getEntry("camera_auto_exposure").setDouble(mPeriodicIO.camera_auto_exposure ? 0.0 : 1.0);
 		mConfigTable.getEntry("camera_gain").setDouble(mPeriodicIO.camera_gain);
-	}
-
-	private static Twist2d log(final Pose2d transform) {
-		final double dtheta = transform.getRotation().getRadians();
-		final double half_dtheta = 0.5 * dtheta;
-		final double cos_minus_one = transform.getRotation().getCos() - 1.0;
-		double halftheta_by_tan_of_halfdtheta;
-		if (Math.abs(cos_minus_one) < 1E-9) {
-			halftheta_by_tan_of_halfdtheta = 1.0 - 1.0 / 12.0 * dtheta * dtheta;
-		} else {
-			halftheta_by_tan_of_halfdtheta = -(half_dtheta * transform.getRotation().getSin()) / cos_minus_one;
-		}
-		final Translation2d translation_part = transform.getTranslation()
-				.rotateBy(new Rotation2d(halftheta_by_tan_of_halfdtheta, -half_dtheta));
-		return new Twist2d(translation_part.getX(), translation_part.getY(), dtheta);
-	}
-
-	private Pose2d inverse(Translation2d translation, Rotation2d rotation) {
-		Rotation2d rotation_inverted = Rotation2d.fromRadians(-rotation.getRadians());
-		return new Pose2d(new Translation2d(-translation.getX(), -translation.getY()).rotateBy(rotation_inverted),
-				rotation_inverted);
+	
+		inSnapRange = false;
+		hasTarget = false;
 	}
 
 	private void processFrames() {
+		// System.out.println("VisionDevice.processFrame");
 		if (mVisible.get() == 0) {
+			hasTarget = false;
 			return;
+		} else {
+			hasTarget = true;
 		}
+		// System.out.println("VisionDevice.processFrame, mVisible is true");
 
 		double[] mt2Pose = mObservations.get();
 		double[] stdDevs = mStdDevs.get();
 		double timestamp = Timer.getFPGATimestamp() * Math.pow(10, 6) - VisionDeviceManager.getTimestampOffset();
-		
+
 		if (mt2Pose.length == 0) {
+			// System.out.println("VisionDevice.processFrame, mt2Pose is zero length, mt2
+			// from helper=" );
+			hasTarget = false;
 			return;
 		}
 
-		LimelightHelpers.SetRobotOrientation(mConstants.kTableName, mPigeon.getYaw().getDegrees(), 0, 0, 0, 0, 0);	
+		// System.out.println("VisionDevice.processFrame, mt2Pose.length=" +
+		// mt2Pose.length);
+
+		LimelightHelpers.SetRobotOrientation(mConstants.kTableName, mPigeon.getYaw().getDegrees(), 0, 0, 0, 0, 0);
 
 		Pose2d botPose = new Pose2d(mt2Pose[0], mt2Pose[1], new Rotation2d(mt2Pose[5] * Math.PI / 180));
 		Vector<N2> stdDevsVec = VecBuilder.fill(stdDevs[6], stdDevs[7]);
 
 		robotField.setRobotPose(botPose);
+		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
+		Vector<N2> betterDevs = VecBuilder.fill(0.005 * targetSpace_pose.getX(), 0.005 * targetSpace_pose.getY());
 
 		RobotState.getInstance()
 				.addVisionUpdate(
@@ -133,8 +137,30 @@ public class VisionDevice extends Subsystem {
 								timestamp,
 								botPose.getTranslation(),
 								new Translation2d(0, 0),
-								stdDevsVec),
-						botPose.getRotation());
+								stdDevsVec));
+		
+		//Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
+		int[] validIds = {17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11};
+
+		if (
+			targetSpace_pose.getTranslation().getDistance(new Translation2d(0, 0)) < 3 
+			&& MathUtil.inputModulus(targetSpace_pose.getRotation().getDegrees() + 15, -180, 180) < 30
+			&& Arrays.stream(validIds).anyMatch(n->n==(int) mID.get())
+		) {
+			// System.out.println(mID.get());
+			inSnapRange = true;
+		} else {
+			// System.out.println(MathUtil.inputModulus(mPigeon.getYaw().getDegrees(), -180, 180));
+			inSnapRange = false;
+		}
+	}
+
+	public boolean inSnapRange() {
+		return inSnapRange;
+	}
+
+	public boolean hasTarget() {
+		return hasTarget;
 	}
 
 	@Override

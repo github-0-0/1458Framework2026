@@ -2,6 +2,7 @@ package frc.robot;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Optional;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -30,21 +31,33 @@ import edu.wpi.first.math.util.Units;
 public class FieldLayout {
 	public static double kFieldLength = Units.inchesToMeters(651.223);
 	public static double kFieldWidth = Units.inchesToMeters(323.277);
-	public static int closestTag = -1;
-    public static Translation2d[] offsets = {
-		new Translation2d(0.85/2,-0.18),
-		new Translation2d(0.85/2, 0.18),
-		new Translation2d(0.85/2,0),
-		new Translation2d(-0.85/2,-0.18),
-		new Translation2d(-0.85/2,0),
-		new Translation2d(-0.85/2,0.18),
-	};
+
+    public static HashMap<String, Translation2d> offsets = new HashMap<>();
+	public static HashMap<String, int[]> presets = new HashMap<>();
 
 	public static final double kApriltagWidth = Units.inchesToMeters(6.50);
 	public static final AprilTagFieldLayout kTagMap;
 
 	static {
-		try {
+		try {	
+			offsets.put("LEFTBAR",
+				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, -0.166));
+			offsets.put("RIGHTBAR",
+				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, 0.166));
+			offsets.put("CENTER",
+				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20,0.0));
+			offsets.put("CS",
+				new Translation2d(Constants.Swerve.trackWidth/2 + 0.20, 0));
+			offsets.put("HANG",
+				new Translation2d(0,0));
+			
+			presets.put("CS", new int[] {1, 2, 12, 13});
+			presets.put("R", new int[] {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22});
+			presets.put("P", new int[] {3, 16});
+			presets.put("ANY", new int[] {});
+			presets.put("BARGE", new int[] {4, 5, 14, 15});
+			presets.put("NOBARGE", new int[] {-4, -5, -14, -15});
+
 			kTagMap = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -81,31 +94,50 @@ public class FieldLayout {
 		}
 		return x_coordinate;
 	}
-
-	public static Pose3d getClosestTagPos(Translation2d robot_position) {
-		Pose3d closest_tag = new Pose3d();
+	/**
+	 * Default is no barge
+	 * @param robot_position
+	 * @return
+	 */
+	public static AprilTag getClosestTag(Translation2d robot_position) {
+		return getClosestTag(robot_position, presets.get("NOBARGE"));
+	}
+	/**
+	 * 
+	 * @param robot_position The current robot position
+	 * @param ids Positive for whitelist, negative for blacklist
+	 * @return The closest apriltag on the field
+	 */
+	public static AprilTag getClosestTag(Translation2d robot_position, int[] ids) {
+		AprilTag closest_tag = null;
 		double closest_distance = Double.MAX_VALUE;
+
 		for (AprilTag tag : kTagMap.getTags()) {
 			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
+
+			for (int num : ids) {
+				int absNum = Math.abs(num);
+				if (tag.ID == absNum) {
+					if (num == absNum) {
+						distance -= 1000000000;
+						break; //hopefully there is no situation where this is insufficient
+					} else {
+						distance = Double.MAX_VALUE;
+						break;
+					}
+				}
+			}
+
 			if (distance < closest_distance) {
-				closest_tag = tag.pose;
+				closest_tag = tag;
 				closest_distance = distance;
 			}
 		}
+
 		return closest_tag;
 	}
 
-	public static int getClosestTag(Translation2d robot_position) {
-		int closest_tag = -1;
-		double closest_distance = Double.MAX_VALUE;
-		for (AprilTag tag : kTagMap.getTags()) {
-			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
-			if (distance < closest_distance) {
-				closest_tag = tag.ID;
-				closest_distance = distance;
-			}
-		}
-		closestTag = closest_tag;
-		return closest_tag;
+	public static AprilTag getClosestTag(Translation2d robot_position, String preset) {
+		return getClosestTag(robot_position, presets.get(preset));
 	}
 }

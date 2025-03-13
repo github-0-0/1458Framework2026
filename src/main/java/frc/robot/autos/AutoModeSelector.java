@@ -8,15 +8,10 @@ import java.util.Optional;
 public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
-		TESTPATHMODE,
+		LEFTSIDE,
+		RIGHTSIDE,
+		CENTER,
 		TESTAUTOMODE3,
-		LEFTCORAL,
-		LMIDDLECORAL,
-		RLMIDDLE,
-		RRMIDDLE,
-		LRMIDDLE,
-		LLMIDDLE,
-		L4AROUND
 	}
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -26,17 +21,12 @@ public class AutoModeSelector {
 	private static SendableChooser<DesiredMode> mModeChooser = new SendableChooser<>();
 
 	public AutoModeSelector() {
-		mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
-		mModeChooser.addOption("mode to test paths", DesiredMode.TESTPATHMODE);
-		mModeChooser.addOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
-		mModeChooser.addOption("Left Coral", DesiredMode.LEFTCORAL);
-		mModeChooser.addOption("LMiddle Coral", DesiredMode.LMIDDLECORAL);
-		mModeChooser.addOption("RLMiddle", DesiredMode.RLMIDDLE);
-		mModeChooser.addOption("RRMiddle!", DesiredMode.RRMIDDLE);
-		mModeChooser.addOption("LRMiddle", DesiredMode.LRMIDDLE);
-		mModeChooser.addOption("L4Around", DesiredMode.L4AROUND);
-
-		mModeChooser.setDefaultOption("mode to test autos", DesiredMode.TESTAUTOMODE3);
+		mModeChooser.addOption("DoNothing", DesiredMode.DO_NOTHING);
+		mModeChooser.addOption("LeftSide", DesiredMode.LEFTSIDE);
+		mModeChooser.addOption("RightSide", DesiredMode.RIGHTSIDE);
+		mModeChooser.addOption("Center", DesiredMode.CENTER);
+		mModeChooser.addOption("AutoMode3", DesiredMode.TESTAUTOMODE3);
+		mModeChooser.setDefaultOption("AutoMode3", DesiredMode.TESTAUTOMODE3);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
 	}
 
@@ -55,43 +45,33 @@ public class AutoModeSelector {
 		mCachedDesiredMode = desiredMode;
 	}
 
-	public void forceModeTo(boolean force_regen){
-		DesiredMode desiredMode = DesiredMode.TESTPATHMODE;
+	// public void forceModeTo(boolean force_regen){
+	// 	DesiredMode desiredMode = DesiredMode.TESTPATHMODE;
 
-		if (desiredMode == null) {
-			desiredMode = DesiredMode.DO_NOTHING;
-		}
-		if (mCachedDesiredMode != desiredMode
-		|| force_regen) {
-			System.out.println("Auto selection changed, updating creator: desiredMode-> " + desiredMode.name());
+	// 	if (desiredMode == null) {
+	// 		desiredMode = DesiredMode.DO_NOTHING;
+	// 	}
+	// 	if (mCachedDesiredMode != desiredMode
+	// 	|| force_regen) {
+	// 		System.out.println("Auto selection changed, updating creator: desiredMode-> " + desiredMode.name());
 			
-			mAutoMode = getAutoModeForParams(desiredMode);
-			}
-		mCachedDesiredMode = desiredMode;
-	}
+	// 		mAutoMode = getAutoModeForParams(desiredMode);
+	// 		}
+	// 	mCachedDesiredMode = desiredMode;
+	// }
 
 	private Optional<AutoModeBase> getAutoModeForParams(DesiredMode mode ){
-			switch (mode) {
+		switch (mode) {
 			case DO_NOTHING:
 				return Optional.of(new DoNothingMode());
-			case TESTPATHMODE:
-				return Optional.of(new TestPathMode());
+			case LEFTSIDE:
+				return Optional.of(new AutoModeLeftSide());
+			case RIGHTSIDE:
+				return Optional.of(new AutoModeRightSide());
+			case CENTER:
+				return Optional.of(new AutoModeCenter());
 			case TESTAUTOMODE3:
 				return Optional.of(new TestAutoMode3());
-			case LEFTCORAL:
-				return Optional.of(new LeftCoralScoreAutoMode());
-			case LMIDDLECORAL:
-				return Optional.of(new LMiddleCoralScoreAutoMode());	
-			case RLMIDDLE:
-				return Optional.of(new Start2LeftSideCoral());
-			case RRMIDDLE:
-				return Optional.of(new Start2RightSideCoral());
-			case LRMIDDLE:
-				return Optional.of(new Start3RightSideCoral());
-			case LLMIDDLE:
-				return Optional.of(new Start3LeftSideCoral());
-			case L4AROUND:
-				return Optional.of(new RightAroundTheReefL4());
 			default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);
 				break;

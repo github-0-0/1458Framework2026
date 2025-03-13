@@ -1,119 +1,134 @@
 package frc.robot.teleop;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.vision.VisionDeviceManager;
+import frc.robot.Constants;
 import frc.robot.FieldLayout;
 import frc.robot.RobotState;
 import frc.robot.autos.actions.*;
+import frc.robot.autos.modes.TeleopAutoMode;
+import frc.robot.lib.util.Util;
+
 /**
  * A class that contains the controls for the robot.
  */
 public class Controller {
-
-    private DummySubsystem m_ExampleSubsystem = null;
+    private XboxController mXboxController1 = null;
+    private TeleopAutoMode mTeleopAutoMode = null;
+    private Joystick m_JoyStick = null;
     private SwerveDrive m_SwerveDrive = null;
-    private Funnel m_Funnel = null;
-    private Elevator m_Elevator = null;
-    private CoralShooter m_Shooter = null;
-    private AlgaeShooter m_AlgaeShooter = null;
-    private Hang m_Hang;
-    public TeleopActionExecutor m_TeleopActionExecutor = null;
-    public XboxController mXboxController = null;
-    public boolean prev_left_trigger = false;
-    public boolean prev_right_trigger = false;
-    public Controller(XboxController xboxController, DummySubsystem exampleSubsystem, SwerveDrive swerveDrive, Funnel funnel, Elevator elevator, CoralShooter shooter, AlgaeShooter aShooter, Hang hang, TeleopActionExecutor teleopActionExecutor) {
-        mXboxController = xboxController;
-        m_ExampleSubsystem = exampleSubsystem;
-        m_SwerveDrive = swerveDrive;
-        m_Funnel = funnel;
-        m_Elevator = elevator;
-        m_Shooter = shooter;
-        m_AlgaeShooter = aShooter;
-        m_Hang = hang;
-        m_TeleopActionExecutor = teleopActionExecutor;
+    private VisionDeviceManager m_VisionDevices = null;
+    private LED m_LED = null;
+
+    private final EventLoop m_loop = new EventLoop();
+    
+    private boolean isFieldRelative = true;
+
+    private final int translationAxis = XboxController.Axis.kLeftY.value;
+    private final int strafeAxis = XboxController.Axis.kLeftX.value;
+    private final int rotationAxis = XboxController.Axis.kRightX.value;
+
+    public Controller(
+        XboxController xboxController1, 
+        TeleopAutoMode teleopAutoMode,
+        Joystick joystick
+    ) {
+        mXboxController1 = xboxController1;
+        mTeleopAutoMode = teleopAutoMode;
+        m_JoyStick = joystick;
+        m_SwerveDrive = SwerveDrive.getInstance();
+        m_VisionDevices = VisionDeviceManager.getInstance();
+        m_LED = LED.getInstance();
+
+        mXboxController1.a(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("Ground")));
+        mXboxController1.b(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L2")));
+        mXboxController1.x(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L3")));
+        mXboxController1.y(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L4")));
+        mXboxController1.leftBumper(m_loop).rising().ifHigh(
+                () -> mTeleopAutoMode.runAction(new SnapToTag("LEFTBAR", "R")));
+        mXboxController1.rightBumper(m_loop).rising().ifHigh(
+                () -> {
+                    mTeleopAutoMode.runAction(new SnapToTag("RIGHTBAR", "R"));
+                });
+        mXboxController1.rightTrigger(0.5, m_loop).ifHigh(
+                () -> mTeleopAutoMode.runAction(new CoralShootAction()));
+        mXboxController1.leftTrigger(0.5, m_loop).rising().ifHigh(
+            () -> mTeleopAutoMode.runAction(new SnapToTag("CS", "CS"))
+        );
+        mXboxController1.start(m_loop).ifHigh(
+            () -> isFieldRelative = !isFieldRelative
+        );
     }
-    public void update() {
-        if(mXboxController.getYButtonPressed()) {
-            //m_Elevator.runElevator(-0.1);
-        }
-        else if(mXboxController.getAButtonPressed()) {
-            //m_Elevator.runElevator(0.1);
-        }
-        else {
-            //m_Elevator.runElevator(-0.02);
+
+    public void processKeyCommand() {
+        if (mTeleopAutoMode == null)
+            return;
+
+        m_loop.poll();
+
+        double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)
+                * Constants.SwerveConstants.maxSpeed;
+        double strafeVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)
+                * Constants.SwerveConstants.maxSpeed;
+        double rotationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)
+                * Constants.Swerve.maxAngularVelocity;
+
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            translationVal = -translationVal;
+            strafeVal = -strafeVal;
         }
 
-
-        if(mXboxController.getYButton()) {
-//                    m_Shooter.spin();                   
-        }
-        else{
-//                    m_Shooter.stop();
-        }
-        if(mXboxController.getXButtonPressed()) {
-            m_AlgaeShooter.spinOut();                   
-        } else if (mXboxController.getBButtonPressed()) {
-            m_AlgaeShooter.spinIn();
+        if (mXboxController1.getPOV() == 90) {
+            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                    0, -0.4, 0));
+        } else if (mXboxController1.getPOV() == 0) {
+            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                    0.4, 0, 0));
+        } else if (mXboxController1.getPOV() == 270) {
+            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                    0, 0.4, 0));
+        } else if (mXboxController1.getPOV() == 180) {
+            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                    -0.4, 0, 0));
         } else {
-            m_AlgaeShooter.stop();
-        }
-        
-        if(mXboxController.getPOV() == 180) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(0));
-        }
-        if (mXboxController.getYButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(1));
-        }
-        if (mXboxController.getAButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(2));
-        }
-        if (mXboxController.getBButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(3));
-        }
-        if (mXboxController.getXButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new ElevatorAction(4));
+            if (isFieldRelative) {
+                m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        translationVal, strafeVal, rotationVal,
+                        Util.robotToFieldRelative(m_SwerveDrive.getHeading(), DriverStation.getAlliance().get() == Alliance.Red)));
+            } else {
+                m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                        translationVal, strafeVal, rotationVal));
+            }
         }
 
-        if (mXboxController.getLeftTriggerAxis()>0.5) {
-            if (!prev_left_trigger){
-            prev_left_trigger = true;
-            m_TeleopActionExecutor.runAction(new AlgaeShooterAction());}
-        }else{prev_left_trigger = false;}
-        if (mXboxController.getRightTriggerAxis()>0.5) {
-            if (!prev_right_trigger){
-            m_TeleopActionExecutor.runAction(new CoralShooterAction());}
-        }else{prev_right_trigger = false;}
-        if (mXboxController.getLeftBumperButtonPressed()) {
-            int tag = FieldLayout.getClosestTag(RobotState.getInstance().getLatestFieldToVehicle().getTranslation());
-            boolean isL3 = false;
-            for (int num : new int[] {18, 20, 22, 7, 9, 11}) {
-                if (num == tag) {
-                    isL3 = true;
-                }
-            }
-            m_TeleopActionExecutor.runAction(new SeriesAction(
-                new ElevatorAction(isL3 ? 3 : 2),
-                new SnapToTag(2),
-                new AlgaeIntakeAction()
-            ));
+        Twist2d velocity = RobotState.getInstance().getMeasuredVelocity();
+
+        if (m_VisionDevices.inRange() &&
+                Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1) {
+            mXboxController1.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
+            m_LED.green();
+        } else {
+            mXboxController1.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+            m_LED.red();
         }
-        if (mXboxController.getRightBumperButtonPressed()) {
-            m_TeleopActionExecutor.runAction(new SeriesAction(
-                new SnapToTag(2),
-                new CoralIntakeAction()
-            ));
-        }if (mXboxController.getPOV() == 0) {
-            m_TeleopActionExecutor.runAction(new SnapToTag(2));
-        }
-        if (mXboxController.getPOV() == 90) {
-            m_TeleopActionExecutor.runAction(new SnapToTag(1));
-        }
-        if (mXboxController.getPOV() == 270) {
-            m_TeleopActionExecutor.runAction(new SnapToTag(0));
-        }
-        if (mXboxController.getLeftStickButtonPressed()) {
-            m_TeleopActionExecutor.abort();
-        }
+
     }
 }

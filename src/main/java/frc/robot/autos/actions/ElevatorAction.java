@@ -5,16 +5,14 @@ import frc.robot.subsystems.Elevator;
 
 public class ElevatorAction implements Action {
 	private Elevator mElevator = null;
-	private int kLevel;
-    public ElevatorAction(int level) {
-		kLevel = level;
-    }
-
+	private String target = "";
+	public ElevatorAction(String targ) {
+		target = targ;
+	}
 	@Override
 	public void start() {
 		mElevator = Elevator.getInstance();
-		mElevator.setTargetLevel(kLevel);
-		System.out.println("Elevator going to " + kLevel);
+		mElevator.setTarget(target);
 	}
 
 	@Override
@@ -25,9 +23,11 @@ public class ElevatorAction implements Action {
 	@Override
 	public boolean isFinished() {
 		if (Robot.isSimulation()) return true;
-		return true; //mElevator.getIsAtTarget();	/*dc.2.11.25. TODO: MUST revise when Elevator class is merged*/
+		return mElevator.isAtTarget();
 	}
 
 	@Override
-	public void done() {}
+	public void done() {
+		mElevator.stop();
+	}
 }
