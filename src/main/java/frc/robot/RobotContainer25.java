@@ -25,8 +25,8 @@ import frc.robot.autos.AutoModeExecutor;
 import frc.robot.autos.AutoModeSelector;
 import frc.robot.autos.actions.SnapToTag;
 import frc.robot.autos.modes.TeleopAutoMode;
-//dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
-//dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
+//dc.2.11.25, keep Shooter for testing until CoralShooter is verified.
+//dc.2.11.25, keep Shooter for testing until CoralShooter is verified.
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.vision.*;
 import edu.wpi.first.wpilibj.Timer;
@@ -48,7 +48,7 @@ public class RobotContainer25 {
     public static boolean is_red_alliance = false;  //TODO: code the update logic for this property
 
     private Controller m_Controller;
-    
+
     private Boolean foundStation = false;
 
     /* Controllers */
@@ -58,7 +58,7 @@ public class RobotContainer25 {
     //private final XboxController xboxController2 = new XboxController(1);
     /* button key-value */
     /* JoyStick Buttons */
-    
+
     /* loop framework objects */
     private final Looper m_EnabledLooper = new Looper();
     private final Looper m_DisabledLooper = new Looper();
@@ -80,7 +80,7 @@ public class RobotContainer25 {
     public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
 
     public AutoModeExecutor mTeleopActionExecutor;
-	
+
     private VisionDeviceManager m_VisionDevices;
 
     // contructor
@@ -156,15 +156,15 @@ public class RobotContainer25 {
 
     // init manual (teleop) mode
     public void initManualMode() {
-        if (m_AutoModeExecutor != null) {m_AutoModeExecutor.stop();	}     
-        
+        if (m_AutoModeExecutor != null) {m_AutoModeExecutor.stop();	}
+
    		try {
-            
+
             // Create an empty TeleopAutoMode and bind it to controller
             mTeleopActionExecutor = new AutoModeExecutor();
             TeleopAutoMode teleopAutoMode = new TeleopAutoMode();
             mTeleopActionExecutor.setAutoMode(teleopAutoMode);
-            m_Controller = new Controller(xboxController, teleopAutoMode, m_JoyStick);            
+            m_Controller = new Controller(xboxController, teleopAutoMode, m_JoyStick);
             // turn on the looper
             //RobotState.getInstance().setIsInAuto(false);
             System.out.println("InitManualMode called");
@@ -197,7 +197,7 @@ public class RobotContainer25 {
         if (!ally.isPresent()){return;}
 		if (ally.get() == Alliance.Blue) {m_SwerveDrive.zeroGyro(180);
         }else{m_SwerveDrive.zeroGyro(0);}
-        
+
         try {
             // RobotState.getInstance().setIsInAuto(false);
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
@@ -218,7 +218,7 @@ public class RobotContainer25 {
         // turn on loopers
         try {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
-            
+
             xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -274,7 +274,7 @@ public class RobotContainer25 {
             // mControlBoard.update();
 
             /* Drive */
-            
+
             // if (xboxController.getStartButton()) {
             //     System.out.println("keyY is pressed, zero the wheels!");
             //     if (m_SwerveDrive != null)
@@ -282,14 +282,13 @@ public class RobotContainer25 {
 			// }
                 //dc.11.9.24, to scale up joystick input to max-speed
                 m_Controller.processKeyCommand();
-          
+
                 // for(int i = 0; i < 4;  i++) {
                 //     SmartDashboard.putBoolean("Mag Sensor " + i, DigitalSensor.getSensor(i));
                 // }
-                
+
 
             // mDriverControls.oneControllerMode();
-
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -309,7 +308,7 @@ public class RobotContainer25 {
         System.out.println("DC: testChassisSpeedConvert swerveHeading: heading=" + m_SwerveDrive.getHeading()
                 + ", field=" + sV + ", rVal=" + rV);
     }
-/* 
+/*
     // dummy methods for now.
     public Command getAutonomousCommand() {
         return null;
