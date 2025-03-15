@@ -192,15 +192,15 @@ public final class Constants {
                 new Translation2d(Units.inchesToMeters(10.78), Units.inchesToMeters(2)),
                 Rotation2d.fromDegrees(90));
         
-        kFrontVisionDevice.kTableName = "limelight-front";
+        kFrontVisionDevice.kTableName = "limelight-frontl";
         kFrontVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(11.11), Units.inchesToMeters(4.28)),
                 Rotation2d.fromDegrees(0));
 
-        kBackVisionDevice.kTableName = "limelight-back";
+        kBackVisionDevice.kTableName = "limelight-frontr";
         kBackVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
-                new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(-0.96)),
-                Rotation2d.fromDegrees(180));
+                new Translation2d(0.308, 0.251),
+                Rotation2d.fromDegrees(25));
 }
 
     //dc.10.21.2024, citrus code constants
@@ -434,10 +434,24 @@ public final class Constants {
     }
 
     public static final class AlgaeShooter { //TODO: make constants correct
-        public static final int kAlgaeShooterLeftMotorId = 26;
-        public static final int kAlgaeShooterRightMotorId = 27;
-        public static final int kAlgaeShooterLimitSwitchId = 32;
+        public static final int kAlgaePivotMotorId = 26;
+        public static final int kAlgaeShooterMotorId = 28;
         public static final double kAlgaeShooterSpeed = 0.4;
+        public static final double kIntakeHeight = 0;
+        public static final double kBargeHeight = 0;
+        public static final double kProcessorHeight = 0;
+        public static final double kGroundHeight = 0;
+
+        public static final double kS = 0.125;
+        public static final double kV = 0.0;
+        public static final double kP = 5.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        
+    
+        public static final double kCruiseVelocity = 40;
+        public static final double kAcceleration = 72.5;
+        public static final double kJerk = 1600;
     }
 
     public static final class Hang { //TODO: make constants correct
