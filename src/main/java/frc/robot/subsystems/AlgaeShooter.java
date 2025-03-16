@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.lang.constant.DirectMethodHandleDesc;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -35,10 +37,11 @@ public class AlgaeShooter extends Subsystem {
     }
 
     private TalonFX mPivotMotor;
+    private TalonFX mShooterMotor;
 
     private MotionMagicVoltage m_request;
     private boolean mSafeStop = true;
-    
+    private DigitalInput sensor;
 
 
 
@@ -46,8 +49,11 @@ public class AlgaeShooter extends Subsystem {
         mPeriodicIO = new PeriodicIO();
 
         mPivotMotor = new TalonFX(Constants.AlgaeShooter.kAlgaePivotMotorId); // MASTER
+        mShooterMotor = new TalonFX(Constants.AlgaeShooter.kAlgaeShooterMotorId);
 
         var talonFXConfigs = new TalonFXConfiguration();
+
+        sensor = new DigitalInput(3);
 
         var slot0Configs = talonFXConfigs.Slot0;
         slot0Configs.kS = Constants.AlgaeShooter.kS; // Add 0.0 V output to overcome static friction
@@ -70,6 +76,7 @@ public class AlgaeShooter extends Subsystem {
 
     private static class PeriodicIO {
         double pivot_target = 0.0;
+        double des_shooter_speed = 0.0;
         String state = "Resting";
         double mCurrentPos = 0.0;//current encoder reading 
     }
@@ -96,7 +103,8 @@ public class AlgaeShooter extends Subsystem {
 
     @Override
     public void readPeriodicInputs() {
-        mPeriodicIO.mCurrentPos = mPivotMotor.getPosition().getValueAsDouble();//update elevator current position
+        if()
+        mPeriodicIO.mCurrentPos = mPivotMotor.getPosition().getValueAsDouble(); //update pivot current position
     }
 
 
@@ -107,6 +115,7 @@ public class AlgaeShooter extends Subsystem {
         } else {
             // runPivotRaw(0.03);// dc. how to counter balance weight and spring forces which are variable to the pivot
         }
+        runShooter(mPeriodicIO.des_shooter_speed);
     }
 
     @Override
@@ -165,4 +174,19 @@ public class AlgaeShooter extends Subsystem {
         return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.pivot_target) < 0.5; //TODO: tune magic number in constants
     }
 
+    public void runShooter(double speed) {
+        mShooterMotor.set(speed);
+    }
+
+    public void shoot() {
+        mPeriodicIO.des_shooter_speed = Constants.AlgaeShooter.kAlgaeShooterSpeed;
+    }
+
+    public void intake() {
+        mPeriodicIO.des_shooter_speed = -Constants.AlgaeShooter.kAlgaeShooterSpeed;
+    }
+
+    public void stopAlgaeShooter() {
+        mPeriodicIO.des_shooter_speed = 0.0;
+    }
 }

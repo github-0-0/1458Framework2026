@@ -265,7 +265,7 @@ public class RobotContainer25 {
     }
 
     public void testModePeriodic() {
-        Laser.testLaser();
+        System.out.println(DigitalSensor.getSensor(3));
     }
 
     // manual mode periodic callback
