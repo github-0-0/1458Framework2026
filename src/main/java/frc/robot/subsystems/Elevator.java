@@ -92,7 +92,7 @@ public class Elevator extends Subsystem {
   private static class PeriodicIO {
     double elevator_target = 0.0;
     String state = "Ground";
-    double mCurrentPos =0.0;//current encoder reading 
+    double mCurrentPos = 0.0;//current encoder reading 
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
