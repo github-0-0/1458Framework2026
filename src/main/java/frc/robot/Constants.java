@@ -311,6 +311,7 @@ public final class Constants {
         public static final int kElevatorLeftMotorId = 20;
         public static final int kElevatorRightMotorId = 21;
         
+        public static final double kG = 0.1;
         public static final double kS = 0.125;
         public static final double kV = 0.0;
         public static final double kP = 5.0;
@@ -327,11 +328,11 @@ public final class Constants {
         public static final double kMaxPowerDown = 0.1;
         
         //TODO: Find correct elevator heights for each level
-        public static final double kGroundHeight = 0.1; //occasionally stalls at bottom
+        public static final double kGroundHeight = 0.5; //occasionally stalls at bottom
         public static final double kL2Height = 9.15;
         public static final double kL3Height = 22;
         
-        public static final double kL4Height = 43.5;    //stalls at top
+        public static final double kL4Height = 43.15;    //stalls at top
         public static final double kAPHeight = 6.9;
         public static final double kA1Height = 25.7;  //19.4
         public static final double kA2Height = 32.5; //Unsure

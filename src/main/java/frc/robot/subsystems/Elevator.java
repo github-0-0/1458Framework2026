@@ -55,6 +55,7 @@ public class Elevator extends Subsystem {
     var talonFXConfigs = new TalonFXConfiguration();
 
     var slot0Configs = talonFXConfigs.Slot0;
+    slot0Configs.kG = Constants.Elevator.kG;
     slot0Configs.kS = Constants.Elevator.kS; // Add 0.0 V output to overcome static friction
     slot0Configs.kV = Constants.Elevator.kV; // A velocity target of 1 rps results in 0.0 V output
     slot0Configs.kP = Constants.Elevator.kP; // An error of 1 rotation results in 0.4 V output
@@ -144,10 +145,10 @@ public class Elevator extends Subsystem {
       //System.out.println("it is at target =" );
       //System.out.println("it is at target =" );=
       if(mPeriodicIO.state.equals("Ground") && !mSafeStop) {
-        runElevatorRaw(0);
+//        runElevatorRaw(0);
       }
       else{
-        runElevatorRaw(0.03);
+        //runElevatorRaw(0.03);
       }
     }
   }
@@ -211,6 +212,7 @@ public class Elevator extends Subsystem {
   private void goToTarget() {
 
     if (Laser.inRangeIntake()) {
+      mLeftMotor.setControl(m_request.withPosition(mPeriodicIO.mCurrentPos));
       //System.out.println("Break Laser Check");
       return;
     }
