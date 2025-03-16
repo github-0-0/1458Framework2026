@@ -142,8 +142,13 @@ public class Elevator extends Subsystem {
       goToTarget();
     }else{
       //System.out.println("it is at target =" );
-      //System.out.println("it is at target =" );
-      runElevatorRaw(0.03);
+      //System.out.println("it is at target =" );=
+      if(mPeriodicIO.state.equals("Ground") && !mSafeStop) {
+        runElevatorRaw(0);
+      }
+      else{
+        runElevatorRaw(0.03);
+      }
     }
   }
 
@@ -223,7 +228,9 @@ public class Elevator extends Subsystem {
     //System.out.println("reading");
     //System.out.println("Current Pos: " + mPeriodicIO.mCurrentPos);
     //System.out.println("Error: " + (mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target));
-    
+    if(mPeriodicIO.mCurrentPos < Constants.Elevator.kGroundHeight && mPeriodicIO.state.equals("Ground")) {
+      return true;
+    }
     return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 0.5;
   }
 

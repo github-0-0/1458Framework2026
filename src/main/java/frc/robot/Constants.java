@@ -437,10 +437,11 @@ public final class Constants {
         public static final int kAlgaePivotMotorId = 26;
         public static final int kAlgaeShooterMotorId = 28;
         public static final double kAlgaeShooterSpeed = 0.4;
-        public static final double kIntakeHeight = 0;
-        public static final double kBargeHeight = 0;
-        public static final double kProcessorHeight = 0;
-        public static final double kGroundHeight = 0;
+        public static final double kIntakePosition = 0;
+        public static final double kBargePosition = 0;
+        public static final double kProcessorPosition = 0;
+        public static final double kRestingPosition = 0;
+        public static final double kGroundPosition = 0;
 
         public static final double kS = 0.125;
         public static final double kV = 0.0;
@@ -449,8 +450,8 @@ public final class Constants {
         public static final double kD = 0.0;
         
     
-        public static final double kCruiseVelocity = 40;
-        public static final double kAcceleration = 72.5;
+        public static final double kCruiseVelocity = 2;
+        public static final double kAcceleration = 5;
         public static final double kJerk = 1600;
     }
 

@@ -4,42 +4,30 @@ import frc.robot.subsystems.AlgaeShooter;
 import frc.robot.subsystems.Laser;
 
 public class AlgaeAction implements Action {
-    private AlgaeShooter mShooter=null;
-	private String dir;
-	
-	public AlgaeAction(String dir) {
-//		mShooter = AlgaeShooter.getInstance();
-		this.dir = dir;
+    private AlgaeShooter mShooter = null;
+	private String target = "";
+	public AlgaeAction(String targ) {
+		target = targ;
 	}
 	@Override
 	public void start() {
-		if(dir.equals("Intake")){
-			mShooter.intake();
-		}
-		else {
-			mShooter.shoot();
-		}
-		
-		//System.out.println("Shooter shooting at phenomenally slow speeds!");
+		mShooter = AlgaeShooter.getInstance();
+		mShooter.setTarget(target);
 	}
 
 	@Override
-	public void update() {}
+	public void update() {
+		
+	}
 
 	@Override
 	public boolean isFinished() {
 		if (Robot.isSimulation()) return true;
-
-		if(dir.equals("Intake")){
-			return Laser.inRangeAlgaeShooter();
-		}
-        else {
-			return Laser.getMeasurementAlgaeShooter() > 300;
-		}
+		return mShooter.isAtTarget();
 	}
 
 	@Override
 	public void done() {
-		mShooter.stopAlgaeShooter();
+		mShooter.stop();
 	}
 }

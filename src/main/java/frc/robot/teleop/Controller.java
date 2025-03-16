@@ -53,15 +53,15 @@ public class Controller {
         m_SwerveDrive = SwerveDrive.getInstance();
         m_VisionDevices = VisionDeviceManager.getInstance();
         m_LED = LED.getInstance();
-
-        mXboxController1.a(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new ElevatorAction("Ground")));
+                                                                                        //COMMENTS ARE ALGAE MODE
+        mXboxController1.a(m_loop).rising().ifHigh(                                     //On shoot button, move pivot to proc. and shoot
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("Ground")));    //On intake button, move pivot to ground and intake
         mXboxController1.b(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new ElevatorAction("L2")));
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L2")));         //Auto move pivot to ground, on intake button intake, shoot shoots
         mXboxController1.x(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new ElevatorAction("L3")));
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L3")));         //Same as L2
         mXboxController1.y(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new ElevatorAction("L4")));
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L4")));         //Pm shoot button, move pivot to barge and shoot
         mXboxController1.leftBumper(m_loop).rising().ifHigh(
                 () -> mTeleopAutoMode.runAction(new SnapToTag("LEFTBAR", "R")));
         mXboxController1.rightBumper(m_loop).rising().ifHigh(
@@ -76,6 +76,10 @@ public class Controller {
         mXboxController1.start(m_loop).ifHigh(
             () -> isFieldRelative = !isFieldRelative
         );
+        mXboxController1.back(m_loop).ifHigh(
+            () -> mTeleopAutoMode.runAction(new AlgaeAction("Resting"))
+        );
+        
     }
 
     public void processKeyCommand() {
