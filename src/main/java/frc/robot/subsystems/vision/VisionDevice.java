@@ -130,7 +130,7 @@ public class VisionDevice extends Subsystem {
 		Vector<N2> stdDevsVec = VecBuilder.fill(stdDevs[6], stdDevs[7]);
 
 		robotField.setRobotPose(botPose);
-		double deTrust=0.02;
+		double deTrust=0.01;
 		double cTag= LimelightHelpers.getTargetCount(mConstants.kTableName);
 		if (cTag <2){
 			deTrust *=2;
