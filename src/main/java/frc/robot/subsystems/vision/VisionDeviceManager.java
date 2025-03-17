@@ -74,7 +74,11 @@ public class VisionDeviceManager extends Subsystem {
 	}
 
 	public synchronized boolean inRange () {
-		return mFrontCamera.inSnapRange() && mFrontCamera.hasTarget();
+		return 
+			(mFrontCamera.inSnapRange() 
+			&& mFrontCamera.hasTarget())
+			|| (mBackCamera.inSnapRange()
+			&& mBackCamera.hasTarget());
 	}
 
 	public synchronized VisionDevice getLeftVision() {
