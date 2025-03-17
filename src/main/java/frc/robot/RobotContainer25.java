@@ -173,6 +173,8 @@ public class RobotContainer25 {
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
             // start TeleopAutoMode, empty for now, to be activated by shortcut keys from controller.
             mTeleopActionExecutor.start();
+
+            SmartDashboard.putString("gameMode", "Coral");
 		} catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -202,6 +204,8 @@ public class RobotContainer25 {
             // RobotState.getInstance().setIsInAuto(false);
             switchOnLooper(m_EnabledLooper, m_DisabledLooper);
             m_AutoModeExecutor.start();
+
+            SmartDashboard.putString("gameMode", "Autonomous");
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -220,6 +224,8 @@ public class RobotContainer25 {
             switchOnLooper(m_DisabledLooper, m_EnabledLooper);
             
             xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+
+            SmartDashboard.putString("gameMode", "Disabled");
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -258,6 +264,8 @@ public class RobotContainer25 {
 
             // testChassisSpeedConvert();
             // CrashTracker.logTest("Testing crashtracker - if you see this it works");
+
+            SmartDashboard.putString("gameMode", "Test");
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -265,7 +273,7 @@ public class RobotContainer25 {
     }
 
     public void testModePeriodic() {
-        Laser.testLaser();
+        System.out.println(DigitalSensor.getSensor(3));
     }
 
     // manual mode periodic callback
