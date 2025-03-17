@@ -53,29 +53,31 @@ public class Controller {
         m_SwerveDrive = SwerveDrive.getInstance();
         m_VisionDevices = VisionDeviceManager.getInstance();
         m_LED = LED.getInstance();
-
-        mXboxController1.a(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new ElevatorAction("Ground")));
+                                                                                        //COMMENTS ARE ALGAE MODE
+        mXboxController1.a(m_loop).rising().ifHigh(                                     //On shoot button, move pivot to proc. and shoot
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("Ground")));    //On intake button, move pivot to ground and intake
         mXboxController1.b(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new ElevatorAction("L2")));
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L2")));         //Auto move pivot to ground, on intake button intake, shoot shoots
         mXboxController1.x(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new ElevatorAction("L3")));
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L3")));         //Same as L2
         mXboxController1.y(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new ElevatorAction("L4")));
+                () -> mTeleopAutoMode.runAction(new ElevatorAction("L4")));         //Pm shoot button, move pivot to barge and shoot
         mXboxController1.leftBumper(m_loop).rising().ifHigh(
                 () -> mTeleopAutoMode.runAction(new SnapToTag("LEFTBAR", "R")));
         mXboxController1.rightBumper(m_loop).rising().ifHigh(
-                () -> {
-                    mTeleopAutoMode.runAction(new SnapToTag("RIGHTBAR", "R"));
-                });
+                () -> mTeleopAutoMode.runAction(new SnapToTag("RIGHTBAR", "R")));
         mXboxController1.rightTrigger(0.5, m_loop).ifHigh(
                 () -> mTeleopAutoMode.runAction(new CoralShootAction()));
         mXboxController1.leftTrigger(0.5, m_loop).rising().ifHigh(
-            () -> mTeleopAutoMode.runAction(new SnapToTag("CS", "CS"))
-        );
+                () -> mTeleopAutoMode.runAction(new AlgaePivotAction("Intake")));
+        mXboxController1.leftTrigger(0.5, m_loop).falling().ifHigh(
+                () -> mTeleopAutoMode.runAction(new AlgaePivotAction("Ground")));
+                //() -> mTeleopAutoMode.runAction(new SnapToTag("CS", "CS")));
         mXboxController1.start(m_loop).ifHigh(
-            () -> isFieldRelative = !isFieldRelative
-        );
+                () -> isFieldRelative = !isFieldRelative);
+        mXboxController1.back(m_loop).ifHigh(
+                () -> mTeleopAutoMode.runAction(new SnapToTag("CS","CS")));
+        
     }
 
     public void processKeyCommand() {
@@ -121,8 +123,9 @@ public class Controller {
 
         Twist2d velocity = RobotState.getInstance().getMeasuredVelocity();
 
-        if (m_VisionDevices.inRange() &&
-                Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1) {
+        // if (m_VisionDevices.inRange() &&
+        //         Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1) {
+        if (m_VisionDevices.inRange()) {
             mXboxController1.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
             m_LED.green();
         } else {
