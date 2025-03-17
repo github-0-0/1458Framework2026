@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+snappackage frc.robot.subsystems;
 
 import java.util.zip.Checksum;
 
