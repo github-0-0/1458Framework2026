@@ -192,15 +192,15 @@ public final class Constants {
                 new Translation2d(Units.inchesToMeters(10.78), Units.inchesToMeters(2)),
                 Rotation2d.fromDegrees(90));
         
-        kFrontVisionDevice.kTableName = "limelight-frontl";
+        kFrontVisionDevice.kTableName = "limelight-front";
         kFrontVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
                 new Translation2d(Units.inchesToMeters(11.11), Units.inchesToMeters(4.28)),
                 Rotation2d.fromDegrees(0));
 
-        kBackVisionDevice.kTableName = "limelight-frontr";
+        kBackVisionDevice.kTableName = "limelight-back";
         kBackVisionDevice.kRobotToCamera = new edu.wpi.first.math.geometry.Transform2d(
-                new Translation2d(0.308, 0.251),
-                Rotation2d.fromDegrees(25));
+                new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(-0.96)),
+                Rotation2d.fromDegrees(180));
 }
 
     //dc.10.21.2024, citrus code constants
@@ -311,7 +311,6 @@ public final class Constants {
         public static final int kElevatorLeftMotorId = 20;
         public static final int kElevatorRightMotorId = 21;
         
-        public static final double kG = 0.1;
         public static final double kS = 0.125;
         public static final double kV = 0.0;
         public static final double kP = 5.0;
@@ -328,11 +327,11 @@ public final class Constants {
         public static final double kMaxPowerDown = 0.1;
         
         //TODO: Find correct elevator heights for each level
-        public static final double kGroundHeight = 0.5; //occasionally stalls at bottom
+        public static final double kGroundHeight = 0.1; //occasionally stalls at bottom
         public static final double kL2Height = 9.15;
         public static final double kL3Height = 22;
         
-        public static final double kL4Height = 43.15;    //stalls at top
+        public static final double kL4Height = 43.5;    //stalls at top
         public static final double kAPHeight = 6.9;
         public static final double kA1Height = 25.7;  //19.4
         public static final double kA2Height = 32.5; //Unsure
@@ -435,27 +434,10 @@ public final class Constants {
     }
 
     public static final class AlgaeShooter { //TODO: make constants correct
-        public static final int kAlgaePivotMotorId = 26;
-        public static final int kAlgaeShooterMotorId = 28;
-
+        public static final int kAlgaeShooterLeftMotorId = 26;
+        public static final int kAlgaeShooterRightMotorId = 27;
+        public static final int kAlgaeShooterLimitSwitchId = 32;
         public static final double kAlgaeShooterSpeed = 0.4;
-        public static final double kIntakePosition = 5.93;
-        public static final double kBargePosition = 0;
-        public static final double kProcessorPosition = 4.5;
-        public static final double kRestingPosition = 0;
-        public static final double kGroundPosition = 5.93;
-
-        public static final double kS = 0.015;
-        public static final double kV = 0.0;
-        public static final double kP = 0.25;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        
-    
-        public static final double kCruiseVelocity = 2;
-        public static final double kAcceleration = 5;
-        public static final double kJerk = 1600;
-        public static final double kWaitTime = 0.5;
     }
 // WIP PLS CHANGE SOON I DONT THINK THIS IS CORRECT - AARUSH
     public static final class AlgaeSmth { //TODO: make constants correct

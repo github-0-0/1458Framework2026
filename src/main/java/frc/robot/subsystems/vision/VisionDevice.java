@@ -2,8 +2,6 @@ package frc.robot.subsystems.vision;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import frc.robot.Constants;
-
 import frc.robot.FieldLayout;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotState;
@@ -130,22 +128,8 @@ public class VisionDevice extends Subsystem {
 		Vector<N2> stdDevsVec = VecBuilder.fill(stdDevs[6], stdDevs[7]);
 
 		robotField.setRobotPose(botPose);
-		double deTrust=0.01;
-		double cTag= LimelightHelpers.getTargetCount(mConstants.kTableName);
-		if (cTag <2){
-			deTrust *=2;
-		}
-		Twist2d vel = RobotState.getInstance().getMeasuredVelocity();
-		double vDrive = Math.hypot(vel.dx,vel.dy);
-		if(vDrive > Constants.Swerve.maxSpeed/2){
-			deTrust *=2;
-		}
-		double vRotation = Math.abs(vel.dtheta);
-		if (vRotation > Constants.Swerve.maxAngularVelocity/2){
-			deTrust *=2;
-		}
 		Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
-		Vector<N2> betterDevs = VecBuilder.fill(deTrust, deTrust);
+		Vector<N2> betterDevs = VecBuilder.fill(0.005 * targetSpace_pose.getX(), 0.005 * targetSpace_pose.getY());
 
 		RobotState.getInstance()
 				.addVisionUpdate(
@@ -153,7 +137,7 @@ public class VisionDevice extends Subsystem {
 								timestamp,
 								botPose.getTranslation(),
 								new Translation2d(0, 0),
-								betterDevs));
+								stdDevsVec));
 		
 		//Pose2d targetSpace_pose = LimelightHelpers.toPose2D(LimelightHelpers.getBotPose_TargetSpace(mConstants.kTableName));
 		int[] validIds = {17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11};

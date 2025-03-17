@@ -19,19 +19,19 @@ public class AutoStringAuto extends AutoModeBase {
      * <ul>
      * <li> Space between each command (including brackets, parentheses, etc.) </li>
      * <li> Space between each command and its argument </li>
-     * <li> S, P, R, CS, and the following number denotes a point (REMEMBER TO ADD A SPACE BETWEEN THE LETTER AND THE NUMBER). See <a href="{@docRoot}/../deploy/pathplanner/Naming">Naming</a> </li>
+     * <li> S, P, R, CS, and the following number denotes a point (REMEMBER TO ADD A SPACE BETWEEN THE LETTER AND THE NUMBER). See {@link Naming} </li>
      * <li> After stating a point the robot will try to move to that point </li>
      * <li> Always check if the trajectory exists in the set </li>
-     * <li> [ actions ] denote a parallel action, where actions are run in parallel ({@link ParallelAction})</li>
-     * <li> ( actions ) denote a series action, where actions are run one by one ({@link SeriesAction})</li>
-     * <li> { actions } denote a repeat action, where actions are repeated a number of times denoted by the number after the closing bracket</li>
-     * <li> Wait and the following number denotes a wait action for that number of seconds ({@link WaitAction})</li>
-     * <li> CShoot denotes a coral shoot action ({@link CoralShootAction})</li>
-     * <li> AIntake denotes an algae intake action ({@link AlgaeIntakeAction})</li>
-     * <li> AShoot denotes an algae shoot action ({@link AlgaeShootAction})</li>
-     * <li> APivot and the following position denotes an algae pivot action ({@link AlgaePivotAction})</li>
-     * <li> Elevator and the following number denotes an elevator action to that height index ({@link ElevatorAction})</li>
-     * <li> Snap and following offset ({@link SnapToTag#SnapToTag(String, String)}) </li>
+     * <li> [ actions ] denote a parallel action, where actions are run in parallel </li>
+     * <li> ( actions ) denote a series action, where actions are run one by one </li>
+     * <li> { actions } denote a repeat action, where actions are repeated a number of times denoted by the number after the closing bracket </li>
+     * <li> Wait and the following number denotes a wait action for that number of seconds </li>
+     * <li> CIntake denotes a coral intake action </li>
+     * <li> CShoot denotes a coral shoot action </li>
+     * <li> AIntake denotes an algae intake action </li>
+     * <li> AShoot denotes an algae shoot action </li>
+     * <li> Elevator and the following number denotes an elevator action to that height index </li>
+     * <li> Snap and following offset ({@link SnapToTag#SnapToTag(String)}) </li>
      * </ul>
      */
     
@@ -88,7 +88,7 @@ public class AutoStringAuto extends AutoModeBase {
                     }
                     break;
                 case ("R"):
-                    point = actionStrings[i] + actionStrings[++i];
+                    point = actionStrings[i] + actionStrings[++i];//+actionStrings[++i];
                     System.out.println("Trajectory Action: "+lastPoint+"-"+point);
                     if(lastPoint == null) {lastPoint = point;}
                     else {
@@ -102,7 +102,7 @@ public class AutoStringAuto extends AutoModeBase {
                     while(!actionStrings[i].equals("]")) {
                         subString += actionStrings[++i] + " ";
                     }
-                    subString = subString.substring(0, subString.length() - 2);
+                    subString = subString.substring(0,subString.length()-2);
                     listOfActions.add(new ParallelAction(parseAuto(subString)));
                     System.out.println("Parallel Action: "+subString);
                     break;
@@ -111,7 +111,7 @@ public class AutoStringAuto extends AutoModeBase {
                     while(!actionStrings[i].equals(")")) {
                         subString += actionStrings[++i] + " ";
                     }
-                    subString = subString.substring(0, subString.length() - 2);
+                    subString = subString.substring(0,subString.length()-2);
                     System.out.println("Series Action: "+subString);
                     listOfActions.add(new SeriesAction(parseAuto(subString)));
                     break;
@@ -121,9 +121,9 @@ public class AutoStringAuto extends AutoModeBase {
                         subString += actionStrings[++i] + " ";
                     }
                     int repeats = Integer.parseInt(actionStrings[++i]);
-                    subString = subString.substring(0, subString.length() - 3);
+                    subString = subString.substring(0,subString.length()-3);
                     System.out.println("Repeat Action: " + subString);
-                    ArrayList<Action> repeatActions = new ArrayList<>();
+                    ArrayList<Action> repeatActions = new ArrayList<Action>();
                     for (int j = 0; j < repeats; j++) {
                         repeatActions.add(new SeriesAction(parseAuto(subString)));
                     }
@@ -136,17 +136,15 @@ public class AutoStringAuto extends AutoModeBase {
                     listOfActions.add(new CoralShootAction());
                     break;
                 case "AShoot":
-                    listOfActions.add(new AlgaeShootAction());
+                    // listOfActions.add(new AlgaeAction("Shoot"));
                     break;
                 case "AIntake":
-                    listOfActions.add(new AlgaeIntakeAction());
-                    break;
-                case "APivot":
-                    listOfActions.add(new AlgaePivotAction(actionStrings[++i]));
+                    // listOfActions.add(new AlgaeAction("Intake"));
                     break;
                 case "Elevator":
                     listOfActions.add(new ElevatorAction(actionStrings[++i]));
                     break;
+                    
                 case "Snap":
                     listOfActions.add(new SnapToTag(actionStrings[++i]));
                     break;

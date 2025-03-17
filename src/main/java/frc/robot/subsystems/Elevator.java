@@ -55,7 +55,6 @@ public class Elevator extends Subsystem {
     var talonFXConfigs = new TalonFXConfiguration();
 
     var slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kG = Constants.Elevator.kG;
     slot0Configs.kS = Constants.Elevator.kS; // Add 0.0 V output to overcome static friction
     slot0Configs.kV = Constants.Elevator.kV; // A velocity target of 1 rps results in 0.0 V output
     slot0Configs.kP = Constants.Elevator.kP; // An error of 1 rotation results in 0.4 V output
@@ -93,7 +92,7 @@ public class Elevator extends Subsystem {
   private static class PeriodicIO {
     double elevator_target = 0.0;
     String state = "Ground";
-    double mCurrentPos = 0.0;//current encoder reading 
+    double mCurrentPos =0.0;//current encoder reading 
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -143,13 +142,8 @@ public class Elevator extends Subsystem {
       goToTarget();
     }else{
       //System.out.println("it is at target =" );
-      //System.out.println("it is at target =" );=
-      if(mPeriodicIO.state.equals("Ground") && !mSafeStop) {
-//        runElevatorRaw(0);
-      }
-      else{
-        //runElevatorRaw(0.03);
-      }
+      //System.out.println("it is at target =" );
+      runElevatorRaw(0.03);
     }
   }
 
@@ -212,7 +206,6 @@ public class Elevator extends Subsystem {
   private void goToTarget() {
 
     if (Laser.inRangeIntake()) {
-      mLeftMotor.setControl(m_request.withPosition(mPeriodicIO.mCurrentPos));
       //System.out.println("Break Laser Check");
       return;
     }
@@ -230,9 +223,7 @@ public class Elevator extends Subsystem {
     //System.out.println("reading");
     //System.out.println("Current Pos: " + mPeriodicIO.mCurrentPos);
     //System.out.println("Error: " + (mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target));
-    if(mPeriodicIO.mCurrentPos < Constants.Elevator.kGroundHeight && mPeriodicIO.state.equals("Ground")) {
-      return true;
-    }
+    
     return Math.abs(mPeriodicIO.mCurrentPos - mPeriodicIO.elevator_target) < 0.5;
   }
 
