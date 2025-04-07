@@ -67,6 +67,22 @@ public class AutoStringAuto extends AutoModeBase {
                         lastPoint = point;
                         isFirstTrajectory = false;
                     }
+                    break;                
+                case("E"):
+                    point = actionStrings[i] + actionStrings[++i];
+                    System.out.println("Trajectory Action: "+lastPoint+"-"+point);
+                    if(lastPoint == null) {
+                        lastPoint = point;
+                    } else {
+                        listOfActions.add(new SwerveTrajectoryAction(
+                                lastPoint + "-" + point,
+                                isFirstTrajectory ? 
+                                    ResetWheelTracker.SET_TO_STARTING_POS 
+                                    : ResetWheelTracker.NO
+                        ));
+                        lastPoint = point;
+                        isFirstTrajectory = false;
+                    }
                     break;
                 case "[":
                     subString = "";

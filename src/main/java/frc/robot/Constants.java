@@ -250,9 +250,9 @@ public final class Constants {
         public static TalonFXConfiguration AzimuthFXConfig() {
             TalonFXConfiguration config = new TalonFXConfiguration();
 
-            config.Slot0.kP = 0.09;
-            config.Slot0.kI = 0.0;
-            config.Slot0.kD = 0.0016;
+            config.Slot0.kP = 0.9;
+            config.Slot0.kI = 0.001;
+            config.Slot0.kD = 0.016;
             config.Slot0.kS = 0.0;
             config.Slot0.kV = 0.0;
 

@@ -8,10 +8,7 @@ import java.util.Optional;
 public class AutoModeSelector {
 	public enum DesiredMode {
 		DO_NOTHING,
-		LEFTSIDE,
-		RIGHTSIDE,
-		CENTER,
-		TESTAUTOMODE3,
+		TESTAUTOMODE,
 	}
 
 	private DesiredMode mCachedDesiredMode = DesiredMode.DO_NOTHING;
@@ -21,12 +18,8 @@ public class AutoModeSelector {
 	private static SendableChooser<DesiredMode> mModeChooser = new SendableChooser<>();
 
 	public AutoModeSelector() {
-		mModeChooser.addOption("DoNothing", DesiredMode.DO_NOTHING);
-		mModeChooser.addOption("LeftSide", DesiredMode.LEFTSIDE);
-		mModeChooser.addOption("RightSide", DesiredMode.RIGHTSIDE);
-		mModeChooser.addOption("Center", DesiredMode.CENTER);
-		mModeChooser.addOption("AutoMode3", DesiredMode.TESTAUTOMODE3);
-		mModeChooser.setDefaultOption("AutoMode3", DesiredMode.TESTAUTOMODE3);
+		mModeChooser.addOption("AutoMode3", DesiredMode.TESTAUTOMODE);
+		mModeChooser.setDefaultOption("AutoMode3", DesiredMode.TESTAUTOMODE);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
 	}
 
@@ -45,32 +38,11 @@ public class AutoModeSelector {
 		mCachedDesiredMode = desiredMode;
 	}
 
-	// public void forceModeTo(boolean force_regen){
-	// 	DesiredMode desiredMode = DesiredMode.TESTPATHMODE;
-
-	// 	if (desiredMode == null) {
-	// 		desiredMode = DesiredMode.DO_NOTHING;
-	// 	}
-	// 	if (mCachedDesiredMode != desiredMode
-	// 	|| force_regen) {
-	// 		System.out.println("Auto selection changed, updating creator: desiredMode-> " + desiredMode.name());
-			
-	// 		mAutoMode = getAutoModeForParams(desiredMode);
-	// 		}
-	// 	mCachedDesiredMode = desiredMode;
-	// }
-
 	private Optional<AutoModeBase> getAutoModeForParams(DesiredMode mode ){
 		switch (mode) {
 			case DO_NOTHING:
 				return Optional.of(new DoNothingMode());
-			case LEFTSIDE:
-				return Optional.of(new AutoModeLeftSide());
-			case RIGHTSIDE:
-				return Optional.of(new AutoModeRightSide());
-			case CENTER:
-				return Optional.of(new AutoModeCenter());
-			case TESTAUTOMODE3:
+			case TESTAUTOMODE:
 				return Optional.of(new TestAutoMode());
 			default:
 				System.out.println("ERROR: unexpected auto mode: " + mode);

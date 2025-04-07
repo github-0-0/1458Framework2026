@@ -10,14 +10,16 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.lib.trajectory.TrajectoryIterator;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.lib.control.Lookahead;
 import frc.robot.lib.util.SynchronousPIDF;
 import frc.robot.lib.util.Util;
 
-public class DriveMotionPlanner {
+public class DriveMotionPlanner implements DriveController {
 	private static final double kMaxDx = 0.0127; // m
 	private static final double kMaxDy = 0.0127; // m
 	private static final double kMaxDTheta = Math.toRadians(1.0);
@@ -86,7 +88,8 @@ public class DriveMotionPlanner {
     public DriveMotionPlanner() {}
 
     //set trajectory to traverse
-    public void setTrajectory(final TrajectoryIterator trajectory) {
+    @Override
+	public void setTrajectory(TrajectoryIterator trajectory) {
         mCurrentTrajectory = trajectory;
 		mSetpoint = trajectory.getState();
 		useDefaultCook = true;
@@ -102,6 +105,7 @@ public class DriveMotionPlanner {
 		mIsReversed = mCurrentTrajectory.isReversed();
     }
 
+	@Override
 	public void reset() {
 //		mErrorTracker.reset();
 		mTranslationalError = new Translation2d();
@@ -113,7 +117,10 @@ public class DriveMotionPlanner {
 
     // update chassis speeds at the specified timestamp based on current Pose2d and Velocity
 	// return a robot-relative chassis_speeds
-	public ChassisSpeeds update(double timestamp, Pose2d current_pose, Translation2d current_velocity) {
+	@Override
+	public ChassisSpeeds calculate() {
+		double timestamp = Timer.getFPGATimestamp();
+		Pose2d current_pose = RobotState.getInstance().getLatestFieldToVehicle();
 		if (mCurrentTrajectory == null) return null;
 		if (!Double.isFinite(mLastTime)) mLastTime = timestamp;
 		mDt = timestamp - mLastTime;
@@ -123,7 +130,7 @@ public class DriveMotionPlanner {
 		Twist2d pid_error;	//twist2d between actual and desired states. 
 
 
-		if (!isDone(current_pose)) {
+		if (!isDone()) {
 			
 			// Compute error in robot frame
 			mPrevHeadingError = mError.getRotation();
@@ -219,7 +226,9 @@ public class DriveMotionPlanner {
 	}
 
     // check if we complete the current trajectory
-    public boolean isDone(Pose2d currPose) {
+	@Override
+    public boolean isDone() {
+		Pose2d currPose = RobotState.getInstance().getLatestFieldToVehicle();
 		if (mCurrentTrajectory != null){
 			if (mCurrentTrajectory.getRemainingProgress()<0.3){
 				//check if currPose is really close the ending pose of traj for the last 300ms of the path 

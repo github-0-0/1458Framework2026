@@ -57,8 +57,13 @@ public class TrajectoryIterator {
         return fromPathPlannerTrajectoryState(stateList.get(stateList.size()-1));
     }
 
+    public Trajectory.State getInitialState(){
+        List<PathPlannerTrajectoryState> stateList = mCurrentTrajectory.getStates();
+        return fromPathPlannerTrajectoryState(stateList.get(0));
+    }
+
     //access to the current trajectory properties
-    public PathPlannerTrajectory trajectory(){ return mCurrentTrajectory;}
+    public PathPlannerTrajectory trajectory() {return mCurrentTrajectory;}
 
     //get the current state
     public Trajectory.State getState(){

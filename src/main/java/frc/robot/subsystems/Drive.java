@@ -19,8 +19,11 @@ import frc.robot.Loops.ILooper;
 import frc.robot.Loops.Loop;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.drivers.Pigeon;
+import frc.robot.lib.swerve.AdvancedHolonomicDriveController;
+import frc.robot.lib.swerve.DriveController;
 //TODO: import frc.robot.lib.logger.LogUtil;
 import frc.robot.lib.swerve.DriveMotionPlanner;
+import frc.robot.lib.swerve.PurePursuitController;
 import frc.robot.lib.swerve.DriveMotionPlanner.FollowerType;
 import frc.robot.lib.swerve.SwerveHeadingController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -46,6 +49,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pathplanner.lib.config.PIDConstants;
+
 public class Drive extends Subsystem {
 	public enum DriveControlState {
 		FORCE_ORIENT,
@@ -57,6 +62,7 @@ public class Drive extends Subsystem {
 
 	public WheelTracker mWheelTracker;
 	public final Field2d m_field = new Field2d();
+	public final Field2d m_field2 = new Field2d();
 	private Pigeon mPigeon = Pigeon.getInstance();
 	public Module[] mModules;
 
@@ -67,7 +73,7 @@ public class Drive extends Subsystem {
 
 	private boolean odometryReset = false;
 
-	private final DriveMotionPlanner mMotionPlanner;
+	private final DriveController mMotionPlanner;
 	private final SwerveHeadingController mHeadingController;
 
 	private Translation2d enableFieldToOdom = null;
@@ -106,12 +112,13 @@ public class Drive extends Subsystem {
 			new Module(3, Constants.Swerve.BackRightMod.constants, Cancoders.getInstance().getBackRight())
 		};
 
-		mMotionPlanner = new DriveMotionPlanner();
+		mMotionPlanner = new AdvancedHolonomicDriveController(new PIDConstants(1, 0.0001, 0.1), new PIDConstants(1, 0.0001, 0.1));
 		mHeadingController = new SwerveHeadingController();
 
 		mWheelTracker = new WheelTracker(mModules);
 
 		SmartDashboard.putData("Field", m_field);
+		SmartDashboard.putData("Field2", m_field2);
 	}
 
 	public void setKinematicLimits(KinematicLimits newLimits) {
@@ -258,6 +265,9 @@ public class Drive extends Subsystem {
 									mPeriodicIO.measured_velocity,
 									mPeriodicIO.predicted_velocity);
 					m_field.setRobotPose(mWheelTracker.getRobotPose());//it works i think but i really cant tell
+					Pose2d thign = mWheelTracker.getRobotPose();
+					thign = new Pose2d(thign.getTranslation(), thign.getRotation().times(Math.PI/180));
+					m_field2.setRobotPose(thign);
 				}
 			}
 
@@ -307,18 +317,14 @@ public class Drive extends Subsystem {
 	 * @param pid_enable Switches between using PID control or Pure Pursuit control to follow trajectories.
 	 */
 	public synchronized void setUsePIDControl(boolean pid_enable) {
-		if (pid_enable) {
-			mMotionPlanner.setFollowerType(FollowerType.PID);
-		} else {
-			mMotionPlanner.setFollowerType(FollowerType.PURE_PURSUIT);
-		}
+		
 	}
 
 	public synchronized boolean isDoneWithTrajectory() {
 		if (mMotionPlanner == null || mControlState != DriveControlState.PATH_FOLLOWING) {
 			return false;
 		}
-		return mMotionPlanner.isDone(getPose()) || mOverrideTrajectory;
+		return mMotionPlanner.isDone() || mOverrideTrajectory;
 	}
 
 	/**
@@ -328,13 +334,13 @@ public class Drive extends Subsystem {
 	private void updatePathFollower() {
 		if (mControlState == DriveControlState.PATH_FOLLOWING) {
 			final double now = Timer.getFPGATimestamp();
-			ChassisSpeeds output = mMotionPlanner.update(now, getPose(), mWheelTracker.getMeasuredVelocity());
+			ChassisSpeeds output = mMotionPlanner.calculate();
 			if (output != null) {
 				mPeriodicIO.des_chassis_speeds = output;
 			}
 
-			mPeriodicIO.translational_error = mMotionPlanner.getTranslationalError();
-			mPeriodicIO.heading_error = mMotionPlanner.getHeadingError();
+			// mPeriodicIO.translational_error = mMotionPlanner.getTranslationalError();
+			// mPeriodicIO.heading_error = mMotionPlanner.getHeadingError();
 		} else {
 			DriverStation.reportError("Drive is not in path following state", false);
 		}
@@ -496,7 +502,14 @@ public class Drive extends Subsystem {
 		m_field.setRobotPose(mWheelTracker.getRobotPose());
 
 		// Publish swerve module states and rotaton to smartdashboard
-		desiredStatesPublisher.set(mPeriodicIO.des_module_states);
+
+		SwerveModuleState[] other = new SwerveModuleState[4];
+		for (int i = 0; i < mPeriodicIO.des_module_states.length; i++) {
+			other[i] = mPeriodicIO.des_module_states[i];
+			other[i].angle = mPeriodicIO.des_module_states[i].angle.unaryMinus();
+		}
+
+		desiredStatesPublisher.set(other);
 
 		chassisSpeedsPublisher.set(mPeriodicIO.des_chassis_speeds);
 
@@ -531,7 +544,7 @@ public class Drive extends Subsystem {
 		return mPigeon.getYaw();
 	}
 
-	public DriveMotionPlanner getMotionPlanner() {
+	public DriveController getMotionPlanner() {
 		return mMotionPlanner;
 	}
 
