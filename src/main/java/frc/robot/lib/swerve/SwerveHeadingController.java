@@ -3,7 +3,7 @@ package frc.robot.lib.swerve;
 //dc.10.21.2024 ported from com.team1678.lib.swerve; copy&paste
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.SynchronousPIDF;
-import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants;
 
 public class SwerveHeadingController {
 
@@ -60,16 +60,16 @@ public class SwerveHeadingController {
 
 	public SwerveHeadingController() {
 		stabilizePID = new SynchronousPIDF(
-				SwerveConstants.kStabilizeSwerveHeadingKp,
-				SwerveConstants.kStabilizeSwerveHeadingKi,
-				SwerveConstants.kStabilizeSwerveHeadingKd,
-				SwerveConstants.kStabilizeSwerveHeadingKf);
+				Constants.Swerve.kStabilizeSwerveHeadingKp,
+				Constants.Swerve.kStabilizeSwerveHeadingKi,
+				Constants.Swerve.kStabilizeSwerveHeadingKd,
+				Constants.Swerve.kStabilizeSwerveHeadingKf);
 
 		snapPID = new SynchronousPIDF(
-				SwerveConstants.kSnapSwerveHeadingKp,
-				SwerveConstants.kSnapSwerveHeadingKi,
-				SwerveConstants.kSnapSwerveHeadingKd,
-				SwerveConstants.kSnapSwerveHeadingKf);
+				Constants.Swerve.kSnapSwerveHeadingKp,
+				Constants.Swerve.kSnapSwerveHeadingKi,
+				Constants.Swerve.kSnapSwerveHeadingKd,
+				Constants.Swerve.kSnapSwerveHeadingKf);
 
 		stabilizePID.setInputRange(-Math.PI, Math.PI);
 		stabilizePID.setContinuous();

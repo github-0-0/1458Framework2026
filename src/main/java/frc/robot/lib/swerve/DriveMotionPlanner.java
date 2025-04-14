@@ -97,7 +97,7 @@ public class DriveMotionPlanner implements DriveController {
 				kAdaptivePathMinLookaheadDistance,
 				kAdaptivePathMaxLookaheadDistance,
 				0.0,
-				Constants.SwerveConstants.maxAutoSpeed);
+				Constants.Swerve.maxAutoSpeed);
 		mCurrentTrajectoryLength =
 				mCurrentTrajectory.trajectory().getTotalTimeSeconds();	//dc.11.21.24, replace citrus code = .getLastPoint().state().t();
 		
@@ -325,7 +325,7 @@ public class DriveMotionPlanner implements DriveController {
 		// use avergae of scalar speed of current and lookahead sample points as the driving speed. 
 		// No directions used here as we just want to make sure the scalar value of the speed 
 		// Assume scalar speed on the trajectory maintain continuity 
-		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond + lookahead_state.velocityMetersPerSecond) /2.0/ Constants.SwerveConstants.maxAutoSpeed; 
+		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond + lookahead_state.velocityMetersPerSecond) /2.0/ Constants.Swerve.maxAutoSpeed; 
 
 		// Use Default Cook at the begining of the trajectory until path speed exceeds it or robot progresses far enough 
 		// It is also bugfix for zero speed at the beginning of trajectory
@@ -344,14 +344,14 @@ public class DriveMotionPlanner implements DriveController {
 		// method1. compensate omega speed from current trajectory state with angle error of current pose 
 //		Rotation2d currPoseRotationDelta = current_pose.getRotation().minus(mSetpoint.poseMeters.getRotation());//dc.1.22.2025, add code to support pose rotation on the trajectory
 //		double deltaOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > Util.kEpsilon )? currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * Math.abs(mSetpoint.velocityMetersPerSecond) : 0.0;
-//		double deltaOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > Util.kEpsilon )? currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed*Constants.SwerveConstants.maxAutoSpeed: 0.0;
+//		double deltaOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > Util.kEpsilon )? currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed*Constants.Swerve.maxAutoSpeed: 0.0;
 
 		// method2. calc omega directly from angle difference between current pose and lookahead state
 		Rotation2d currPoseRotationDelta = lookahead_state.poseMeters.getRotation().minus(current_pose.getRotation());//dc.1.22.2025, 2nd methods for calc oemga
 		SmartDashboard.putNumber("PurePursuit/CurrDelta",currPoseRotationDelta.getRadians());
 		
 		double trueOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > kAdaptivePathMinLookaheadDistance) ? 
-			currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed * Constants.SwerveConstants.maxAutoSpeed : 
+			currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed * Constants.Swerve.maxAutoSpeed : 
 			(mCurrentTrajectory.getRemainingProgress() > 0.0) ? currPoseRotationDelta.getRadians() / mCurrentTrajectory.getRemainingProgress() :
 			mCurrentTrajectory.getLastPoint().poseMeters.getRotation().minus(current_pose.getRotation()).getRadians() * 3 ;//TODO: put magic number in constants
 		trueOmegaRadiansPerSecond = Math.min(trueOmegaRadiansPerSecond, Constants.Swerve.maxAngularVelocity);		
@@ -362,8 +362,8 @@ public class DriveMotionPlanner implements DriveController {
 		SmartDashboard.putNumber("PurePursuit/steeringVector.vx", steeringVector.getX());		
 		SmartDashboard.putNumber("PurePursuit/steeringVector.vy", steeringVector.getY());		
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
-				steeringVector.getX() * Constants.SwerveConstants.maxAutoSpeed,
-				steeringVector.getY() * Constants.SwerveConstants.maxAutoSpeed,
+				steeringVector.getX() * Constants.Swerve.maxAutoSpeed,
+				steeringVector.getY() * Constants.Swerve.maxAutoSpeed,
 				// mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond);				
 //				mSetpoint.curvatureRadPerMeter*mSetpoint.velocityMetersPerSecond - deltaOmegaRadiansPerSecond);		
 				trueOmegaRadiansPerSecond);

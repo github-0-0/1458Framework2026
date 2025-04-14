@@ -89,7 +89,7 @@ public class RobotContainer {
                 m_Cancoders = Cancoders.getInstance();
                 double startInitTs = Timer.getFPGATimestamp();
                 System.out.println("* Starting to init Cancoders at ts " + startInitTs);
-                while (Timer.getFPGATimestamp() - startInitTs < Constants.SwerveConstants.kCancoderBootAllowanceSeconds
+                while (Timer.getFPGATimestamp() - startInitTs < Constants.Swerve.kCancoderBootAllowanceSeconds
                         && !m_Cancoders.allHaveBeenInitialized()) {
                     Timer.delay(0.1);
                 }

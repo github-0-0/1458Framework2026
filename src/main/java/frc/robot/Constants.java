@@ -28,15 +28,16 @@ public final class Constants {
         public static final int pigeonID = 20;
 
         public static final COTSTalonFXSwerveConstants chosenModule =  
-        COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
+            COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
 
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(24); 
         public static final double wheelBase = Units.inchesToMeters(24);
         public static final double wheelCircumference = chosenModule.wheelCircumference;
+        public static final double wheelDiameter = Swerve.chosenModule.wheelDiameter; 
 
         /* Swerve Kinematics */
-        public static final Translation2d[] swerveModuleLocations = {  //dc.10.28.2024, need for WheelTracker.java
+        public static final Translation2d[] swerveModuleLocations = {
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
             new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
             new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
@@ -96,12 +97,104 @@ public final class Constants {
         /* Swerve Profiling Values */
         /** Meters per Second */
         public static final double maxSpeed = 4;
+        public static final double maxAutoSpeed = maxSpeed * 0.85;  // Max out at 85% to ensure attainable speeds, 
+
+        /** Meters per Second Squared */
+        public static final double maxAcceleration = 3;
         /** Radians per Second */
         public static final double maxAngularVelocity = 3.14 * 2; //TODO: This must be tuned to specific robot
+
+        /** Radians per Second Squared */
+        public static final double kMaxAngularAcceleration = 720.0;
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
         public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake;
+
+
+        public static final boolean invertGyro = false; // TODO: ensure Gyro is CCW+ CW-
+
+        /* Heading Controller */
+
+        // Stabilize Heading PID Values
+        public static final double kStabilizeSwerveHeadingKp = 10.0;
+        public static final double kStabilizeSwerveHeadingKi = 0.0;
+        public static final double kStabilizeSwerveHeadingKd = 0.3;
+        public static final double kStabilizeSwerveHeadingKf = 2.0;
+
+        // Snap Heading PID Values
+        public static final double kSnapSwerveHeadingKp = 10.0;
+        public static final double kSnapSwerveHeadingKi = 0.0;
+        public static final double kSnapSwerveHeadingKd = 0.6;
+        public static final double kSnapSwerveHeadingKf = 1.0;
+
+        public static final SwerveDriveKinematics kKinematics = Swerve.swerveKinematics;
+
+        public static final double kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed);
+        
+        public static final double kCancoderBootAllowanceSeconds = 10.0;
+
+        public static final KinematicLimits kUncappedLimits = new KinematicLimits();
+
+        static {
+            kUncappedLimits.kMaxDriveVelocity = maxSpeed;
+            kUncappedLimits.kMaxAccel = Double.MAX_VALUE;
+            kUncappedLimits.kMaxAngularVelocity = Swerve.maxAngularVelocity;
+            kUncappedLimits.kMaxAngularAccel = Double.MAX_VALUE;
+        }
+
+        /* TalonFx module constants*/
+        public static TalonFXConfiguration AzimuthFXConfig() {
+            TalonFXConfiguration config = new TalonFXConfiguration();
+
+            config.Slot0.kP = 0.9;
+            config.Slot0.kI = 0.001;
+            config.Slot0.kD = 0.016;
+            config.Slot0.kS = 0.0;
+            config.Slot0.kV = 0.0;
+
+            config.CurrentLimits.StatorCurrentLimitEnable = true;
+            config.CurrentLimits.StatorCurrentLimit = Swerve.angleCurrentLimit;
+
+            config.CurrentLimits.SupplyCurrentLimitEnable = true;
+            config.CurrentLimits.SupplyCurrentLimit = Swerve.angleCurrentLimit;
+            config.CurrentLimits.SupplyCurrentLowerLimit = Swerve.angleCurrentThreshold;
+            config.CurrentLimits.SupplyCurrentLowerTime = Swerve.angleCurrentThresholdTime;
+
+            config.Voltage.PeakForwardVoltage = 12.0;
+            config.Voltage.PeakReverseVoltage = -12.0;
+
+            config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+            return config;
+        }
+
+        public static TalonFXConfiguration DriveFXConfig() {
+            TalonFXConfiguration config = new TalonFXConfiguration();
+
+            config.Slot0.kP = 0.030 * 12.0;
+            config.Slot0.kI = 0.0;
+            config.Slot0.kD = 0.000000 * 12.0;
+            config.Slot0.kS = 0.1;
+            config.Slot0.kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed);
+
+            config.CurrentLimits.StatorCurrentLimitEnable = true;
+            config.CurrentLimits.StatorCurrentLimit = Swerve.driveCurrentLimit;
+
+            config.CurrentLimits.SupplyCurrentLimitEnable = true;
+            config.CurrentLimits.SupplyCurrentLimit = Swerve.driveCurrentLimit;
+            config.CurrentLimits.SupplyCurrentLowerLimit = Swerve.driveCurrentThreshold;
+            config.CurrentLimits.SupplyCurrentLowerTime = 0.5;
+
+            config.Voltage.PeakForwardVoltage = 12.0;
+            config.Voltage.PeakReverseVoltage = -12.0;
+
+            config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+            config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Swerve.openLoopRamp;
+            config.OpenLoopRamps.VoltageOpenLoopRampPeriod = Swerve.openLoopRamp;
+            return config;
+        }
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
@@ -152,15 +245,9 @@ public final class Constants {
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, isDriveInverted, isAngleInverted);
         }
 
-        public static final double kMaxAngularAcceleration = 720.0;
     }
 
-    public static final class AutoConstants { //TODO: This must be tuned to specific robot
-        public static final double kMaxSpeedMetersPerSecond = 1;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-        public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
-    
+    public static final class Auto { //TODO: This must be tuned to specific robot
         public static final double kPXController = 1;
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
@@ -168,7 +255,7 @@ public final class Constants {
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
-                kMaxAngularSpeedRadiansPerSecond, kMaxAngularAccelerationRadiansPerSecondSquared);
+                Swerve.maxAngularVelocity, Swerve.kMaxAngularAcceleration);
     }
 
     public static class Limelight { //TODO: this must be tuned to specific robot
@@ -198,106 +285,6 @@ public final class Constants {
                     new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(-0.96)),
                     Rotation2d.fromDegrees(180));
         }
-    }
-
-    //dc.10.21.2024, citrus code constants
-    public static final class SwerveConstants {
-        public static final boolean invertGyro = false; // TODO: ensure Gyro is CCW+ CW-
-
-   		/* Heading Controller */
-
-		// Stabilize Heading PID Values
-		public static final double kStabilizeSwerveHeadingKp = 10.0;
-		public static final double kStabilizeSwerveHeadingKi = 0.0;
-		public static final double kStabilizeSwerveHeadingKd = 0.3;
-		public static final double kStabilizeSwerveHeadingKf = 2.0;
-
-		// Snap Heading PID Values
-		public static final double kSnapSwerveHeadingKp = 10.0;
-		public static final double kSnapSwerveHeadingKi = 0.0;
-		public static final double kSnapSwerveHeadingKd = 0.6;
-		public static final double kSnapSwerveHeadingKf = 1.0;
-
-        public static final SwerveDriveKinematics kKinematics = Swerve.swerveKinematics;
-        //public static final boolean driveMotorInvert = false;   //TODO: need to verify with the actual Robot setting
-        //public static final boolean angleMotorInvert = true;    //TODO: need to verify with the actual Robot setting
-        public static final double wheelDiameter = Swerve.chosenModule.wheelDiameter; //??4.0inch
-        public static final double wheelCircumference = Swerve.chosenModule.wheelCircumference;
-        public static final double driveGearRatio = Swerve.chosenModule.driveGearRatio;//?? Constants.isEpsilon ? 5.82 : 5.82; 
-        public static final double angleGearRatio = Swerve.chosenModule.angleGearRatio;
-        public static final double maxSpeed = Swerve.maxSpeed; 
-        public static final double maxAngularVelocity = Swerve.maxAngularVelocity;
-        public static final double kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed); //TODO: need to finetune with the actual robot
-        public static final double maxAutoSpeed = maxSpeed * 0.85;  // Max out at 85% to ensure attainable speeds, 
-        
-        public static final double kCancoderBootAllowanceSeconds = 10.0;
-
-        public static final KinematicLimits kUncappedLimits = new KinematicLimits();
-
-		static {
-			kUncappedLimits.kMaxDriveVelocity = maxSpeed;
-			kUncappedLimits.kMaxAccel = Double.MAX_VALUE;
-			kUncappedLimits.kMaxAngularVelocity = Swerve.maxAngularVelocity;
-			kUncappedLimits.kMaxAngularAccel = Double.MAX_VALUE;
-		}
-
-        public static final boolean invertYAxis = false;
-		public static final boolean invertRAxis = false;
-		public static final boolean invertXAxis = false;
-
-        /* TalonFx module constants*/
-        
-        public static TalonFXConfiguration AzimuthFXConfig() {
-            TalonFXConfiguration config = new TalonFXConfiguration();
-
-            config.Slot0.kP = 0.9;
-            config.Slot0.kI = 0.001;
-            config.Slot0.kD = 0.016;
-            config.Slot0.kS = 0.0;
-            config.Slot0.kV = 0.0;
-
-            config.CurrentLimits.StatorCurrentLimitEnable = true;
-            config.CurrentLimits.StatorCurrentLimit = Swerve.angleCurrentLimit;
-
-            config.CurrentLimits.SupplyCurrentLimitEnable = true;
-            config.CurrentLimits.SupplyCurrentLimit = Swerve.angleCurrentLimit;
-            config.CurrentLimits.SupplyCurrentLowerLimit = Swerve.angleCurrentThreshold;
-            config.CurrentLimits.SupplyCurrentLowerTime = Swerve.angleCurrentThresholdTime;
-
-            config.Voltage.PeakForwardVoltage = 12.0;
-            config.Voltage.PeakReverseVoltage = -12.0;
-
-            config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-            return config;
-        }
-
-        public static TalonFXConfiguration DriveFXConfig() {
-			TalonFXConfiguration config = new TalonFXConfiguration();
-
-			config.Slot0.kP = 0.030 * 12.0;
-			config.Slot0.kI = 0.0;
-			config.Slot0.kD = 0.000000 * 12.0;
-			config.Slot0.kS = 0.1;
-			config.Slot0.kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed);
-
-			config.CurrentLimits.StatorCurrentLimitEnable = true;
-			config.CurrentLimits.StatorCurrentLimit = Swerve.driveCurrentLimit;
-
-			config.CurrentLimits.SupplyCurrentLimitEnable = true;
-			config.CurrentLimits.SupplyCurrentLimit = Swerve.driveCurrentLimit;
-            config.CurrentLimits.SupplyCurrentLowerLimit = Swerve.driveCurrentThreshold;
-			config.CurrentLimits.SupplyCurrentLowerTime = 0.5;
-
-			config.Voltage.PeakForwardVoltage = 12.0;
-			config.Voltage.PeakReverseVoltage = -12.0;
-
-			config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-			config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Swerve.openLoopRamp;
-			config.OpenLoopRamps.VoltageOpenLoopRampPeriod = Swerve.openLoopRamp;
-			return config;
-		}
 
     }
     public static final class PathPlannerRobotConfig {

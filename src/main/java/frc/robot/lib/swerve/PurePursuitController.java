@@ -97,7 +97,7 @@ public class PurePursuitController implements DriveController {
 				kAdaptivePathMinLookaheadDistance,
 				kAdaptivePathMaxLookaheadDistance,
 				0.0,
-				Constants.SwerveConstants.maxAutoSpeed);
+				Constants.Swerve.maxAutoSpeed);
 		mCurrentTrajectoryLength =
 				mCurrentTrajectory.trajectory().getTotalTimeSeconds();	//dc.11.21.24, replace citrus code = .getLastPoint().state().t();
 		mTranslationPIDF = new SynchronousTranslationPIDF(0.3, 0.00001, 0.01);
@@ -200,7 +200,7 @@ public class PurePursuitController implements DriveController {
 		// Convert from field-relative steering direction to robot-relative = steeringDirection - current_pose.getRotation()
 		steeringDirection = steeringDirection.rotateBy(Util.inversePose2d(current_pose).getRotation());//.inverse().getRotation());
 	
-		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond + lookahead_state.velocityMetersPerSecond) /2.0/ Constants.SwerveConstants.maxAutoSpeed; 
+		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond + lookahead_state.velocityMetersPerSecond) /2.0/ Constants.Swerve.maxAutoSpeed; 
 
 		// Use Default Cook at the begining of the trajectory until path speed exceeds it or robot progresses far enough 
 		// It is also bugfix for zero speed at the beginning of trajectory
@@ -223,7 +223,7 @@ public class PurePursuitController implements DriveController {
 		mHeadingPIDF.setSetpoint(lookahead_state.poseMeters.getRotation().getRadians());
 		trueOmegaRadiansPerSecond = mHeadingPIDF.calculate(current_pose.getRotation().getRadians());
 		// if (lookaheadTranslation.getNorm() > kAdaptivePathMinLookaheadDistance) {
-		// 	trueOmegaRadiansPerSecond = currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed * Constants.SwerveConstants.maxAutoSpeed;
+		// 	trueOmegaRadiansPerSecond = currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed * Constants.Swerve.maxAutoSpeed;
 		// } else { 
 		// 	if (mCurrentTrajectory.getRemainingProgress() > 0.0) {
 		// 		trueOmegaRadiansPerSecond = currPoseRotationDelta.getRadians() / mCurrentTrajectory.getRemainingProgress(); 
@@ -236,8 +236,8 @@ public class PurePursuitController implements DriveController {
 		trueOmegaRadiansPerSecond = Math.max(trueOmegaRadiansPerSecond, -Constants.Swerve.maxAngularVelocity);
 		
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
-				steeringVector.getX() * Constants.SwerveConstants.maxAutoSpeed,
-				steeringVector.getY() * Constants.SwerveConstants.maxAutoSpeed,
+				steeringVector.getX() * Constants.Swerve.maxAutoSpeed,
+				steeringVector.getY() * Constants.Swerve.maxAutoSpeed,
 				trueOmegaRadiansPerSecond);
 
 		//output debug info as we get close to the end of path

@@ -4,15 +4,16 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Constants.Auto;
 import frc.robot.Constants.Swerve;
-import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.Swerve;
 import frc.robot.lib.util.InterpolatingPose2d;
 import frc.robot.lib.util.SwerveModuleConstants;
 /*
-import frc.robot.Constants.SwerveConstants.Mod0;
-import frc.robot.Constants.SwerveConstants.Mod1;
-import frc.robot.Constants.SwerveConstants.Mod2;
-import frc.robot.Constants.SwerveConstants.Mod3;
+import frc.robot.Constants.Swerve.Mod0;
+import frc.robot.Constants.Swerve.Mod1;
+import frc.robot.Constants.Swerve.Mod2;
+import frc.robot.Constants.Swerve.Mod3;
 */
 import frc.robot.RobotState;
 import frc.robot.Loops.ILooper;
@@ -38,6 +39,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import frc.robot.lib.trajectory.TrajectoryIterator;
 //TODO:import com.team254.lib.trajectory.TimedView;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -83,7 +85,7 @@ public class Drive extends Subsystem {
 
 	private Rotation2d mTrackingAngle = new Rotation2d();
 
-	private KinematicLimits mKinematicLimits = SwerveConstants.kUncappedLimits;
+	private KinematicLimits mKinematicLimits = Constants.Swerve.kUncappedLimits;
 
 	private static Drive mInstance;
 
@@ -105,14 +107,18 @@ public class Drive extends Subsystem {
 
 	private Drive() {
 		mModules = new Module[] {
-			//TODO: code review to confirm the
 			new Module(0, Constants.Swerve.FrontLeftMod.constants, Cancoders.getInstance().getFrontLeft()),
 			new Module(1, Constants.Swerve.FrontRightMod.constants, Cancoders.getInstance().getFrontRight()),
 			new Module(2, Constants.Swerve.BackLeftMod.constants, Cancoders.getInstance().getBackLeft()),
 			new Module(3, Constants.Swerve.BackRightMod.constants, Cancoders.getInstance().getBackRight())
 		};
 
-		mMotionPlanner = new AdvancedHolonomicDriveController(new PIDConstants(1, 0.0001, 0.1), new PIDConstants(1, 0.0001, 0.1));
+		mMotionPlanner = new AdvancedHolonomicDriveController(
+			new PIDConstants(Constants.Auto.kPXController, 0.0, 0.), 
+			new PIDConstants(Constants.Auto.kPThetaController, 0.0, 0.0),
+			Constants.Auto.kThetaControllerConstraints
+		);
+
 		mHeadingController = new SwerveHeadingController();
 
 		mWheelTracker = new WheelTracker(mModules);
@@ -133,13 +139,13 @@ public class Drive extends Subsystem {
 	public void feedTeleopSetpoint(ChassisSpeeds speeds) {
 		if (mControlState == DriveControlState.PATH_FOLLOWING) {
 			if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)> mKinematicLimits.kMaxDriveVelocity * 0.05 || 
-				Math.abs(speeds.omegaRadiansPerSecond)> 0.1 * Constants.SwerveConstants.maxAngularVelocity) { 
+				Math.abs(speeds.omegaRadiansPerSecond)> 0.1 * Constants.Swerve.maxAngularVelocity) { 
 				mControlState = DriveControlState.OPEN_LOOP;
 			} else {
 				return;
 			}
 		} else if (mControlState == DriveControlState.HEADING_CONTROL) {
-			if (Math.abs(speeds.omegaRadiansPerSecond) > 0.0*Constants.SwerveConstants.maxAngularVelocity) { //original value = 0.1
+			if (Math.abs(speeds.omegaRadiansPerSecond) > 0.0*Constants.Swerve.maxAngularVelocity) { //original value = 0.1
 				mControlState = DriveControlState.OPEN_LOOP;
 				System.out.println("back to Open_Loop");
 
@@ -292,7 +298,7 @@ public class Drive extends Subsystem {
 		mPeriodicIO.pitch = mPigeon.getPitch();
 
 		SwerveModuleState[] moduleStates = getModuleStates();
-		Twist2d twist_vel = toTwist2d(Constants.SwerveConstants.kKinematics
+		Twist2d twist_vel = toTwist2d(Constants.Swerve.kKinematics
 				.toChassisSpeeds(moduleStates));
 		Translation2d translation_vel = new Translation2d(twist_vel.dx, twist_vel.dy);
 		translation_vel = translation_vel.rotateBy(getHeading());
@@ -393,8 +399,8 @@ public class Drive extends Subsystem {
 
 			SwerveModuleState[] prev_module_states =
 					mPeriodicIO.des_module_states.clone(); // Get last setpoint to get differentials
-			ChassisSpeeds prev_chassis_speeds = SwerveConstants.kKinematics.toChassisSpeeds(prev_module_states);
-			SwerveModuleState[] target_module_states = SwerveConstants.kKinematics.toSwerveModuleStates(wanted_speeds);
+			ChassisSpeeds prev_chassis_speeds = Constants.Swerve.kKinematics.toChassisSpeeds(prev_module_states);
+			SwerveModuleState[] target_module_states = Constants.Swerve.kKinematics.toSwerveModuleStates(wanted_speeds);
 
 			// Zero the modules' speeds if want_speeds is less epsilon value
 			if (Util.chassisSpeedsEpsilonEquals(wanted_speeds, new ChassisSpeeds(), Util.kEpsilon)) {
@@ -440,14 +446,14 @@ public class Drive extends Subsystem {
 		}
 
 
-		SwerveModuleState[] real_module_setpoints = SwerveConstants.kKinematics.toSwerveModuleStates(wanted_speeds);
+		SwerveModuleState[] real_module_setpoints = Constants.Swerve.kKinematics.toSwerveModuleStates(wanted_speeds);
    		
 		SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/Omega)", wanted_speeds.omegaRadiansPerSecond);
 		SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/vx)", wanted_speeds.vxMetersPerSecond);
 		SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/vy)", wanted_speeds.vyMetersPerSecond);
 		
 
-		SwerveDriveKinematics.desaturateWheelSpeeds(real_module_setpoints, Constants.SwerveConstants.maxSpeed);
+		SwerveDriveKinematics.desaturateWheelSpeeds(real_module_setpoints, Constants.Swerve.maxSpeed);
 
 		Twist2d pred_twist_vel= new Twist2d(wanted_speeds.vxMetersPerSecond,wanted_speeds.vyMetersPerSecond,wanted_speeds.omegaRadiansPerSecond);
 		mPeriodicIO.predicted_velocity =
@@ -587,7 +593,7 @@ public class Drive extends Subsystem {
 	}
 
 	public static class KinematicLimits {
-		public double kMaxDriveVelocity = Constants.SwerveConstants.maxSpeed;
+		public double kMaxDriveVelocity = Constants.Swerve.maxSpeed;
 		public double kMaxAccel = Double.MAX_VALUE;
 		public double kMaxAngularVelocity = Constants.Swerve.maxAngularVelocity;
 		public double kMaxAngularAccel = Double.MAX_VALUE;

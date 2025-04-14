@@ -32,7 +32,7 @@ public class AdvancedHolonomicDriveController implements DriveController {
 
     private RobotState mRobotState = RobotState.getInstance();
 
-    public AdvancedHolonomicDriveController(PIDConstants translationConstants, PIDConstants rotationConstants) {
+    public AdvancedHolonomicDriveController(PIDConstants translationConstants, PIDConstants rotationConstants, TrapezoidProfile.Constraints thetaConstraints) {
         //this.translationKa = ka;
 
         xController = new PIDV(
@@ -44,10 +44,7 @@ public class AdvancedHolonomicDriveController implements DriveController {
         yController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
 
         thetaController = new ProfiledPIDV(
-                rotationConstants.kP, rotationConstants.kI, rotationConstants.kD,
-                new TrapezoidProfile.Constraints(
-                        rotationConstants.kP, rotationConstants.kD), // Can be tuned
-                0.02);
+                rotationConstants.kP, rotationConstants.kI, rotationConstants.kD, thetaConstraints);
         thetaController.setIntegratorRange(-rotationConstants.iZone, rotationConstants.iZone);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
     }
@@ -66,7 +63,7 @@ public class AdvancedHolonomicDriveController implements DriveController {
     @Override
     public void reset() {
         if (trajectory != null && trajectory.getInitialState() != null) {
-            Trajectory.State state = trajectory.getInitialState();
+            trajectory.advance(Double.MIN_VALUE);
             thetaController.reset(currentPose.getRotation().getRadians(), currentSpeeds.omegaRadiansPerSecond);
             prevTime = Timer.getFPGATimestamp();
         }
@@ -74,7 +71,6 @@ public class AdvancedHolonomicDriveController implements DriveController {
 
     @Override
     public ChassisSpeeds calculate() {
-        System.out.println("calculating");
         setRobotState(mRobotState.getLatestFieldToVehicle(), mRobotState.getSmoothedVelocity());
         if (trajectory == null || currentPose == null || currentSpeeds == null || trajectory.isDone()) {
             return new ChassisSpeeds(0, 0, 0);

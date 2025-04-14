@@ -85,9 +85,9 @@ public class KeyMap {
         m_loop.poll();
 
         double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)
-                * Constants.SwerveConstants.maxSpeed;
+                * Constants.Swerve.maxSpeed;
         double strafeVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)
-                * Constants.SwerveConstants.maxSpeed;
+                * Constants.Swerve.maxSpeed;
         double rotationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)
                 * Constants.Swerve.maxAngularVelocity;
 

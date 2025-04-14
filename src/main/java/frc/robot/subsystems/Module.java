@@ -20,7 +20,6 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 
 //dc.10.21.2024 replacing with our own/ported classes
 import frc.robot.Constants;
-import frc.robot.Constants.SwerveConstants;
 import frc.robot.lib.util.Conversions;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.drivers.Phoenix6Util;
@@ -78,13 +77,13 @@ public class Module extends Subsystem {
 		// Angle motor config
 		mAngleMotor = new TalonFX(moduleConstants.angleMotorID, "CV");
 		Phoenix6Util.checkErrorAndRetry(() ->
-				mAngleMotor.getConfigurator().apply(SwerveConstants.AzimuthFXConfig(), Constants.kLongCANTimeoutMs));
+				mAngleMotor.getConfigurator().apply(Constants.Swerve.AzimuthFXConfig(), Constants.kLongCANTimeoutMs));
 		mAngleMotor.setInverted(moduleConstants.angleInvert);
 
 		// Drive motor config
 		mDriveMotor = new TalonFX(moduleConstants.driveMotorID, "CV");
 		Phoenix6Util.checkErrorAndRetry(() ->
-				mDriveMotor.getConfigurator().apply(SwerveConstants.DriveFXConfig(), Constants.kLongCANTimeoutMs));
+				mDriveMotor.getConfigurator().apply(Constants.Swerve.DriveFXConfig(), Constants.kLongCANTimeoutMs));
 		mDriveMotor.setInverted(moduleConstants.driveInvert);
 		mDriveMotor.setPosition(0.0);
 
@@ -138,8 +137,8 @@ public class Module extends Subsystem {
 		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle.getRadians())) ? -1 : 1;  //dc: modify to support WPILib Rotation2d constructor
 		mPeriodicIO.targetVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
-				mPeriodicIO.targetVelocity, SwerveConstants.wheelCircumference, SwerveConstants.driveGearRatio);
-		mPeriodicIO.driveDemand = new VoltageOut(rotorSpeed * SwerveConstants.kV)
+				mPeriodicIO.targetVelocity, Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio);
+		mPeriodicIO.driveDemand = new VoltageOut(rotorSpeed * Constants.Swerve.kV)
 				.withEnableFOC(true)
 				.withOverrideBrakeDurNeutral(false);
 	}
@@ -149,8 +148,8 @@ public class Module extends Subsystem {
 		mPeriodicIO.targetVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
 				mPeriodicIO.targetVelocity,
-				Constants.SwerveConstants.wheelCircumference,
-				Constants.SwerveConstants.driveGearRatio);
+				Constants.Swerve.wheelCircumference,
+				Constants.Swerve.driveGearRatio);
 
 		if (Math.abs(rotorSpeed) < 0.002) {
 			mPeriodicIO.driveDemand = new NeutralOut();
@@ -187,7 +186,7 @@ public class Module extends Subsystem {
 	private double target_angle;
 
 	private void setSteeringAngleRaw(double angleDegrees) {
-		double rotorPosition = Conversions.degreesToRotation(angleDegrees, SwerveConstants.angleGearRatio);
+		double rotorPosition = Conversions.degreesToRotation(angleDegrees, Constants.Swerve.angleGearRatio);
 //		mPeriodicIO.rotationDemand = new PositionDutyCycle(rotorPosition, 0.0, true, 0.0, 0, false, false, false);
 		mPeriodicIO.rotationDemand = new PositionDutyCycle(rotorPosition);//dc: todo: check if the new constructor uses the same values for parameters deprecated from old version, as above
 		SmartDashboard.putNumber("Drive/Module#" + kModuleNumber +"/AngleMotor/DemandAngle", angleDegrees);
@@ -209,7 +208,7 @@ public class Module extends Subsystem {
  		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutMs);
 		double angle = Util.placeInAppropriate0To360Scope(
 				getCurrentUnboundedDegrees(), -(getCanCoder().getDegrees() - kAngleOffset)); //see above comments foor the negate operation
-		double absolutePosition = Conversions.degreesToRotation(angle, SwerveConstants.angleGearRatio);
+		double absolutePosition = Conversions.degreesToRotation(angle, Constants.Swerve.angleGearRatio);
 		//reset CANcoder reading to relative angle to Zero position, does NOT move motor
 		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.setPosition(absolutePosition, Constants.kLongCANTimeoutMs));
 	}
@@ -314,19 +313,19 @@ public class Module extends Subsystem {
 	public double getCurrentVelocity() {
 		return Conversions.RPSToMPS(
 				mPeriodicIO.driveVelocity,
-				Constants.SwerveConstants.wheelCircumference,
-				Constants.SwerveConstants.driveGearRatio);
+				Constants.Swerve.wheelCircumference,
+				Constants.Swerve.driveGearRatio);
 	}
 
 	public double getDriveDistanceMeters() {
 		return Conversions.rotationsToMeters(
 				mPeriodicIO.drivePosition,
-				Constants.SwerveConstants.wheelCircumference,
-				Constants.SwerveConstants.driveGearRatio);
+				Constants.Swerve.wheelCircumference,
+				Constants.Swerve.driveGearRatio);
 	}
 
 	public double getCurrentUnboundedDegrees() {
-		return Conversions.rotationsToDegrees(mPeriodicIO.rotationPosition, SwerveConstants.angleGearRatio);
+		return Conversions.rotationsToDegrees(mPeriodicIO.rotationPosition, Constants.Swerve.angleGearRatio);
 	}
 
 	public double getTimestamp() {

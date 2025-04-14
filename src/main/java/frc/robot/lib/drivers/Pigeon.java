@@ -29,7 +29,7 @@ public class Pigeon {
 	private final Pigeon2 mGyro;
 
 	// Configs
-	private boolean inverted = Constants.SwerveConstants.invertGyro;
+	private boolean inverted = Constants.Swerve.invertGyro;
 	private Rotation2d yawAdjustmentAngle = new Rotation2d();
 	private Rotation2d rollAdjustmentAngle = new Rotation2d();
 	private Rotation2d pitchAdjustmentAngle = new Rotation2d();
