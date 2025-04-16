@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
-import frc.robot.Loops.ILooper;
-import frc.robot.Loops.Loop;
+import frc.robot.lib.Loops.ILooper;
+import frc.robot.lib.Loops.Loop;
 public class ExampleSubsystem extends Subsystem {
 
 	private static ExampleSubsystem m_Instance;

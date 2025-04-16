@@ -1,4 +1,4 @@
-package frc.robot.lib.util;
+package frc.robot.lib.util.interpolation;
 
 /**
  * A Double that can be interpolated using the InterpolatingTreeMap.
@@ -14,7 +14,7 @@ public class InterpolatingDouble implements Interpolable<InterpolatingDouble>, I
     }
 
     @Override
-    public InterpolatingDouble Interpolate(InterpolatingDouble other, double x) {
+    public InterpolatingDouble interpolate(InterpolatingDouble other, double x) {
         Double dydx = other.value - value;
         Double searchY = dydx * x + value;
         return new InterpolatingDouble(searchY);

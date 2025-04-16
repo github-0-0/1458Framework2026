@@ -1,8 +1,7 @@
-package frc.robot.Loops;
+package frc.robot.lib.Loops;
 
 import frc.robot.Constants;
 
-//import frc.lib.Notifier;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

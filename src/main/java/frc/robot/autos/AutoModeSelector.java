@@ -18,8 +18,8 @@ public class AutoModeSelector {
 	private static SendableChooser<DesiredMode> mModeChooser = new SendableChooser<>();
 
 	public AutoModeSelector() {
-		mModeChooser.addOption("AutoMode3", DesiredMode.TESTAUTOMODE);
-		mModeChooser.setDefaultOption("AutoMode3", DesiredMode.TESTAUTOMODE);
+		mModeChooser.addOption("AutoMode", DesiredMode.TESTAUTOMODE);
+		mModeChooser.setDefaultOption("AutoMode", DesiredMode.TESTAUTOMODE);
 		SmartDashboard.putData("Auto Mode", mModeChooser);
 	}
 

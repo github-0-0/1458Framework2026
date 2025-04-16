@@ -1,4 +1,4 @@
-package frc.robot.Loops;
+package frc.robot.lib.Loops;
 
 /**
  * Interface for loops, which are routine that run periodically in the robot code (such as periodic gyroscope

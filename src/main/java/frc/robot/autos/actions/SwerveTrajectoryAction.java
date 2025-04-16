@@ -12,11 +12,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 public class SwerveTrajectoryAction implements Action {
+	private static final double kEpsilon = 0.05; //Meters per second
 	private Drive mDrive = null;
 	private TrajectoryIterator mTrajectory;
 	private final PathPlannerTrajectory kTrajectory;
 	private ResetWheelTracker mResetWheelTracker = ResetWheelTracker.NO;
-	String name = null;
+
+	private String name = null;
 	public enum ResetWheelTracker {
 		SET_TO_STARTING_POS,
 		SET_TO_ZERO,
@@ -103,6 +105,8 @@ public class SwerveTrajectoryAction implements Action {
 
 	@Override
 	public void done() {
-		mDrive.stop();
+		if (mTrajectory.getLastPoint().velocityMetersPerSecond < kEpsilon) {
+			mDrive.stop();
+		}
 	}
 }

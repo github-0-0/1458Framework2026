@@ -10,11 +10,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.RobotState;
+import frc.robot.lib.control.PIDV;
+import frc.robot.lib.control.ProfiledPIDV;
+import frc.robot.lib.swerve.COTSTalonFXSwerveConstants.SDS.MK3.driveRatios;
 import frc.robot.lib.trajectory.TrajectoryIterator;
-import frc.robot.lib.util.PIDV;
-import frc.robot.lib.util.ProfiledPIDV;
 
-public class AdvancedHolonomicDriveController implements DriveController {
+public class PIDHolonomicDriveController implements DriveController {
     private final PIDV xController;
     private final PIDV yController;
 
@@ -32,9 +33,7 @@ public class AdvancedHolonomicDriveController implements DriveController {
 
     private RobotState mRobotState = RobotState.getInstance();
 
-    public AdvancedHolonomicDriveController(PIDConstants translationConstants, PIDConstants rotationConstants, TrapezoidProfile.Constraints thetaConstraints) {
-        //this.translationKa = ka;
-
+    public PIDHolonomicDriveController(PIDConstants translationConstants, PIDConstants rotationConstants, TrapezoidProfile.Constraints thetaConstraints) {
         xController = new PIDV(
                 translationConstants.kP, translationConstants.kI, translationConstants.kD, 0.02);
         yController = new PIDV(
@@ -53,6 +52,7 @@ public class AdvancedHolonomicDriveController implements DriveController {
     public void setTrajectory(TrajectoryIterator trajectory) {
         this.trajectory = trajectory;
         prevTime = Timer.getFPGATimestamp();
+        this.trajectory.visualizeTrajectory();
     }
 
     public void setRobotState(Pose2d pose, Twist2d speeds) {
@@ -112,6 +112,10 @@ public class AdvancedHolonomicDriveController implements DriveController {
 
     @Override
     public boolean isDone() {
-        return trajectory == null || trajectory.isDone();
+        if (trajectory == null || trajectory.isDone()) {
+            System.out.println("Done with trajectory, error: " + Math.hypot(xController.getPositionError(), yController.getPositionError()));
+            return true;
+        }
+        return false;
     }
 }

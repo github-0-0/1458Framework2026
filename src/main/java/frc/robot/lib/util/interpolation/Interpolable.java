@@ -1,4 +1,4 @@
-package frc.robot.lib.util;
+package frc.robot.lib.util.interpolation;
 
 /**
  * Interpolable is an interface used by an Interpolating Tree as the Value type. Given two end points and an
@@ -18,5 +18,5 @@ public interface Interpolable<T> {
      * @return Interpolable<T> The estimated average between the surrounding data
      */
 
-    public T Interpolate(T other, double x); //note that this is capitalized because i needed it to different to run for some reason, have fun :skull:
+    public T interpolate(T other, double x); //note that this is capitalized because i needed it to different to run for some reason, have fun :skull:
 }

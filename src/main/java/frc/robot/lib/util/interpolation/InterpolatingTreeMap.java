@@ -1,4 +1,4 @@
-package frc.robot.lib.util;
+package frc.robot.lib.util.interpolation;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -75,7 +75,7 @@ public class InterpolatingTreeMap<K extends InverseInterpolable<K> & Comparable<
             // get surrounding values for interpolation
             V topElem = get(topBound);
             V bottomElem = get(bottomBound);
-            return bottomElem.Interpolate(topElem, bottomBound.inverseInterpolate(topBound, key));
+            return bottomElem.interpolate(topElem, bottomBound.inverseInterpolate(topBound, key));
         } else {
             return gotval;
         }

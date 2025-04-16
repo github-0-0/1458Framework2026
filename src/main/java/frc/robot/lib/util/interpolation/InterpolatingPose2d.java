@@ -1,4 +1,4 @@
-package frc.robot.lib.util;
+package frc.robot.lib.util.interpolation;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -33,7 +33,7 @@ public class InterpolatingPose2d extends Pose2d implements Interpolable<Interpol
      * @param x The interpolation factor (0.0 = this pose, 1.0 = other pose).
      * @return The interpolated pose.
      */
-    public InterpolatingPose2d Interpolate(final InterpolatingPose2d other, double x) {
+    public InterpolatingPose2d interpolate(final InterpolatingPose2d other, double x) {
         if (x <= 0) {
             return new InterpolatingPose2d(this);
         } else if (x >= 1) {

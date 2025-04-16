@@ -1,5 +1,5 @@
 package frc.robot.subsystems;
-import frc.robot.Loops.ILooper;
+import frc.robot.lib.Loops.ILooper;
 /**
  * The Subsystem abstract class, which serves as a basic framework for all robot subsystems. Each subsystem outputs
  * commands to SmartDashboard, has a stop routine (for after each match), and a routine to zero all sensors, which helps

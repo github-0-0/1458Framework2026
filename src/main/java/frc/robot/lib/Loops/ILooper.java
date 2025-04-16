@@ -1,4 +1,4 @@
-package frc.robot.Loops;
+package frc.robot.lib.Loops;
 
 // interface for Looper object
 public interface ILooper {

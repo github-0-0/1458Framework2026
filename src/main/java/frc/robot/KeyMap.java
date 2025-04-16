@@ -61,9 +61,9 @@ public class KeyMap {
                 () -> mTeleopAutoMode.runAction(new EmptyAction()));
         //Bumper
         mXboxController1.leftBumper(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new SnapToTag("LEFTBAR", "ANY")));
+                () -> mTeleopAutoMode.runAction(new SnapToTag("CENTER", "ANY")));
         mXboxController1.rightBumper(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new SnapToTag("RIGHTBAR", "ANY")));
+                () -> mTeleopAutoMode.runAction(new EmptyAction()));
         //Triggers
         mXboxController1.rightTrigger(0.5, m_loop).ifHigh(
                 () -> mTeleopAutoMode.runAction(new EmptyAction()));

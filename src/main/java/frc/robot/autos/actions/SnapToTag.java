@@ -16,21 +16,14 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.RotationTarget;
 import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.apriltag.AprilTag;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.*;
+
 import frc.robot.lib.trajectory.TrajectoryIterator;
 import frc.robot.lib.util.Util;
-import frc.robot.subsystems.Drive;
+
 public class SnapToTag implements Action {
     private PathPlannerPath generatedPath = null;
-	private Drive mDrive = Drive.getInstance();
 
     private Pose2d initialPose = new Pose2d();
     private Twist2d initialSpeed = new Twist2d();
@@ -112,12 +105,8 @@ public class SnapToTag implements Action {
         mTrajectory = generatedPath.getIdealTrajectory(Constants.PathPlannerRobotConfig.config).get();
 
         if (debug) {
-            SmartDashboard.putData(mDrive.m_field);
-            ArrayList<Trajectory.State> temp = new ArrayList<>();
-            for (PathPlannerTrajectoryState s : mTrajectory.getStates()) {
-                temp.add(TrajectoryIterator.fromPathPlannerTrajectoryState(s));
-            }
-            mDrive.m_field.getObject("traj").setTrajectory(new Trajectory(temp));
+            TrajectoryIterator debugIterator = new TrajectoryIterator(mTrajectory);
+            debugIterator.visualizeTrajectory();
         }
 		
         mAction = new SwerveTrajectoryAction(mTrajectory);

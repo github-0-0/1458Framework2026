@@ -29,12 +29,12 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.StateSpaceUtil;
-import frc.robot.lib.util.InterpolatingTreeMap;
-import frc.robot.lib.util.InterpolatingPose2d;
-import frc.robot.lib.util.InterpolatingTranslation2d;
-import frc.robot.lib.util.InterpolatingDouble;
 import frc.robot.lib.util.MovingAverageTwist2d;
 import frc.robot.lib.util.Util;
+import frc.robot.lib.util.interpolation.InterpolatingDouble;
+import frc.robot.lib.util.interpolation.InterpolatingPose2d;
+import frc.robot.lib.util.interpolation.InterpolatingTranslation2d;
+import frc.robot.lib.util.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 

@@ -1,6 +1,6 @@
 package frc.robot.autos;
 
-import frc.robot.Loops.CrashTrackingRunnable;
+import frc.robot.lib.Loops.CrashTrackingRunnable;
 
 /**
  * This class selects, runs, and stops (if necessary) a specified autonomous

@@ -1,9 +1,10 @@
-package frc.robot.lib.util;
+package frc.robot.lib.control;
 
 //dc.10.21.2024 ported from com.team254.lib.util;
 
 import edu.wpi.first.hal.util.BoundaryException;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.lib.util.Util;
 
 /**
  * This class implements a PID Control Loop.

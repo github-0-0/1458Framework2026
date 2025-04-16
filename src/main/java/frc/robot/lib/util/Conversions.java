@@ -1,6 +1,5 @@
 package frc.robot.lib.util;
 
-//dc.10.21.2024, ported from citrus package com.team1678.lib; copy & paste
 
 public class Conversions {
 

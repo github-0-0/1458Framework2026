@@ -23,7 +23,7 @@ import frc.robot.Constants;
 import frc.robot.lib.util.Conversions;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.drivers.Phoenix6Util;
-import frc.robot.lib.util.SwerveModuleConstants;
+import frc.robot.lib.swerve.SwerveModuleConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;

@@ -10,8 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.robot.lib.util.COTSTalonFXSwerveConstants;
-import frc.robot.lib.util.SwerveModuleConstants;
+import frc.robot.lib.swerve.COTSTalonFXSwerveConstants;
+import frc.robot.lib.swerve.SwerveModuleConstants;
 import frc.robot.subsystems.Drive.KinematicLimits;
 import frc.robot.subsystems.vision.VisionDeviceConstants;
 
@@ -102,7 +102,7 @@ public final class Constants {
         /** Meters per Second Squared */
         public static final double maxAcceleration = 3;
         /** Radians per Second */
-        public static final double maxAngularVelocity = 3.14 * 2; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = Math.PI * 3; //TODO: This must be tuned to specific robot
 
         /** Radians per Second Squared */
         public static final double kMaxAngularAcceleration = 720.0;
@@ -147,9 +147,9 @@ public final class Constants {
         public static TalonFXConfiguration AzimuthFXConfig() {
             TalonFXConfiguration config = new TalonFXConfiguration();
 
-            config.Slot0.kP = 0.9;
+            config.Slot0.kP = 2.3;
             config.Slot0.kI = 0.001;
-            config.Slot0.kD = 0.016;
+            config.Slot0.kD = 0.3;
             config.Slot0.kS = 0.0;
             config.Slot0.kV = 0.0;
 
@@ -172,9 +172,9 @@ public final class Constants {
         public static TalonFXConfiguration DriveFXConfig() {
             TalonFXConfiguration config = new TalonFXConfiguration();
 
-            config.Slot0.kP = 0.030 * 12.0;
-            config.Slot0.kI = 0.0;
-            config.Slot0.kD = 0.000000 * 12.0;
+            config.Slot0.kP = 1.2;
+            config.Slot0.kI = 0.05;
+            config.Slot0.kD = 0.1;
             config.Slot0.kS = 0.1;
             config.Slot0.kV = 12 * Math.PI * wheelDiameter / (driveGearRatio * maxSpeed);
 
@@ -248,9 +248,9 @@ public final class Constants {
     }
 
     public static final class Auto { //TODO: This must be tuned to specific robot
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
-        public static final double kPThetaController = 1;
+        public static final double kPXController = 6;
+        public static final double kPYController = 6;
+        public static final double kPThetaController = 4;
     
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
