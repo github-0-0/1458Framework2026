@@ -1,6 +1,5 @@
 package frc.robot.lib.swerve;
 
-//dc.10.21.2024 ported from com.team1678.lib.swerve; copy&paste
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.lib.control.SynchronousPIDF;

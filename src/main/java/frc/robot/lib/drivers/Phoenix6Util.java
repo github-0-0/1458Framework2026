@@ -1,7 +1,6 @@
 package frc.robot.lib.drivers;
 
-//dc.10.21.2024 ported from com.team254.lib.drivers.PhoenixUtil;
-import com.ctre.phoenix.ErrorCode;  //it needs phoenix5 libraries 
+import com.ctre.phoenix.ErrorCode;  
 import com.ctre.phoenix6.StatusCode;
 
 import edu.wpi.first.wpilibj.DriverStation;

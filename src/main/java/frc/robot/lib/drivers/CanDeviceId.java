@@ -1,7 +1,5 @@
 package frc.robot.lib.drivers;
 
-//dc.10.24.2024 the class is ported directly from com.team254.lib.drivers;
-
 public class CanDeviceId {
     private final int mDeviceNumber;
     private final String mBus;

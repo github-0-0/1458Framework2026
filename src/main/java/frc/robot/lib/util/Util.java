@@ -1,7 +1,5 @@
 package frc.robot.lib.util;
 
-//dc.10.21.2024 ported from com.team1678.lib.util.Util class, which is a superset of the same class from team254
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -122,15 +120,6 @@ public class Util {
 		return Math.signum(deadbandedValue) * ((Math.abs(deadbandedValue) - deadband) / (maxValue - deadband));
 	}
 
-/* 
-dc.10.21.2024 commented out because wpilib Rotation2d misses .distance () method 
-	public static boolean shouldReverse(Rotation2d goalAngle, Rotation2d currentAngle) {
-		double angleDifference = Math.abs(goalAngle.distance(currentAngle));
-		double reverseAngleDifference =
-				Math.abs(goalAngle.distance(currentAngle.rotateBy(Rotation2d.fromDegrees(180.0))));
-		return reverseAngleDifference < angleDifference;
-	}
-*/
 	public static Rotation2d robotToFieldRelative(Rotation2d rot, boolean is_red_alliance) {
 		if (is_red_alliance) {
 			return rot.rotateBy(Rotation2d.fromDegrees(180.0));
@@ -196,8 +185,8 @@ dc.10.21.2024 commented out because wpilib Rotation2d misses .distance () method
 		return new Rotation3d(new Quaternion(w, x, y, z)).toRotation2d().getRadians();
 	}
 */
-	/*dc.10.22.2024 add function to implement citrus pose2d.inverse() */
-	public static Pose2d inversePose2d(Pose2d curPose){
+
+	public static Pose2d inversePose2d(Pose2d curPose) {
 		// Invert the rotation
 		Rotation2d inverseRotation = curPose.getRotation().unaryMinus();
 		

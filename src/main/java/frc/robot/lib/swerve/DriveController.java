@@ -1,7 +1,5 @@
 package frc.robot.lib.swerve;
 
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.lib.trajectory.TrajectoryIterator;
 

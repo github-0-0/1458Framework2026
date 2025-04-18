@@ -4,16 +4,13 @@
 
 package frc.robot;
 
-import au.grapplerobotics.CanBridge;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.lib.Loops.Looper;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -62,7 +59,6 @@ public class Robot extends TimedRobot {
 		// and running subsystem periodic() methods.  This must be called from the robot's periodic
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
-		//SmartDashboard.putNumber("Algae Shooter", Laser.getMeasurementAlgaeShooter());
 		m_robotStatePose = RobotState.getInstance().getLatestFieldToVehicle();
 		m_robotStateField.setRobotPose(m_robotStatePose);
 
@@ -94,14 +90,14 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		//initialize container for teleop mode 
-		m_robotContainer.initManualMode();
+		m_robotContainer.initTeleopMode();
 
 	}
 
 	/** This function is called periodically during operator control. */
 	@Override
 	public void teleopPeriodic() {
-		m_robotContainer.manualModePeriodic();  //run the manual mode loop
+		m_robotContainer.teleopModePeriodic();  //run the manual mode loop
 	}
 
 	@Override

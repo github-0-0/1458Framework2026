@@ -68,7 +68,7 @@ public final class Constants {
         public static final double angleCurrentThresholdTime = 0.1;
         public static final boolean angleEnableCurrentLimit = true;
 
-        public static final int driveCurrentLimit = 30; //dc.11.9.24 reduce max current per motor, total current needs to time motor-count(8)
+        public static final int driveCurrentLimit = 30;
         public static final int driveCurrentThreshold = 45; 
         public static final double driveCurrentThresholdTime = 0.1;
         public static final boolean driveEnableCurrentLimit = true;
@@ -303,8 +303,6 @@ public final class Constants {
         public static final int ledStart = 0;
         public static final int ledLength =  117;
     }
-
-    /* dc.10.21.2024 extra constants needed during porting of citrus SwerveModule.java code */
 
     // Timeout constants
 	public static final int kLongCANTimeoutMs = 100;

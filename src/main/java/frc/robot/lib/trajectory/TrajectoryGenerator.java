@@ -1,24 +1,13 @@
 package frc.robot.lib.trajectory;
 
-import edu.wpi.first.math.trajectory.*;
-import edu.wpi.first.util.struct.parser.ParseException;
-import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants;
-import frc.robot.subsystems.ExampleSubsystem;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-import com.pathplanner.lib.util.FileVersionException;
 
-import java.io.File;
-import java.io.IOException;
 
 public class TrajectoryGenerator {
-
     private static TrajectoryGenerator mInstance;
     
 	public static TrajectoryGenerator getInstance() {
@@ -46,6 +35,11 @@ public class TrajectoryGenerator {
         public HashMap<String, PathPlannerTrajectory> set = new HashMap<>();
         public TrajectorySet() {}
 
+        /**
+         * loads a pathplanner trajectory from the deploy folder
+         * @param sJsonFile the path to that trajectory (deploy/pathplanner/paths/)
+         * @return the trajectory
+         */
         public PathPlannerTrajectory loadPathPlannerTrajectory (String sJsonFile) {
             if (set.keySet().contains(sJsonFile)) {
                 return set.get(sJsonFile);
@@ -64,7 +58,10 @@ public class TrajectoryGenerator {
 
     }
 
-    //access to the trajectory set 
+    /**
+     * Access the trajectory set
+     * @return the trajectory set
+     */
 	public TrajectorySet getTrajectorySet() {
 		return mTrajectorySet;
 	}

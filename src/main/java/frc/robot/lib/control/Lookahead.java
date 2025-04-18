@@ -1,7 +1,5 @@
 package frc.robot.lib.control;
 
-//dc.10.21.2024, ported from package com.team254.lib.control; copy & paste
-
 /**
  * A utility class for interpolating lookahead distance based on current speed.
  */

@@ -1,37 +1,27 @@
 package frc.robot.subsystems;
 
-//dc.10.25.2024, ported from com.team1678.frc2024.subsystems.Drive;
+
 
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.Auto;
 import frc.robot.Constants.Swerve;
-import frc.robot.Constants.Swerve;
-/*
-import frc.robot.Constants.Swerve.Mod0;
-import frc.robot.Constants.Swerve.Mod1;
-import frc.robot.Constants.Swerve.Mod2;
-import frc.robot.Constants.Swerve.Mod3;
-*/
 import frc.robot.RobotState;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.util.interpolation.InterpolatingPose2d;
 import frc.robot.lib.Loops.ILooper;
 import frc.robot.lib.Loops.Loop;
 import frc.robot.lib.drivers.Pigeon;
-//TODO: import frc.robot.lib.logger.LogUtil;
 import frc.robot.lib.swerve.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.geometry.Pose2d;
-//TODO:import com.team254.lib.geometry.Pose2dWithMotion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import frc.robot.lib.trajectory.TrajectoryIterator;
-//TODO:import com.team254.lib.trajectory.TimedView;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.Trajectory.State;

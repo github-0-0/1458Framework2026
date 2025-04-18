@@ -1,13 +1,9 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -15,34 +11,21 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.autos.AutoModeBase;
-import frc.robot.autos.AutoModeExecutor;
-import frc.robot.autos.AutoModeSelector;
-import frc.robot.autos.actions.SnapToTag;
+import frc.robot.autos.*;
 import frc.robot.autos.modes.TeleopAutoMode;
-//dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
-//dc.2.11.25, keep Shooter for testing until CoralShooter is verified. 
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.vision.*;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.Loops.CrashTracker;
 import frc.robot.lib.Loops.Looper;
-import frc.robot.lib.trajectory.TrajectoryGenerator;
 /**
- * DC 10.28.2024
- * This class is where the bulk of the robot (for 2025 FRC season) should be
+ * This class is where the bulk of the robot should be
  * declared,
  * while very little robot logic should actually be handled in the {@link Robot}
  * periodic methods. Instead, the structure of the robot (including
  * subsystems, loopers, control button mappings etc) should be declared here.
- *
  */
-
 public class RobotContainer {
     public static boolean is_red_alliance = false;  //TODO: code the update logic for this property
 
@@ -78,13 +61,13 @@ public class RobotContainer {
     // contructor
     public RobotContainer() {
         try {
-            // get instance of subsystems
+            // initialize subsystems
             m_ExampleSubsystem = ExampleSubsystem.getInstance();
             m_SwerveDrive = Drive.getInstance();
             m_Led = LED.getInstance();
             m_VisionDevices = VisionDeviceManager.getInstance();
 
-            // init cancoders
+            // initialize cancoders
             if (Robot.isReal()) {
                 m_Cancoders = Cancoders.getInstance();
                 double startInitTs = Timer.getFPGATimestamp();
@@ -101,12 +84,12 @@ public class RobotContainer {
             if (m_SwerveDrive != null)
                 m_SwerveDrive.resetModulesToAbsolute();
 
-            // add subsystems to its manager
+            // add subsystems to SubsystemManager
             m_SubsystemManager.setSubsystems(
                     m_SwerveDrive,
                     m_ExampleSubsystem,
                     m_VisionDevices
-                    // Insert instances of additional subsystems here
+                    // TODO: Insert instances of additional subsystems here
             );
 
             // register subsystems to loopers
@@ -115,7 +98,7 @@ public class RobotContainer {
 
             RobotState.getInstance().resetKalman();
 
-            // set robot to neutral brake
+            // set swerves to neutral brake
             if (m_SwerveDrive != null)
                 m_SwerveDrive.setNeutralBrake(true);
 
@@ -125,14 +108,20 @@ public class RobotContainer {
         }
     }
 
-    // switch between two loopers
+    /**
+     * Change to using onLooper
+     * @param onLooper the onLooper object
+     * @param offLooper the offLooper object
+     */
     public void switchOnLooper(Looper onLooper, Looper offLooper) {
         offLooper.stop();
         onLooper.start();
     }
 
-    // init manual (teleop) mode
-    public void initManualMode() {
+    /**
+     * Runs at the start of teleop mode
+     */
+    public void initTeleopMode() {
         if (m_AutoModeExecutor != null) 
             m_AutoModeExecutor.stop();  
         
@@ -153,7 +142,21 @@ public class RobotContainer {
         }
     }
 
-    // init auto mode
+    /**
+     * Runs every cycle in teleop mode
+     */
+    public void teleopModePeriodic() {
+        try {
+            m_Controller.processKeyCommand();
+        } catch (Throwable t) {
+            CrashTracker.logThrowableCrash(t);
+            throw t;
+        }
+    }
+
+    /**
+     * Runs at the beginning of autonomous mode
+     */
     public void initAutoMode() {
 		m_AutoModeSelector.reset();
 		m_AutoModeSelector.updateModeCreator(true);
@@ -181,8 +184,10 @@ public class RobotContainer {
             throw t;
         }
     }
-
-    // init diabled  mode
+    
+    /**
+     * Runs at the beginning of disabled mode
+     */
     public void initDisabledMode() {
         if (m_AutoModeExecutor != null) {
             m_AutoModeExecutor.stop();
@@ -196,6 +201,9 @@ public class RobotContainer {
         }
     }
 
+    /**
+     * Runs every cycle in disabled mode
+     */
     public void disabledPeriodicMode() {
         m_Led.rainbowPulse();
         if (foundStation) 
@@ -218,7 +226,7 @@ public class RobotContainer {
         foundStation = true;
     }
 
-    // init manual (teleop) mode
+    
     public void initTestMode() {
         try {
             if (m_AutoModeExecutor != null) {
@@ -230,20 +238,16 @@ public class RobotContainer {
         }
     }
 
-    public void testModePeriodic() {}
-
-    // manual mode periodic callback
-    public void manualModePeriodic() {
-        try {
-            m_Controller.processKeyCommand();
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-
+    public void testModePeriodic() {
+        
     }
-    //init robot for simulation mode
-    private void initSimulation(){
+
+
+
+    /** 
+     * init robot for simulation mode
+    */
+    private void initSimulation() {
         //put robot on the start line  to simulate the actual game
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (!ally.isPresent()){

@@ -12,20 +12,17 @@ import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.lib.control.PIDV;
 import frc.robot.lib.control.ProfiledPIDV;
-import frc.robot.lib.swerve.COTSTalonFXSwerveConstants.SDS.MK3.driveRatios;
 import frc.robot.lib.trajectory.TrajectoryIterator;
 
 public class PIDHolonomicDriveController implements DriveController {
     private final PIDV xController;
     private final PIDV yController;
-
     private final ProfiledPIDV thetaController;
+    private double translationKa;
 
     private TrajectoryIterator trajectory;
     private Pose2d currentPose;
     private ChassisSpeeds currentSpeeds;
-
-    private double translationKa;
 
     private boolean enabled = true;
 

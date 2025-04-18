@@ -38,12 +38,8 @@ import frc.robot.lib.util.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 
-//dc.10.25.2024 TODO: a dummy RobotState class to pass compilation, placeholder for actual implementation
-//priority level 2, for presentation purpose
 public class RobotState {
 	private static RobotState mInstance;
-	//dc.1.29.25, debug code for display pose from vision
-	Field2d field_=new Field2d(); 
 
 	public static RobotState getInstance() {
 		if (mInstance == null) {
@@ -249,7 +245,6 @@ public class RobotState {
 
 	/**
 	 * @return Latest odometry pose.
-	 *         TODO: find replacement of InterpolatingDouble, or port team254 code
 	 */
 	public synchronized Map.Entry<InterpolatingDouble, InterpolatingPose2d> getLatestOdomToVehicle() {
 		return odometry_to_vehicle.lastEntry();

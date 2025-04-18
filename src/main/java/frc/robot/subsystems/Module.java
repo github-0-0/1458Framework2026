@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Volts;
 
-//dc.10.21.2024 ported from com.team1678.lib.swerve;
+
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -18,7 +18,7 @@ import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
-//dc.10.21.2024 replacing with our own/ported classes
+
 import frc.robot.Constants;
 import frc.robot.lib.util.Conversions;
 import frc.robot.lib.util.Util;
@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-//dc.10.21.2024, replace citrus SwerveModuleState with WPILIB version, the same practice as other Victor & Shaji
+
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -67,7 +67,7 @@ public class Module extends Subsystem {
 		public ControlRequest driveDemand;
 	}
 
-	//dc.10.25.2024 replace citrus SwerveModuleConstants with our own. Just need to angleOffset.getRadians, and disregard CancoderID
+
 	public Module(int moduleNumber, SwerveModuleConstants moduleConstants, CANcoder cancoder) {
 		this.kModuleNumber = moduleNumber;
 		kAngleOffset = moduleConstants.angleOffset.getDegrees();	//kAngleOffset is in radians
@@ -94,7 +94,7 @@ public class Module extends Subsystem {
 		mSignals[2] = mAngleMotor.getRotorPosition();
 		mSignals[3] = mAngleMotor.getRotorVelocity();
 
-		//dc. Venka's upgrade simulation code to WPIlib 2025 version.
+
 		mDriveMotorSim = new DCMotorSim(
 			LinearSystemId.createDCMotorSystem(
 				DCMotor.getKrakenX60Foc(1), 0.001, Constants.Swerve.driveGearRatio),
@@ -158,17 +158,13 @@ public class Module extends Subsystem {
 		}
 	}
 
-	/*DC.11.14.24. bugfix to turn wheels in right direction in teleop swerve mode
-	* We need to negate the desired steering angle because position reading of our robot's rotation motor 
-	* increases along clock-wise direction vs. CCW assumed in Kinematic.toSwerveModuleStates() to calculate disired moduleState.angle.
-	* For the same reason, we need to negate setPosition() value in resetToAbsolute() too.
-	*/
+
 	private boolean setSteeringAngleOptimized(Rotation2d steerAngle) {
 		boolean flip = false;
 		final double targetClamped = - steerAngle.getDegrees();//See comments above for the negate operation
 		final double angleUnclamped = getCurrentUnboundedDegrees();
 		final Rotation2d angleClamped = Rotation2d.fromDegrees(angleUnclamped);
-		final Rotation2d relativeAngle = Rotation2d.fromDegrees(targetClamped).rotateBy(angleClamped.unaryMinus()); //dc. replace citrus inverse() with wpilib unaryMinus()
+		final Rotation2d relativeAngle = Rotation2d.fromDegrees(targetClamped).rotateBy(angleClamped.unaryMinus());
 		double relativeDegrees = relativeAngle.getDegrees();
  		if (relativeDegrees > 90.0) {
 			relativeDegrees -= 180.0;
@@ -198,12 +194,7 @@ public class Module extends Subsystem {
 		mDriveMotor.setControl(mPeriodicIO.driveDemand);
 	}
 
-	/*DC.11.14.24. Bugfix for set wheel to straight forward position at teleop init positions
-	* We need to negate setPosition() value because position reading of our robot's rotation motor 
-	* increases along clock-wise direction while CCW assumed in original citrus code. 
-	* So if current position is at the CW side of zero position, it takes a CCW movement (negative delta) 
-	* for motor returns to zero position in setSteeringAngleOptimized; and vice versus. 
-	*/
+
 	public void resetToAbsolute() {
  		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutMs);
 		double angle = Util.placeInAppropriate0To360Scope(

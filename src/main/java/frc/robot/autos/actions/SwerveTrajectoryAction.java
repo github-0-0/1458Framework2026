@@ -51,12 +51,7 @@ public class SwerveTrajectoryAction implements Action {
 		mResetWheelTracker = resetPose;
 		name = key;
 	}
-	//
-	//dc.2.23.25, all constructors MUST call this ultimate constructor.
-	//1. we will flip the trajectory for red side alliance here. 
-	//2. will init properties of the object
-	//TODO: we shal remove mResetWheelTracker and related code.  WheelTracker is reset at proper time during mode initialization  
-	//
+
 	public SwerveTrajectoryAction(PathPlannerTrajectory trajectory, ResetWheelTracker resetPose) {
 		kTrajectory = trajectory;
 		mDrive = Drive.getInstance();

@@ -10,10 +10,6 @@ public class AutoModeExecutor {
 	private AutoModeBase m_auto_mode;
 	private Thread m_thread = null;
 
-	/* 
-	* dc.1.24.2025,bugfix, make all public methods thread safe 
-	*/
-
 	public synchronized void setAutoMode(AutoModeBase new_auto_mode) {
 		m_auto_mode = new_auto_mode;
 	}
