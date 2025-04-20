@@ -18,5 +18,5 @@ public interface Interpolable<T> {
      * @return Interpolable<T> The estimated average between the surrounding data
      */
 
-    public T interpolate(T other, double x); //note that this is capitalized because i needed it to different to run for some reason, have fun :skull:
+    public T Interpolate(T other, double x); //note that this is capitalized because i needed it to different to run for some reason, have fun :skull:
 }

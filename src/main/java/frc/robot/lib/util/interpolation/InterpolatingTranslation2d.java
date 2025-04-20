@@ -27,7 +27,7 @@ public class InterpolatingTranslation2d extends Translation2d implements Interpo
      * @param x     Interpolation factor (0.0 = this translation, 1.0 = other translation).
      * @return The interpolated translation.
      */
-    public InterpolatingTranslation2d interpolate(InterpolatingTranslation2d other, double x) {
+    public InterpolatingTranslation2d Interpolate(InterpolatingTranslation2d other, double x) {
         if (x <= 0) {
             return new InterpolatingTranslation2d(this);
         } else if (x >= 1) {
