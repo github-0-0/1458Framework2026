@@ -104,7 +104,7 @@ public class RobotState {
 	 * Reconstructs Kalman Filter.
 	 */
 	public synchronized void resetKalman() {
-		mKalmanFilter = new ExtendedKalmanFilter<N2, N2, N2>(
+		mKalmanFilter = new ExtendedKalmanFilter<N2, N2, N2> (
 				Nat.N2(), // Dimensions of output (x, y)
 				Nat.N2(), // Dimensions of predicted error shift (dx, dy) (always 0)
 				Nat.N2(), // Dimensions of vision (x, y)

@@ -1,4 +1,4 @@
-package frc.robot.lib.Loops;
+package frc.robot.lib.loops;
 
 // CREDIT - FRC Team 1323
 

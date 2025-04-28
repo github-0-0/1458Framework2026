@@ -1,8 +1,7 @@
 package frc.robot.subsystems;
-import frc.robot.lib.Loops.ILooper;
-import frc.robot.lib.Loops.Loop;
+import frc.robot.lib.loops.ILooper;
+import frc.robot.lib.loops.Loop;
 public class ExampleSubsystem extends Subsystem {
-
 	private static ExampleSubsystem m_Instance;
 
     public static ExampleSubsystem getInstance() {
@@ -19,17 +18,17 @@ public class ExampleSubsystem extends Subsystem {
 
     @Override
 	public void readPeriodicInputs() {
-        //System.out.println("Example Subsystem is reading periodic inputs");
+        //Read inputs here
     }
 
     @Override
 	public void writePeriodicOutputs() {
-        //System.out.println("Example Subsystem is writing periodic outputs");
+        //Write outputs here
     }
 
     @Override
 	public void outputTelemetry() {
-        //System.out.println("Example Subsystem is outputting telemetry");
+        //Output telemetry here
     }
 
     @Override

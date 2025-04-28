@@ -103,11 +103,11 @@ public class TrajectoryIterator {
 
     public void visualizeTrajectory() {
         Drive mDrive = Drive.getInstance();
-        SmartDashboard.putData(mDrive.m_field);
+        SmartDashboard.putData(mDrive.mField);
         ArrayList<Trajectory.State> temp = new ArrayList<>();
         for (PathPlannerTrajectoryState s : mCurrentTrajectory.getStates()) {
             temp.add(TrajectoryIterator.fromPathPlannerTrajectoryState(s));
         }
-        mDrive.m_field.getObject("traj").setTrajectory(new Trajectory(temp));
+        mDrive.mField.getObject("traj").setTrajectory(new Trajectory(temp));
     }
 }

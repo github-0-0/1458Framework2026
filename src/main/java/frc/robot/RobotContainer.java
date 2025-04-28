@@ -16,9 +16,9 @@ import frc.robot.autos.modes.TeleopAutoMode;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.vision.*;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.lib.loops.CrashTracker;
+import frc.robot.lib.loops.Looper;
 import frc.robot.lib.util.Util;
-import frc.robot.lib.Loops.CrashTracker;
-import frc.robot.lib.Loops.Looper;
 /**
  * This class is where the bulk of the robot should be
  * declared,

@@ -1,4 +1,4 @@
-package frc.robot.lib.Loops;
+package frc.robot.lib.loops;
 
 import java.io.FileWriter;
 import java.io.IOException;

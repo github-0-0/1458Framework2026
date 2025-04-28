@@ -23,8 +23,6 @@ import frc.robot.lib.trajectory.TrajectoryIterator;
 import frc.robot.lib.util.Util;
 
 public class SnapToTag implements Action {
-    private PathPlannerPath generatedPath = null;
-
     private Pose2d initialPose = new Pose2d();
     private Twist2d initialSpeed = new Twist2d();
     
@@ -74,42 +72,7 @@ public class SnapToTag implements Action {
         getInitialState();
         getTagPosition();
 
-		generatedPath = new PathPlannerPath(
-			PathPlannerPath.waypointsFromPoses(
-				initialPose,
-				finalPose
-			), List.of(
-				new RotationTarget(0.5, finalPose.getRotation())
-			), List.of(), 
-            List.of(
-				new ConstraintsZone(0.5, 15, 
-					new PathConstraints(Constants.Swerve.maxSpeed, 
-                                        Constants.Swerve.maxAcceleration / 4, 
-                                        Constants.Swerve.maxAngularVelocity, 
-                                        Constants.Swerve.kMaxAngularAcceleration)
-				)
-			), List.of(), 
-			new PathConstraints(Constants.Swerve.maxSpeed, 
-                                Constants.Swerve.maxAcceleration, 
-                                Constants.Swerve.maxAngularVelocity, 
-                                Constants.Swerve.kMaxAngularAcceleration), 
-			new IdealStartingState(Util.twist2dMagnitude(initialSpeed), initialPose.getRotation()), 
-			new GoalEndState(0, finalPose.getRotation()), false);
-
-        if(generatedPath.getAllPathPoints().size() == 1) {
-            mAction = null;
-            System.out.println("Something goofy happened!");
-            return;
-        }
-
-        mTrajectory = generatedPath.getIdealTrajectory(Constants.PathPlannerRobotConfig.config).get();
-
-        if (debug) {
-            TrajectoryIterator debugIterator = new TrajectoryIterator(mTrajectory);
-            debugIterator.visualizeTrajectory();
-        }
-		
-        mAction = new SwerveTrajectoryAction(mTrajectory);
+        mAction = new SnapToPose(finalPose, initialPose, initialSpeed);
         System.out.println("Snap to tag -> " + tag);
     
         mAction.start();
@@ -133,7 +96,6 @@ public class SnapToTag implements Action {
         if (mAction == null) {
             return;
         }
-        System.out.println("Done w snap");
         mAction.done();
     }
 
@@ -157,23 +119,8 @@ public class SnapToTag implements Action {
             tag.pose.getTranslation().toTranslation2d().
             plus(offsets.get(mOffset).rotateBy(aprilTagRotation)),
             aprilTagRotation.minus(new Rotation2d(shouldFlip ? 0.0 : Math.PI)));
-
-    }
-    
-    public Pose2d poseBehind(Pose2d pose, double n) { 
-        return pose.plus(new Transform2d(new Translation2d(-n, 0), new Rotation2d())); 
     }
 
-	public Waypoint withControls(Double prevControlLength, Double prevControlHeading, Translation2d anchor, Double nextControlLength, Double nextControlHeading) {
-		Translation2d prevControlPoint = null;
-		Translation2d nextControlPoint = null;
-
-		if (prevControlLength != null && prevControlHeading != null) 
-			prevControlPoint = anchor.plus(new Translation2d(prevControlLength, Rotation2d.fromDegrees(prevControlHeading)));
-		if (nextControlLength != null && nextControlHeading != null)
-			nextControlPoint = anchor.plus(new Translation2d(nextControlLength, Rotation2d.fromDegrees(nextControlHeading)));
-		return new Waypoint(prevControlPoint, anchor, nextControlPoint);
-	}
     /**
 	 * Default is any
 	 * @param robot_position

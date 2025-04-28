@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.lib.Loops.ILooper;
-import frc.robot.lib.Loops.Loop;
-import frc.robot.lib.Loops.Looper;
+import frc.robot.lib.loops.ILooper;
+import frc.robot.lib.loops.Loop;
+import frc.robot.lib.loops.Looper;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;

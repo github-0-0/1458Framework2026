@@ -1,43 +1,59 @@
 package frc.robot.subsystems;
 
-
-
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.Constants.Auto;
-import frc.robot.Constants.Swerve;
 import frc.robot.RobotState;
 import frc.robot.lib.util.Util;
 import frc.robot.lib.util.interpolation.InterpolatingPose2d;
-import frc.robot.lib.Loops.ILooper;
-import frc.robot.lib.Loops.Loop;
 import frc.robot.lib.drivers.Pigeon;
+import frc.robot.lib.loops.ILooper;
+import frc.robot.lib.loops.Loop;
 import frc.robot.lib.swerve.*;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.geometry.*;
 import frc.robot.lib.trajectory.TrajectoryIterator;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.Trajectory.State;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.math.trajectory.*;
+import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.pathplanner.lib.config.PIDConstants;
 
 public class Drive extends Subsystem {
+	private static Drive mInstance;
+
+	public static Drive getInstance() {
+		if (mInstance == null) {
+			mInstance = new Drive();
+		}
+		return mInstance;
+	}
+
+
+	private PeriodicIO mPeriodicIO = new PeriodicIO();
+	public static class PeriodicIO {
+		// Inputs/Desired States
+		double timestamp;
+		ChassisSpeeds des_chassis_speeds = new ChassisSpeeds();
+		Twist2d measured_velocity = new Twist2d();
+		Rotation2d heading = new Rotation2d();
+		Rotation2d pitch = new Rotation2d();
+
+		// Outputs
+		SwerveModuleState[] des_module_states = new SwerveModuleState[] {
+			new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()
+		};
+		Twist2d predicted_velocity = new Twist2d();
+		Translation2d translational_error = new Translation2d();
+		Rotation2d heading_error = new Rotation2d();
+		Rotation2d heading_setpoint = new Rotation2d();
+	}
+
+	private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
+
 	public enum DriveControlState {
 		FORCE_ORIENT,
 		OPEN_LOOP,
@@ -47,31 +63,22 @@ public class Drive extends Subsystem {
 	}
 
 	public WheelTracker mWheelTracker;
-	public final Field2d m_field = new Field2d();
-	public final Field2d m_field2 = new Field2d();
 	private Pigeon mPigeon = Pigeon.getInstance();
+	public final Field2d mField = new Field2d();
+	public final Field2d mAdvScopeField = new Field2d();
 	public Module[] mModules;
 
-	public double intendedAngle = 0;
-
-	private PeriodicIO mPeriodicIO = new PeriodicIO();
-	private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
-
-	private boolean odometryReset = false;
+	private Rotation2d mTrackingAngle = new Rotation2d();
 
 	private final DriveController mMotionPlanner;
 	private final SwerveHeadingController mHeadingController;
 
+	private boolean odometryReset = false;
 	private Translation2d enableFieldToOdom = null;
-
 	private boolean mOverrideTrajectory = false;
 	private boolean mOverrideHeading = false;
 
-	private Rotation2d mTrackingAngle = new Rotation2d();
-
 	private KinematicLimits mKinematicLimits = Constants.Swerve.kUncappedLimits;
-
-	private static Drive mInstance;
 
 	private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher = NetworkTableInstance.getDefault()
         .getStructArrayTopic("SmartDashboard/Drive/States_Desired", SwerveModuleState.struct).publish();
@@ -81,13 +88,6 @@ public class Drive extends Subsystem {
         .getStructTopic("SmartDashboard/Drive/Rotation", Rotation2d.struct).publish();
     private final StructPublisher<ChassisSpeeds> chassisSpeedsPublisher = NetworkTableInstance.getDefault()
         .getStructTopic("SmartDashboard/Drive/ChassisSpeeds", ChassisSpeeds.struct).publish();
-
-	public static Drive getInstance() {
-		if (mInstance == null) {
-			mInstance = new Drive();
-		}
-		return mInstance;
-	}
 
 	private Drive() {
 		mModules = new Module[] {
@@ -107,8 +107,8 @@ public class Drive extends Subsystem {
 
 		mWheelTracker = new WheelTracker(mModules);
 
-		SmartDashboard.putData("Field", m_field);
-		SmartDashboard.putData("Field2", m_field2);
+		SmartDashboard.putData("Field", mField);
+		SmartDashboard.putData("Field2", mAdvScopeField);
 	}
 
 	public void setKinematicLimits(KinematicLimits newLimits) {
@@ -163,6 +163,7 @@ public class Drive extends Subsystem {
 			mControlState = DriveControlState.VELOCITY;
 		}
 	}
+
 	/**
 	 * Instructs the drivetrain to stabilize heading around target angle.
 	 *
@@ -254,10 +255,10 @@ public class Drive extends Subsystem {
 									new InterpolatingPose2d(mWheelTracker.getRobotPose()),
 									mPeriodicIO.measured_velocity,
 									mPeriodicIO.predicted_velocity);
-					m_field.setRobotPose(mWheelTracker.getRobotPose());//it works i think but i really cant tell
-					Pose2d thign = mWheelTracker.getRobotPose();
-					thign = new Pose2d(thign.getTranslation(), thign.getRotation().times(Math.PI/180));
-					m_field2.setRobotPose(thign);
+					mField.setRobotPose(mWheelTracker.getRobotPose());//it works i think but i really cant tell
+					Pose2d advScopeRotation = mWheelTracker.getRobotPose();
+					advScopeRotation = new Pose2d(advScopeRotation.getTranslation(), advScopeRotation.getRotation().times(Math.PI/180));
+					mAdvScopeField.setRobotPose(advScopeRotation);
 				}
 			}
 
@@ -323,14 +324,10 @@ public class Drive extends Subsystem {
 	 */
 	private void updatePathFollower() {
 		if (mControlState == DriveControlState.PATH_FOLLOWING) {
-			final double now = Timer.getFPGATimestamp();
 			ChassisSpeeds output = mMotionPlanner.calculate();
 			if (output != null) {
 				mPeriodicIO.des_chassis_speeds = output;
 			}
-
-			// mPeriodicIO.translational_error = mMotionPlanner.getTranslationalError();
-			// mPeriodicIO.heading_error = mMotionPlanner.getHeadingError();
 		} else {
 			DriverStation.reportError("Drive is not in path following state", false);
 		}
@@ -435,7 +432,6 @@ public class Drive extends Subsystem {
 		SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/Omega)", wanted_speeds.omegaRadiansPerSecond);
 		SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/vx)", wanted_speeds.vxMetersPerSecond);
 		SmartDashboard.putNumber("Drive/ChassisSpeeds/ToModule/vy)", wanted_speeds.vyMetersPerSecond);
-		
 
 		SwerveDriveKinematics.desaturateWheelSpeeds(real_module_setpoints, Constants.Swerve.maxSpeed);
 
@@ -489,10 +485,9 @@ public class Drive extends Subsystem {
 			mPigeon.updateSimPeriodic(mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
 		}
 
-		m_field.setRobotPose(mWheelTracker.getRobotPose());
+		mField.setRobotPose(mWheelTracker.getRobotPose());
 
 		// Publish swerve module states and rotaton to smartdashboard
-
 		SwerveModuleState[] other = new SwerveModuleState[4];
 		for (int i = 0; i < mPeriodicIO.des_module_states.length; i++) {
 			other[i] = mPeriodicIO.des_module_states[i];
@@ -542,23 +537,7 @@ public class Drive extends Subsystem {
 		return mKinematicLimits;
 	}
 
-	public static class PeriodicIO {
-		// Inputs/Desired States
-		double timestamp;
-		ChassisSpeeds des_chassis_speeds = new ChassisSpeeds(0.0, 0.0, 0.0);//a robot-relative chassisSpeeds object
-		Twist2d measured_velocity = new Twist2d();
-		Rotation2d heading = new Rotation2d();
-		Rotation2d pitch = new Rotation2d();
 
-		// Outputs
-		SwerveModuleState[] des_module_states = new SwerveModuleState[] {
-			new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()
-		};
-		Twist2d predicted_velocity = new Twist2d();
-		Translation2d translational_error = new Translation2d();
-		Rotation2d heading_error = new Rotation2d();
-		Rotation2d heading_setpoint = new Rotation2d();
-	}
 
 	@Override
 	public void outputTelemetry() {

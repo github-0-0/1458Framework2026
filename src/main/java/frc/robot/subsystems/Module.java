@@ -38,7 +38,6 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
-
 public class Module extends Subsystem {
 	private final int kModuleNumber;
 	private final double kAngleOffset;
@@ -134,7 +133,7 @@ public class Module extends Subsystem {
 	}
 
 	public void setOpenLoop(SwerveModuleState desiredState) {
-		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle.getRadians())) ? -1 : 1;  //dc: modify to support WPILib Rotation2d constructor
+		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle.getRadians())) ? -1 : 1;
 		mPeriodicIO.targetVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
 				mPeriodicIO.targetVelocity, Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio);
@@ -183,8 +182,7 @@ public class Module extends Subsystem {
 
 	private void setSteeringAngleRaw(double angleDegrees) {
 		double rotorPosition = Conversions.degreesToRotation(angleDegrees, Constants.Swerve.angleGearRatio);
-//		mPeriodicIO.rotationDemand = new PositionDutyCycle(rotorPosition, 0.0, true, 0.0, 0, false, false, false);
-		mPeriodicIO.rotationDemand = new PositionDutyCycle(rotorPosition);//dc: todo: check if the new constructor uses the same values for parameters deprecated from old version, as above
+		mPeriodicIO.rotationDemand = new PositionDutyCycle(rotorPosition);
 		SmartDashboard.putNumber("Drive/Module#" + kModuleNumber +"/AngleMotor/DemandAngle", angleDegrees);
 	}
 
@@ -198,47 +196,11 @@ public class Module extends Subsystem {
 	public void resetToAbsolute() {
  		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutMs);
 		double angle = Util.placeInAppropriate0To360Scope(
-				getCurrentUnboundedDegrees(), -(getCanCoder().getDegrees() - kAngleOffset)); //see above comments foor the negate operation
+				getCurrentUnboundedDegrees(), -(getCanCoder().getDegrees() - kAngleOffset));
 		double absolutePosition = Conversions.degreesToRotation(angle, Constants.Swerve.angleGearRatio);
-		//reset CANcoder reading to relative angle to Zero position, does NOT move motor
 		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.setPosition(absolutePosition, Constants.kLongCANTimeoutMs));
 	}
 
-/* TODO: TBR, keep the two test functions there for now in case we might need them to debug auto-mode
-	public void straightenWheel() {
-		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutMs);
-		double currAbsPosDegree = getCanCoder().getDegrees();
-		double angle2Turn =  currAbsPosDegree - kAngleOffset;
-		double motor2Rotate = angle2Turn /360 * SwerveConstants.angleGearRatio;
-		double currRotorPos = mAngleMotor.getRotorPosition().getValueAsDouble();
-		double newRotorPos = currRotorPos + motor2Rotate;
-		System.out.println("Module#"+ kModuleNumber+ ".straightenModule(): currAbsPosDegree=" +currAbsPosDegree +",currRotorPos=" +currRotorPos + ", angle2Turn=" + angle2Turn + ", newRotorPos=" + newRotorPos);
-		//mAngleMotor.setControl(new PositionDutyCycle(newRotorPos, 0.0, true, 0.0, 0, false, false, false));
-		{//TODO: streamline calls used by loop in one function to verify behavior without the cycling. clean up after debug,
-			mAngleMotor.setPosition(-motor2Rotate, Constants.kLongCANTimeoutMs);
-			try{Thread.sleep(50);}catch(Exception e){}//need to wait 100ms for sensor signal to update back
-			refreshSignals(); //update rotationPosition signal
-			SmartDashboard.putString("Mod#"+kModuleNumber +" straightenWheel (curr, zero)",
-					String.format("(%.2f,%.2f)", currAbsPosDegree, kAngleOffset));
-//			SmartDashboard.putString("Mod#"+kModuleNumber +" rotatorPosition (before, after), and turn-wheel degree StraightenWheel().setPosition()",
-//					String.format("(%.2f,%.2f,%.2f)", currRotorPos, mAngleMotor.getRotorPosition().getValueAsDouble(), angle2Turn));
-//			SmartDashboard.putString("Mod#"+kModuleNumber +"StraightenWheel() mPeriodicIO.rotationPosition",
-//					String.format("(%.5f)", mPeriodicIO.rotationPosition));
-			Rotation2d targetDegree=Rotation2d.fromDegrees(0.0);
-			setSteeringAngleOptimized(targetDegree);
-			mAngleMotor.setControl(mPeriodicIO.rotationDemand);
-		}
-	}
-
-	//TODO: debug swerve function, TBR
-	public void swerveModule (Rotation2d swerveAngle){
-		refreshSignals();
-		SmartDashboard.putString("Mod#" + kModuleNumber + " swerveModule() (currAngle, swerveAngle)",
-			String.format("%.2f,%.2f",getCurrentUnboundedDegrees(), swerveAngle.getDegrees()));
-		setSteeringAngleOptimized(swerveAngle);
-		mAngleMotor.setControl(mPeriodicIO.rotationDemand);
-	}
-*/
 	public void setDriveNeutralBrake(boolean wantBrake) {
 		TalonFXConfiguration t = new TalonFXConfiguration();
 		mDriveMotor.getConfigurator().refresh(t);
