@@ -47,7 +47,7 @@ public class TrajectoryGenerator {
                 try {
                         PathPlannerPath path = PathPlannerPath.fromPathFile(sJsonFile);
                         System.out.println("Trajectory loaded successfully: " + sJsonFile);
-                        return path.getIdealTrajectory(Constants.PathPlannerRobotConfig.config).get();
+                        return path.getIdealTrajectory(Constants.PathPlannerRobotConfig.CONFIG).get();
                     
                 } catch (Exception e) {
                     System.out.println("Trajectory loaded failed! =" + sJsonFile + ";err=" + e);

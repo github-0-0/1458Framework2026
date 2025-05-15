@@ -66,16 +66,16 @@ public class SnapToPose implements Action {
 			), List.of(), 
             List.of(
 				new ConstraintsZone(0.5, Double.MAX_VALUE, 
-					new PathConstraints(Constants.Swerve.maxSpeed, 
-                                        Constants.Swerve.maxAcceleration / 4, 
-                                        Constants.Swerve.maxAngularVelocity, 
-                                        Constants.Swerve.kMaxAngularAcceleration)
+					new PathConstraints(Constants.Swerve.MAX_SPEED, 
+                                        Constants.Swerve.MAX_ACCELERATION / 4, 
+                                        Constants.Swerve.MAX_ANGULAR_VELOCITY, 
+                                        Constants.Swerve.MAX_ANGULAR_ACCELERATION)
 				)
 			), List.of(), 
-			new PathConstraints(Constants.Swerve.maxSpeed, 
-                                Constants.Swerve.maxAcceleration, 
-                                Constants.Swerve.maxAngularVelocity, 
-                                Constants.Swerve.kMaxAngularAcceleration), 
+			new PathConstraints(Constants.Swerve.MAX_SPEED, 
+                                Constants.Swerve.MAX_ACCELERATION, 
+                                Constants.Swerve.MAX_ANGULAR_VELOCITY, 
+                                Constants.Swerve.MAX_ANGULAR_ACCELERATION), 
 			new IdealStartingState(Util.twist2dMagnitude(initialSpeed), initialPose.getRotation()), 
 			new GoalEndState(0, finalPose.getRotation()), false);
 
@@ -85,7 +85,7 @@ public class SnapToPose implements Action {
             return;
         }
 
-        mTrajectory = generatedPath.getIdealTrajectory(Constants.PathPlannerRobotConfig.config).get();
+        mTrajectory = generatedPath.getIdealTrajectory(Constants.PathPlannerRobotConfig.CONFIG).get();
 
         if (debug) {
             TrajectoryIterator debugIterator = new TrajectoryIterator(mTrajectory);
@@ -121,8 +121,8 @@ public class SnapToPose implements Action {
     }
 
     private void getInitialState() {
-        initialSpeed = RobotState.getInstance().getSmoothedVelocity();
-        initialPose = RobotState.getInstance().getLatestFieldToVehicle();
+        initialSpeed = RobotState.getSmoothedVelocity();
+        initialPose = RobotState.getLatestFieldToVehicle();
     }
     
     public Pose2d poseBehind(Pose2d pose, double n) { 

@@ -59,7 +59,7 @@ public class PurePursuitDriveController implements DriveController {
 				kAdaptivePathMinLookaheadDistance,
 				kAdaptivePathMaxLookaheadDistance,
 				0.0,
-				Constants.Swerve.maxAutoSpeed);
+				Constants.Swerve.MAX_AUTO_SPEED);
 		mCurrentTrajectoryLength =
 				mCurrentTrajectory.trajectory().getTotalTimeSeconds();
     }
@@ -78,7 +78,7 @@ public class PurePursuitDriveController implements DriveController {
 	 */
 	public ChassisSpeeds calculate() {
 		double timestamp = Timer.getFPGATimestamp();
-		Pose2d current_pose = RobotState.getInstance().getLatestFieldToVehicle();
+		Pose2d current_pose = RobotState.getLatestFieldToVehicle();
 		if (mCurrentTrajectory == null) return null;
 		if (!Double.isFinite(mLastTime)) mLastTime = timestamp;
 		mDt = timestamp - mLastTime;
@@ -129,7 +129,7 @@ public class PurePursuitDriveController implements DriveController {
 
     @Override
     public boolean isDone() {
-		Pose2d currPose = RobotState.getInstance().getLatestFieldToVehicle();
+		Pose2d currPose = RobotState.getLatestFieldToVehicle();
 		if (mCurrentTrajectory != null){
 			if (mCurrentTrajectory.getRemainingProgress()<0.3){
 				Trajectory.State endPoint = mCurrentTrajectory.getLastPoint();
@@ -170,7 +170,7 @@ public class PurePursuitDriveController implements DriveController {
 
 		steeringDirection = steeringDirection.rotateBy(Util.inversePose2d(current_pose).getRotation());
 
-		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond + lookahead_state.velocityMetersPerSecond) /2.0/ Constants.Swerve.maxAutoSpeed; 
+		double normalizedSpeed = Math.abs(mSetpoint.velocityMetersPerSecond + lookahead_state.velocityMetersPerSecond) /2.0/ Constants.Swerve.MAX_AUTO_SPEED; 
 
 		if (normalizedSpeed > defaultCook || mSetpoint.timeSeconds > mCurrentTrajectoryLength / 2) {
 			useDefaultCook = false;
@@ -184,15 +184,15 @@ public class PurePursuitDriveController implements DriveController {
 		SmartDashboard.putNumber("PurePursuit/CurrDelta",currPoseRotationDelta.getRadians());
 		
 		double trueOmegaRadiansPerSecond = (lookaheadTranslation.getNorm() > kAdaptivePathMinLookaheadDistance) ? 
-			currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed * Constants.Swerve.maxAutoSpeed : 
+			currPoseRotationDelta.getRadians() / lookaheadTranslation.getNorm() * normalizedSpeed * Constants.Swerve.MAX_AUTO_SPEED : 
 			(mCurrentTrajectory.getRemainingProgress() > 0.0) ? currPoseRotationDelta.getRadians() / mCurrentTrajectory.getRemainingProgress() :
 			mCurrentTrajectory.getLastPoint().poseMeters.getRotation().minus(current_pose.getRotation()).getRadians() * 3;
-		trueOmegaRadiansPerSecond = Math.min(trueOmegaRadiansPerSecond, Constants.Swerve.maxAngularVelocity);		
-		trueOmegaRadiansPerSecond = Math.max(trueOmegaRadiansPerSecond, -Constants.Swerve.maxAngularVelocity);
+		trueOmegaRadiansPerSecond = Math.min(trueOmegaRadiansPerSecond, Constants.Swerve.MAX_ANGULAR_VELOCITY);		
+		trueOmegaRadiansPerSecond = Math.max(trueOmegaRadiansPerSecond, -Constants.Swerve.MAX_ANGULAR_VELOCITY);
 
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
-				steeringVector.getX() * Constants.Swerve.maxAutoSpeed,
-				steeringVector.getY() * Constants.Swerve.maxAutoSpeed,
+				steeringVector.getX() * Constants.Swerve.MAX_AUTO_SPEED,
+				steeringVector.getY() * Constants.Swerve.MAX_AUTO_SPEED,
 				trueOmegaRadiansPerSecond);
 
 		chassisSpeeds.vxMetersPerSecond = chassisSpeeds.vxMetersPerSecond

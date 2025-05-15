@@ -11,6 +11,10 @@ public class ExampleSubsystem extends Subsystem {
 		return m_Instance;
 	}
 
+	public enum State {
+
+	}
+
     @Override
 	public void writeToLog() {
 
@@ -33,21 +37,16 @@ public class ExampleSubsystem extends Subsystem {
 
     @Override
 	public void registerEnabledLoops(ILooper enabledLooper) {
-        enabledLooper.register(new Loop() {
+		//Manipulate states here
+		enabledLooper.register(new Loop() {
 			@Override
-			public void onStart(double timestamp) {
-				//System.out.println("DummySubsystem loop has started");
-			}
+			public void onStart(double timestamp) {}
 
 			@Override
-			public void onLoop(double timestamp) {
-                //System.out.println("on looped");
-			}
+			public void onLoop(double timestamp) {}
 
 			@Override
-			public void onStop(double timestamp) {
-				//System.out.println("DummySubsystem loop has stopped");
-            }
+			public void onStop(double timestamp) {}
 		});
     }
 

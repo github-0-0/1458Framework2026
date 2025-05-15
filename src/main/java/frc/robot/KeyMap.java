@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.vision.VisionDeviceManager;
 import frc.robot.autos.actions.*;
-import frc.robot.autos.modes.TeleopAutoMode;
 import frc.robot.lib.util.Util;
 
 /**
@@ -24,7 +23,7 @@ import frc.robot.lib.util.Util;
  */
 public class KeyMap {
     private XboxController mXboxController1 = null;
-    private TeleopAutoMode mTeleopAutoMode = null;
+    private TeleopActionExecutor mTeleopActionExecutor = null;
     private Joystick m_JoyStick = null;
     private Drive m_SwerveDrive = null;
     private VisionDeviceManager m_VisionDevices = null;
@@ -40,37 +39,38 @@ public class KeyMap {
 
     public KeyMap(
         XboxController xboxController1, 
-        TeleopAutoMode teleopAutoMode,
+        TeleopActionExecutor teleopAutoMode,
         Joystick joystick
     ) {
         mXboxController1 = xboxController1;
-        mTeleopAutoMode = teleopAutoMode;
+        mTeleopActionExecutor = teleopAutoMode;
         m_JoyStick = joystick;
         m_SwerveDrive = Drive.getInstance();
         m_VisionDevices = VisionDeviceManager.getInstance();
         m_LED = LED.getInstance();
+        
         //XYAB
         mXboxController1.a(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new EmptyAction()));
+                () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         mXboxController1.b(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new EmptyAction()));
+                () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         mXboxController1.x(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new EmptyAction()));
+                () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         mXboxController1.y(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new EmptyAction()));
+                () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         //Bumper
         mXboxController1.leftBumper(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new SnapToTag("CENTER", "ANY")));
+                () -> mTeleopActionExecutor.runAction(new SnapToTag("CENTER", "ANY")));
         mXboxController1.rightBumper(m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new EmptyAction()));
+                () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         //Triggers
         mXboxController1.rightTrigger(0.5, m_loop).ifHigh(
-                () -> mTeleopAutoMode.runAction(new EmptyAction()));
+                () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         mXboxController1.leftTrigger(0.5, m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new EmptyAction()));
+                () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         //Misc
         mXboxController1.button(7, m_loop).rising().ifHigh(
-                () -> mTeleopAutoMode.runAction(new EmptyAction()));
+                () -> mTeleopActionExecutor.runAction(new EmptyAction()));
 
         mXboxController1.start(m_loop).ifHigh(
                 () -> isFieldRelative = !isFieldRelative
@@ -78,17 +78,17 @@ public class KeyMap {
     }
 
     public void processKeyCommand() {
-        if (mTeleopAutoMode == null)
+        if (mTeleopActionExecutor == null)
             return;
 
         m_loop.poll();
 
-        double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.stickDeadband)
-                * Constants.Swerve.maxSpeed;
-        double strafeVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.stickDeadband)
-                * Constants.Swerve.maxSpeed;
-        double rotationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.stickDeadband)
-                * Constants.Swerve.maxAngularVelocity;
+        double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.STICK_DEADBAND)
+                * Constants.Swerve.MAX_SPEED;
+        double strafeVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.STICK_DEADBAND)
+                * Constants.Swerve.MAX_SPEED;
+        double rotationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.STICK_DEADBAND)
+                * Constants.Swerve.MAX_ANGULAR_VELOCITY;
 
         if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
             translationVal = -translationVal;
@@ -117,17 +117,5 @@ public class KeyMap {
                         translationVal, strafeVal, rotationVal));
             }
         }
-
-        Twist2d velocity = RobotState.getInstance().getMeasuredVelocity();
-
-        if (m_VisionDevices.inRange() &&
-                Math.sqrt(Math.pow(velocity.dx, 2) + Math.pow(velocity.dy, 2)) < 1) {
-            mXboxController1.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
-            m_LED.green();
-        } else {
-            mXboxController1.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
-            m_LED.red();
-        }
-
     }
 }

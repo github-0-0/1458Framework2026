@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
 		// and running subsystem periodic() methods.  This must be called from the robot's periodic
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
-		m_robotStatePose = RobotState.getInstance().getLatestFieldToVehicle();
+		m_robotStatePose = RobotState.getLatestFieldToVehicle();
 		m_robotStateField.setRobotPose(m_robotStatePose);
 
 		SmartDashboard.putData("Robot State", m_robotStateField);
@@ -109,5 +109,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		m_robotContainer.testModePeriodic();
+	}
+
+	@Override
+	public void simulationInit() {
+		m_robotContainer.initSimulation();
+	}
+
+	@Override
+	public void simulationPeriodic() {
+		m_robotContainer.simulationPeriodic();
 	}
 }

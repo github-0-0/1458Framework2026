@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.lib.control;
 
 import edu.wpi.first.math.MathSharedStore;
@@ -16,49 +12,47 @@ public class PIDV implements Sendable, AutoCloseable {
     private static int instances;
 
     // Factor for "proportional" control
-    private double m_kp;
+    private double kP;
 
     // Factor for "integral" control
-    private double m_ki;
+    private double kI;
 
     // Factor for "derivative" control
-    private double m_kd;
+    private double kD;
 
     // The error range where "integral" control applies
-    private double m_iZone = Double.POSITIVE_INFINITY;
+    private double mIZone = Double.POSITIVE_INFINITY;
 
     // The period (in seconds) of the loop that calls the controller
     private final double m_period;
 
-    private double m_maximumIntegral = 1.0;
+    private double mMaxIntegral = 1.0;
+    private double mMinIntegral = -1.0;
 
-    private double m_minimumIntegral = -1.0;
-
-    private double m_maximumInput;
-
-    private double m_minimumInput;
+    private double mMaxInput;
+    private double mMinInput;
 
     // Do the endpoints wrap around? e.g. Absolute encoder
-    private boolean m_continuous;
+    private boolean mContinuous;
 
     // The error at the time of the most recent call to calculate()
-    private double m_positionError;
-    private double m_velocityError;
+    private double mPosError;
+    private double mVelError;
 
     // The sum of the errors for use in the integral calc
-    private double m_totalError;
+    private double mTotalError;
 
     // The error that is considered at setpoint.
-    private double m_positionTolerance = 0.05;
-    private double m_velocityTolerance = Double.POSITIVE_INFINITY;
+    private double mPosTolerance = 0.05;
+    private double mVelTolerance = Double.POSITIVE_INFINITY;
 
-    private double m_setpoint;
-    private double m_setpointVelocity;
-    private double m_measurement;
-    private double m_measurementVelocity;;
+    private double mSetpoint;
+    private double mSetpointVel;
+    private double mMeasurement;
+    private double mMeasurementVel;
 
-    private boolean m_haveMeasurement;
-    private boolean m_haveSetpoint;
+    private boolean mHaveMeasurement;
+    private boolean mHaveSetpoint;
 
     /**
      * Allocates a PIDController with the given constants for kp, ki, and kd and a
@@ -90,9 +84,9 @@ public class PIDV implements Sendable, AutoCloseable {
      */
     @SuppressWarnings("this-escape")
     public PIDV(double kp, double ki, double kd, double period) {
-        m_kp = kp;
-        m_ki = ki;
-        m_kd = kd;
+        kP = kp;
+        kI = ki;
+        kD = kd;
 
         if (kp < 0.0) {
             throw new IllegalArgumentException("Kp must be a non-negative number!");
@@ -130,9 +124,9 @@ public class PIDV implements Sendable, AutoCloseable {
      * @param kd The derivative coefficient.
      */
     public void setPID(double kp, double ki, double kd) {
-        m_kp = kp;
-        m_ki = ki;
-        m_kd = kd;
+        kP = kp;
+        kI = ki;
+        kD = kd;
     }
 
     /**
@@ -141,7 +135,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @param kp The proportional coefficient. Must be &gt;= 0.
      */
     public void setP(double kp) {
-        m_kp = kp;
+        kP = kp;
     }
 
     /**
@@ -150,7 +144,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @param ki The integral coefficient. Must be &gt;= 0.
      */
     public void setI(double ki) {
-        m_ki = ki;
+        kI = ki;
     }
 
     /**
@@ -159,7 +153,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @param kd The differential coefficient. Must be &gt;= 0.
      */
     public void setD(double kd) {
-        m_kd = kd;
+        kD = kd;
     }
 
     /**
@@ -180,7 +174,7 @@ public class PIDV implements Sendable, AutoCloseable {
         if (iZone < 0) {
             throw new IllegalArgumentException("IZone must be a non-negative number!");
         }
-        m_iZone = iZone;
+        mIZone = iZone;
     }
 
     /**
@@ -189,7 +183,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return proportional coefficient
      */
     public double getP() {
-        return m_kp;
+        return kP;
     }
 
     /**
@@ -198,7 +192,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return integral coefficient
      */
     public double getI() {
-        return m_ki;
+        return kI;
     }
 
     /**
@@ -207,7 +201,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return differential coefficient
      */
     public double getD() {
-        return m_kd;
+        return kD;
     }
 
     /**
@@ -216,7 +210,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return Maximum magnitude of error to allow integral control.
      */
     public double getIZone() {
-        return m_iZone;
+        return mIZone;
     }
 
     /**
@@ -234,7 +228,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return the position tolerance of the controller.
      */
     public double getPositionTolerance() {
-        return m_positionTolerance;
+        return mPosTolerance;
     }
 
     /**
@@ -243,7 +237,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return the velocity tolerance of the controller.
      */
     public double getVelocityTolerance() {
-        return m_velocityTolerance;
+        return mVelTolerance;
     }
 
     /**
@@ -252,18 +246,18 @@ public class PIDV implements Sendable, AutoCloseable {
      * @param setpoint The desired setpoint.
      */
     public void setSetpoint(double setpoint, double setpointVelocity) {
-        m_setpoint = setpoint;
-        m_setpointVelocity = setpointVelocity;
-        m_haveSetpoint = true;
+        mSetpoint = setpoint;
+        mSetpointVel = setpointVelocity;
+        mHaveSetpoint = true;
 
-        if (m_continuous) {
-            double errorBound = (m_maximumInput - m_minimumInput) / 2.0;
-            m_positionError = MathUtil.inputModulus(m_setpoint - m_measurement, -errorBound, errorBound);
+        if (mContinuous) {
+            double errorBound = (mMaxInput - mMinInput) / 2.0;
+            mPosError = MathUtil.inputModulus(mSetpoint - mMeasurement, -errorBound, errorBound);
         } else {
-            m_positionError = m_setpoint - m_measurement;
+            mPosError = mSetpoint - mMeasurement;
         }
 
-        m_velocityError = m_setpointVelocity - m_measurementVelocity;
+        mVelError = mSetpointVel - mMeasurementVel;
     }
 
     /**
@@ -272,7 +266,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return The current setpoint.
      */
     public double getSetpoint() {
-        return m_setpoint;
+        return mSetpoint;
     }
 
     /**
@@ -284,10 +278,10 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return Whether the error is within the acceptable bounds.
      */
     public boolean atSetpoint() {
-        return m_haveMeasurement
-                && m_haveSetpoint
-                && Math.abs(m_positionError) < m_positionTolerance
-                && Math.abs(m_velocityError) < m_velocityTolerance;
+        return mHaveMeasurement
+                && mHaveSetpoint
+                && Math.abs(mPosError) < mPosTolerance
+                && Math.abs(mVelError) < mVelTolerance;
     }
 
     /**
@@ -302,14 +296,14 @@ public class PIDV implements Sendable, AutoCloseable {
      * @param maximumInput The maximum value expected from the input.
      */
     public void enableContinuousInput(double minimumInput, double maximumInput) {
-        m_continuous = true;
-        m_minimumInput = minimumInput;
-        m_maximumInput = maximumInput;
+        mContinuous = true;
+        mMinInput = minimumInput;
+        mMaxInput = maximumInput;
     }
 
     /** Disables continuous input. */
     public void disableContinuousInput() {
-        m_continuous = false;
+        mContinuous = false;
     }
 
     /**
@@ -318,7 +312,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return True if continuous input is enabled.
      */
     public boolean isContinuousInputEnabled() {
-        return m_continuous;
+        return mContinuous;
     }
 
     /**
@@ -333,8 +327,8 @@ public class PIDV implements Sendable, AutoCloseable {
      * @param maximumIntegral The maximum value of the integrator.
      */
     public void setIntegratorRange(double minimumIntegral, double maximumIntegral) {
-        m_minimumIntegral = minimumIntegral;
-        m_maximumIntegral = maximumIntegral;
+        mMinIntegral = minimumIntegral;
+        mMaxIntegral = maximumIntegral;
     }
 
     /**
@@ -353,8 +347,8 @@ public class PIDV implements Sendable, AutoCloseable {
      * @param velocityTolerance Velocity error which is tolerable.
      */
     public void setTolerance(double positionTolerance, double velocityTolerance) {
-        m_positionTolerance = positionTolerance;
-        m_velocityTolerance = velocityTolerance;
+        mPosTolerance = positionTolerance;
+        mVelTolerance = velocityTolerance;
     }
 
     /**
@@ -363,7 +357,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return The error.
      */
     public double getPositionError() {
-        return m_positionError;
+        return mPosError;
     }
 
     /**
@@ -372,7 +366,7 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return The velocity error.
      */
     public double getVelocityError() {
-        return m_velocityError;
+        return mVelError;
     }
 
     /**
@@ -383,9 +377,9 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return The next controller output.
      */
     public double calculate(double measurement, double measurementVelocity, double setpoint, double setpointVelocity) {
-        m_setpoint = setpoint;
-        m_setpointVelocity = setpointVelocity;
-        m_haveSetpoint = true;
+        mSetpoint = setpoint;
+        mSetpointVel = setpointVelocity;
+        mHaveSetpoint = true;
         return calculate(measurement, measurementVelocity);
     }
 
@@ -396,39 +390,39 @@ public class PIDV implements Sendable, AutoCloseable {
      * @return The next controller output.
      */
     public double calculate(double measurement, double measurementVelocity) {
-        m_measurement = measurement;
-        m_measurementVelocity = measurementVelocity;
-        m_haveMeasurement = true;
+        mMeasurement = measurement;
+        mMeasurementVel = measurementVelocity;
+        mHaveMeasurement = true;
 
-        if (m_continuous) {
-            double errorBound = (m_maximumInput - m_minimumInput) / 2.0;
-            m_positionError = MathUtil.inputModulus(m_setpoint - m_measurement, -errorBound, errorBound);
+        if (mContinuous) {
+            double errorBound = (mMaxInput - mMinInput) / 2.0;
+            mPosError = MathUtil.inputModulus(mSetpoint - mMeasurement, -errorBound, errorBound);
         } else {
-            m_positionError = m_setpoint - m_measurement;
+            mPosError = mSetpoint - mMeasurement;
         }
 
-        m_velocityError = m_setpointVelocity - m_measurementVelocity;
+        mVelError = mSetpointVel - mMeasurementVel;
 
         // If the absolute value of the position error is greater than IZone, reset the
         // total error
-        if (Math.abs(m_positionError) > m_iZone) {
-            m_totalError = 0;
-        } else if (m_ki != 0) {
-            m_totalError = MathUtil.clamp(
-                    m_totalError + m_positionError * m_period,
-                    m_minimumIntegral / m_ki,
-                    m_maximumIntegral / m_ki);
+        if (Math.abs(mPosError) > mIZone) {
+            mTotalError = 0;
+        } else if (kI != 0) {
+            mTotalError = MathUtil.clamp(
+                    mTotalError + mPosError * m_period,
+                    mMinIntegral / kI,
+                    mMaxIntegral / kI);
         }
 
-        return m_kp * m_positionError + m_ki * m_totalError + m_kd * m_velocityError;
+        return kP * mPosError + kI * mTotalError + kD * mVelError;
     }
 
     /** Resets the previous error and the integral term. */
     public void reset() {
-        m_positionError = 0;
-        m_totalError = 0;
-        m_velocityError = 0;
-        m_haveMeasurement = false;
+        mPosError = 0;
+        mTotalError = 0;
+        mVelError = 0;
+        mHaveMeasurement = false;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package frc.robot.lib.control;
 
-//dc.10.21.2024 ported from com.team254.lib.util;
+import frc.robot.lib.control.PIDFConstants;
 
 import edu.wpi.first.hal.util.BoundaryException;
 import edu.wpi.first.wpilibj.Timer;
@@ -36,24 +36,28 @@ public class SynchronousPIDF {
     /**
      * Allocate a PID object with the given constants for P, I, D
      *
-     * @param Kp the proportional coefficient
-     * @param Ki the integral coefficient
-     * @param Kd the derivative coefficient
+     * @param kP the proportional coefficient
+     * @param kI the integral coefficient
+     * @param kD the derivative coefficient
      */
-    public SynchronousPIDF(double Kp, double Ki, double Kd) {
-        setPIDF(Kp, Ki, Kd, 0);
+    public SynchronousPIDF(double kP, double kI, double kD) {
+        setPIDF(kP, kI, kD, 0);
     }
 
     /**
      * Allocate a PID object with the given constants for P, I, D
      *
-     * @param Kp the proportional coefficient
-     * @param Ki the integral coefficient
-     * @param Kd the derivative coefficient
-     * @param Kf the feed forward gain coefficient
+     * @param kP the proportional coefficient
+     * @param kI the integral coefficient
+     * @param kD the derivative coefficient
+     * @param kF the feed forward gain coefficient
      */
-    public SynchronousPIDF(double Kp, double Ki, double Kd, double Kf) {
-        setPIDF(Kp, Ki, Kd, Kf);
+    public SynchronousPIDF(double kP, double kI, double kD, double kF) {
+        setPIDF(kP, kI, kD, kF);
+    }
+
+    public SynchronousPIDF(PIDFConstants constants) {
+        setPIDF(constants.kP, constants.kI, constants.kD, constants.kF);
     }
 
     public double calculate(double input) {
@@ -299,9 +303,9 @@ public class SynchronousPIDF {
     public String getState() {
         String lState = "";
 
-        lState += "Kp: " + m_P + "\n";
-        lState += "Ki: " + m_I + "\n";
-        lState += "Kd: " + m_D + "\n";
+        lState += "kP: " + m_P + "\n";
+        lState += "kI: " + m_I + "\n";
+        lState += "kD: " + m_D + "\n";
 
         return lState;
     }

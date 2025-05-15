@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.lib.control;
 
 import edu.wpi.first.math.MathSharedStore;
@@ -21,14 +17,14 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 public class ProfiledPIDV implements Sendable {
     private static int instances;
 
-    private PIDV m_controller;
-    private double m_minimumInput;
-    private double m_maximumInput;
+    private PIDV mController;
+    private double mMinInput;
+    private double mMaxInput;
 
-    private TrapezoidProfile.Constraints m_constraints;
-    private TrapezoidProfile m_profile;
-    private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-    private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
+    private TrapezoidProfile.Constraints mConstraints;
+    private TrapezoidProfile mProfile;
+    private TrapezoidProfile.State mGoal = new TrapezoidProfile.State();
+    private TrapezoidProfile.State mSetpoint = new TrapezoidProfile.State();
 
     /**
      * Allocates a ProfiledPIDController with the given constants for Kp, Ki, and
@@ -65,9 +61,9 @@ public class ProfiledPIDV implements Sendable {
     @SuppressWarnings("this-escape")
     public ProfiledPIDV(
             double Kp, double Ki, double Kd, TrapezoidProfile.Constraints constraints, double period) {
-        m_controller = new PIDV(Kp, Ki, Kd, period);
-        m_constraints = constraints;
-        m_profile = new TrapezoidProfile(m_constraints);
+        mController = new PIDV(Kp, Ki, Kd, period);
+        mConstraints = constraints;
+        mProfile = new TrapezoidProfile(mConstraints);
         instances++;
 
         SendableRegistry.add(this, "ProfiledPIDController", instances);
@@ -85,7 +81,7 @@ public class ProfiledPIDV implements Sendable {
      * @param Kd The differential coefficient. Must be &gt;= 0.
      */
     public void setPID(double Kp, double Ki, double Kd) {
-        m_controller.setPID(Kp, Ki, Kd);
+        mController.setPID(Kp, Ki, Kd);
     }
 
     /**
@@ -94,7 +90,7 @@ public class ProfiledPIDV implements Sendable {
      * @param Kp The proportional coefficient. Must be &gt;= 0.
      */
     public void setP(double Kp) {
-        m_controller.setP(Kp);
+        mController.setP(Kp);
     }
 
     /**
@@ -103,7 +99,7 @@ public class ProfiledPIDV implements Sendable {
      * @param Ki The integral coefficient. Must be &gt;= 0.
      */
     public void setI(double Ki) {
-        m_controller.setI(Ki);
+        mController.setI(Ki);
     }
 
     /**
@@ -112,7 +108,7 @@ public class ProfiledPIDV implements Sendable {
      * @param Kd The differential coefficient. Must be &gt;= 0.
      */
     public void setD(double Kd) {
-        m_controller.setD(Kd);
+        mController.setD(Kd);
     }
 
     /**
@@ -130,7 +126,7 @@ public class ProfiledPIDV implements Sendable {
      * @throws IllegalArgumentException if iZone &lt;= 0
      */
     public void setIZone(double iZone) {
-        m_controller.setIZone(iZone);
+        mController.setIZone(iZone);
     }
 
     /**
@@ -139,7 +135,7 @@ public class ProfiledPIDV implements Sendable {
      * @return proportional coefficient
      */
     public double getP() {
-        return m_controller.getP();
+        return mController.getP();
     }
 
     /**
@@ -148,7 +144,7 @@ public class ProfiledPIDV implements Sendable {
      * @return integral coefficient
      */
     public double getI() {
-        return m_controller.getI();
+        return mController.getI();
     }
 
     /**
@@ -157,7 +153,7 @@ public class ProfiledPIDV implements Sendable {
      * @return differential coefficient
      */
     public double getD() {
-        return m_controller.getD();
+        return mController.getD();
     }
 
     /**
@@ -166,7 +162,7 @@ public class ProfiledPIDV implements Sendable {
      * @return Maximum magnitude of error to allow integral control.
      */
     public double getIZone() {
-        return m_controller.getIZone();
+        return mController.getIZone();
     }
 
     /**
@@ -175,7 +171,7 @@ public class ProfiledPIDV implements Sendable {
      * @return The period of the controller.
      */
     public double getPeriod() {
-        return m_controller.getPeriod();
+        return mController.getPeriod();
     }
 
     /**
@@ -184,7 +180,7 @@ public class ProfiledPIDV implements Sendable {
      * @return the position tolerance of the controller.
      */
     public double getPositionTolerance() {
-        return m_controller.getPositionTolerance();
+        return mController.getPositionTolerance();
     }
 
     /**
@@ -193,7 +189,7 @@ public class ProfiledPIDV implements Sendable {
      * @return the velocity tolerance of the controller.
      */
     public double getVelocityTolerance() {
-        return m_controller.getVelocityTolerance();
+        return mController.getVelocityTolerance();
     }
 
     /**
@@ -202,7 +198,7 @@ public class ProfiledPIDV implements Sendable {
      * @param goal The desired goal state.
      */
     public void setGoal(TrapezoidProfile.State goal) {
-        m_goal = goal;
+        mGoal = goal;
     }
 
     /**
@@ -211,7 +207,7 @@ public class ProfiledPIDV implements Sendable {
      * @param goal The desired goal position.
      */
     public void setGoal(double goal) {
-        m_goal = new TrapezoidProfile.State(goal, 0);
+        mGoal = new TrapezoidProfile.State(goal, 0);
     }
 
     /**
@@ -220,7 +216,7 @@ public class ProfiledPIDV implements Sendable {
      * @return The goal.
      */
     public TrapezoidProfile.State getGoal() {
-        return m_goal;
+        return mGoal;
     }
 
     /**
@@ -232,7 +228,7 @@ public class ProfiledPIDV implements Sendable {
      * @return True if the error is within the tolerance of the error.
      */
     public boolean atGoal() {
-        return atSetpoint() && m_goal.equals(m_setpoint);
+        return atSetpoint() && mGoal.equals(mSetpoint);
     }
 
     /**
@@ -241,8 +237,8 @@ public class ProfiledPIDV implements Sendable {
      * @param constraints Velocity and acceleration constraints for goal.
      */
     public void setConstraints(TrapezoidProfile.Constraints constraints) {
-        m_constraints = constraints;
-        m_profile = new TrapezoidProfile(m_constraints);
+        mConstraints = constraints;
+        mProfile = new TrapezoidProfile(mConstraints);
     }
 
     /**
@@ -251,7 +247,7 @@ public class ProfiledPIDV implements Sendable {
      * @return Velocity and acceleration constraints.
      */
     public TrapezoidProfile.Constraints getConstraints() {
-        return m_constraints;
+        return mConstraints;
     }
 
     /**
@@ -260,7 +256,7 @@ public class ProfiledPIDV implements Sendable {
      * @return The current setpoint.
      */
     public TrapezoidProfile.State getSetpoint() {
-        return m_setpoint;
+        return mSetpoint;
     }
 
     /**
@@ -272,7 +268,7 @@ public class ProfiledPIDV implements Sendable {
      * @return True if the error is within the tolerance of the error.
      */
     public boolean atSetpoint() {
-        return m_controller.atSetpoint();
+        return mController.atSetpoint();
     }
 
     /**
@@ -287,14 +283,14 @@ public class ProfiledPIDV implements Sendable {
      * @param maximumInput The maximum value expected from the input.
      */
     public void enableContinuousInput(double minimumInput, double maximumInput) {
-        m_controller.enableContinuousInput(minimumInput, maximumInput);
-        m_minimumInput = minimumInput;
-        m_maximumInput = maximumInput;
+        mController.enableContinuousInput(minimumInput, maximumInput);
+        mMinInput = minimumInput;
+        mMaxInput = maximumInput;
     }
 
     /** Disables continuous input. */
     public void disableContinuousInput() {
-        m_controller.disableContinuousInput();
+        mController.disableContinuousInput();
     }
 
     /**
@@ -309,7 +305,7 @@ public class ProfiledPIDV implements Sendable {
      * @param maximumIntegral The maximum value of the integrator.
      */
     public void setIntegratorRange(double minimumIntegral, double maximumIntegral) {
-        m_controller.setIntegratorRange(minimumIntegral, maximumIntegral);
+        mController.setIntegratorRange(minimumIntegral, maximumIntegral);
     }
 
     /**
@@ -328,7 +324,7 @@ public class ProfiledPIDV implements Sendable {
      * @param velocityTolerance Velocity error which is tolerable.
      */
     public void setTolerance(double positionTolerance, double velocityTolerance) {
-        m_controller.setTolerance(positionTolerance, velocityTolerance);
+        mController.setTolerance(positionTolerance, velocityTolerance);
     }
 
     /**
@@ -337,7 +333,7 @@ public class ProfiledPIDV implements Sendable {
      * @return The error.
      */
     public double getPositionError() {
-        return m_controller.getPositionError();
+        return mController.getPositionError();
     }
 
     /**
@@ -346,7 +342,7 @@ public class ProfiledPIDV implements Sendable {
      * @return The change in error per second.
      */
     public double getVelocityError() {
-        return m_controller.getVelocityError();
+        return mController.getVelocityError();
     }
 
     /**
@@ -356,11 +352,11 @@ public class ProfiledPIDV implements Sendable {
      * @return The controller's next output.
      */
     public double calculate(double measurement, double measurementVelocity) {
-        if (m_controller.isContinuousInputEnabled()) {
+        if (mController.isContinuousInputEnabled()) {
             // Get error which is the smallest distance between goal and measurement
-            double errorBound = (m_maximumInput - m_minimumInput) / 2.0;
-            double goalMinDistance = MathUtil.inputModulus(m_goal.position - measurement, -errorBound, errorBound);
-            double setpointMinDistance = MathUtil.inputModulus(m_setpoint.position - measurement, -errorBound,
+            double errorBound = (mMaxInput - mMinInput) / 2.0;
+            double goalMinDistance = MathUtil.inputModulus(mGoal.position - measurement, -errorBound, errorBound);
+            double setpointMinDistance = MathUtil.inputModulus(mSetpoint.position - measurement, -errorBound,
                     errorBound);
 
             // Recompute the profile goal with the smallest error, thus giving the shortest
@@ -371,12 +367,12 @@ public class ProfiledPIDV implements Sendable {
             // only needs to
             // be offset from the measurement by the input range modulus; they don't need to
             // be equal.
-            m_goal.position = goalMinDistance + measurement;
-            m_setpoint.position = setpointMinDistance + measurement;
+            mGoal.position = goalMinDistance + measurement;
+            mSetpoint.position = setpointMinDistance + measurement;
         }
 
-        m_setpoint = m_profile.calculate(getPeriod(), m_setpoint, m_goal);
-        return m_controller.calculate(measurement, measurementVelocity, m_setpoint.position, m_setpoint.velocity);
+        mSetpoint = mProfile.calculate(getPeriod(), mSetpoint, mGoal);
+        return mController.calculate(measurement, measurementVelocity, mSetpoint.position, mSetpoint.velocity);
     }
 
     /**
@@ -412,8 +408,8 @@ public class ProfiledPIDV implements Sendable {
      * @param measurement The current measured State of the system.
      */
     public void reset(TrapezoidProfile.State measurement) {
-        m_controller.reset();
-        m_setpoint = measurement;
+        mController.reset();
+        mSetpoint = measurement;
     }
 
     /**

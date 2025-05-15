@@ -12,13 +12,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.autos.*;
-import frc.robot.autos.modes.TeleopAutoMode;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.vision.*;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.lib.loops.CrashTracker;
 import frc.robot.lib.loops.Looper;
 import frc.robot.lib.util.Util;
+import frc.robot.lib.util.interpolation.InterpolatingPose2d;
 /**
  * This class is where the bulk of the robot should be
  * declared,
@@ -27,53 +27,49 @@ import frc.robot.lib.util.Util;
  * subsystems, loopers, control button mappings etc) should be declared here.
  */
 public class RobotContainer {
-    public static boolean is_red_alliance = false;  //TODO: code the update logic for this property
+    public static boolean mIsRedAlliance = false;  //TODO: code the update logic for this property
 
-    private KeyMap m_Controller;
+    private KeyMap mController;
     
-    private Boolean foundStation = false;
+    private Boolean mFoundStation = false;
 
     /* Controllers */
-    private final Joystick m_JoyStick = new Joystick(0);
+    private final Joystick mJoyStick = new Joystick(0);
 
-    private final XboxController xboxController = new XboxController(0);
-    //private final XboxController xboxController2 = new XboxController(1);
-    /* button key-value */
-    /* JoyStick Buttons */
+    private final XboxController mXboxController = new XboxController(0);
     
     /* loop framework objects */
-    private final Looper m_EnabledLooper = new Looper();
-    private final Looper m_DisabledLooper = new Looper();
-    public final SubsystemManager m_SubsystemManager = SubsystemManager.getInstance();
+    private final Looper mEnabledLooper = new Looper();
+    private final Looper mDisabledLooper = new Looper();
+    public final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
     /* Subsystems instance */
-    private ExampleSubsystem m_ExampleSubsystem;
-    private Drive m_SwerveDrive;
-    private LED m_Led;
-    private Cancoders m_Cancoders;
+    private ExampleSubsystem mExampleSubsystem;
+    private Drive mSwerveDrive;
+    private LED mLed;
+    private Cancoders mCancoders;
 
-    public AutoModeExecutor m_AutoModeExecutor;
-    public static final AutoModeSelector m_AutoModeSelector = new AutoModeSelector();
+    public AutoModeExecutor mAutoModeExecutor;
+    public static final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
-    public AutoModeExecutor mTeleopActionExecutor;
+    public AutoModeExecutor mTeleopAutoExecutor;
 	
-    private VisionDeviceManager m_VisionDevices;
+    private VisionDeviceManager mVisionDevices;
 
-    // contructor
     public RobotContainer() {
         try {
             // initialize subsystems
-            m_ExampleSubsystem = ExampleSubsystem.getInstance();
-            m_SwerveDrive = Drive.getInstance();
-            m_Led = LED.getInstance();
-            m_VisionDevices = VisionDeviceManager.getInstance();
+            mExampleSubsystem = ExampleSubsystem.getInstance();
+            mSwerveDrive = Drive.getInstance();
+            mLed = LED.getInstance();
+            mVisionDevices = VisionDeviceManager.getInstance();
 
             // initialize cancoders
             if (Robot.isReal()) {
-                m_Cancoders = Cancoders.getInstance();
+                mCancoders = Cancoders.getInstance();
                 double startInitTs = Timer.getFPGATimestamp();
                 System.out.println("* Starting to init Cancoders at ts " + startInitTs);
-                while (Timer.getFPGATimestamp() - startInitTs < Constants.Swerve.kCancoderBootAllowanceSeconds
-                        && !m_Cancoders.allHaveBeenInitialized()) {
+                while (Timer.getFPGATimestamp() - startInitTs < Constants.Swerve.CANCODER_BOOT_ALLOWANCE_SECONDS
+                        && !mCancoders.allHaveBeenInitialized()) {
                     Timer.delay(0.1);
                 }
                 System.out.println(
@@ -81,26 +77,28 @@ public class RobotContainer {
             }
 
             // reset swerve modules
-            if (m_SwerveDrive != null)
-                m_SwerveDrive.resetModulesToAbsolute();
+            if (mSwerveDrive != null)
+                mSwerveDrive.resetModulesToAbsolute();
 
             // add subsystems to SubsystemManager
-            m_SubsystemManager.setSubsystems(
-                    m_SwerveDrive,
-                    m_ExampleSubsystem,
-                    m_VisionDevices
+            mSubsystemManager.setSubsystems(
+                    mSwerveDrive,
+                    mExampleSubsystem,
+                    mVisionDevices
                     // TODO: Insert instances of additional subsystems here
             );
 
             // register subsystems to loopers
-            m_SubsystemManager.registerEnabledLoops(m_EnabledLooper);
-            m_SubsystemManager.registerDisabledLoops(m_DisabledLooper);
+            mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+            mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
-            RobotState.getInstance().resetKalman();
+
+		    RobotState.reset(0.0, new InterpolatingPose2d());
+            RobotState.resetKalman();
 
             // set swerves to neutral brake
-            if (m_SwerveDrive != null)
-                m_SwerveDrive.setNeutralBrake(true);
+            if (mSwerveDrive != null)
+                mSwerveDrive.setNeutralBrake(true);
 
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -122,20 +120,18 @@ public class RobotContainer {
      * Runs at the start of teleop mode
      */
     public void initTeleopMode() {
-        if (m_AutoModeExecutor != null) 
-            m_AutoModeExecutor.stop();  
+        if (mAutoModeExecutor != null) 
+            mAutoModeExecutor.stop();  
         
    		try {
-            // Create an empty TeleopAutoMode and bind it to controller
-            mTeleopActionExecutor = new AutoModeExecutor();
-            TeleopAutoMode teleopAutoMode = new TeleopAutoMode();
-            mTeleopActionExecutor.setAutoMode(teleopAutoMode);
-            m_Controller = new KeyMap(xboxController, teleopAutoMode, m_JoyStick);
-            System.out.println("Initializing Manual Mode");
-            if (m_SwerveDrive != null)
-                m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(0.0, 0.0, 0.0));
-            switchOnLooper(m_EnabledLooper, m_DisabledLooper);
-            mTeleopActionExecutor.start();
+            // Create an empty TeleopAutomation and bind it to controller
+            TeleopActionExecutor mTeleopActionExecutor = new TeleopActionExecutor();
+            mController = new KeyMap(mXboxController, mTeleopActionExecutor, mJoyStick);
+            System.out.println("Initializing Teleop Mode");
+            if (mSwerveDrive != null)
+                mSwerveDrive.feedTeleopSetpoint(new ChassisSpeeds());
+            switchOnLooper(mEnabledLooper, mDisabledLooper);
+            mTeleopAutoExecutor.start();
 		} catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -147,7 +143,7 @@ public class RobotContainer {
      */
     public void teleopModePeriodic() {
         try {
-            m_Controller.processKeyCommand();
+            mController.processKeyCommand();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -158,27 +154,27 @@ public class RobotContainer {
      * Runs at the beginning of autonomous mode
      */
     public void initAutoMode() {
-		m_AutoModeSelector.reset();
-		m_AutoModeSelector.updateModeCreator(true);
-        Optional<AutoModeBase> autoMode = m_AutoModeSelector.getAutoMode();
+		mAutoModeSelector.reset();
+		mAutoModeSelector.updateModeCreator(true);
+        Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
         if (autoMode.isPresent()) {
             System.out.println("Initializing Auto Mode: " + autoMode.get().getClass().getName());
-            m_AutoModeExecutor = new AutoModeExecutor();
-            m_AutoModeExecutor.setAutoMode(autoMode.get());
+            mAutoModeExecutor = new AutoModeExecutor();
+            mAutoModeExecutor.setAutoMode(autoMode.get());
         }
 
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (!ally.isPresent())
             return;
 		if (ally.get() == Alliance.Blue) {
-            m_SwerveDrive.zeroGyro(180);
+            mSwerveDrive.zeroGyro(180);
         } else {
-            m_SwerveDrive.zeroGyro(0);
+            mSwerveDrive.zeroGyro(0);
         }
         
         try {
-            switchOnLooper(m_EnabledLooper, m_DisabledLooper);
-            m_AutoModeExecutor.start();
+            switchOnLooper(mEnabledLooper, mDisabledLooper);
+            mAutoModeExecutor.start();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -189,12 +185,13 @@ public class RobotContainer {
      * Runs at the beginning of disabled mode
      */
     public void initDisabledMode() {
-        if (m_AutoModeExecutor != null) {
-            m_AutoModeExecutor.stop();
+        if (mAutoModeExecutor != null) {
+            mAutoModeExecutor.stop();
         }
+
         try {
-            switchOnLooper(m_DisabledLooper, m_EnabledLooper);
-            xboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+            switchOnLooper(mDisabledLooper, mEnabledLooper);
+            mXboxController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -205,8 +202,7 @@ public class RobotContainer {
      * Runs every cycle in disabled mode
      */
     public void disabledPeriodicMode() {
-        m_Led.rainbowPulse();
-        if (foundStation) 
+        if (mFoundStation) 
             return;
 
         Optional<Alliance> ally = DriverStation.getAlliance();
@@ -214,23 +210,32 @@ public class RobotContainer {
         if (!ally.isPresent()){
             return;
         } if (ally.get() == Alliance.Blue) {
-            m_SwerveDrive.zeroGyro(180);
+            mSwerveDrive.zeroGyro(180);
         } else {
-            m_SwerveDrive.zeroGyro(0);
+            mSwerveDrive.zeroGyro(0);
         }
 
-        if (RobotState.getInstance().mLatestVisionUpdate.isPresent()) {
-            m_SwerveDrive.resetOdometry(new Pose2d(RobotState.getInstance().mLatestVisionUpdate.get().getFieldToVehicle(), Rotation2d.fromDegrees(180)));
+        if (RobotState.mLatestVisionUpdate.isPresent()) {
+            mSwerveDrive.resetOdometry(new Pose2d(
+                    RobotState.mLatestVisionUpdate.get().getFieldToVehicle(),
+                    Rotation2d.kPi
+            ));
         }
 
-        foundStation = true;
+        try {
+            mLed.writePeriodicOutputs();
+        } catch (Exception e) {}
+
+        mFoundStation = true;
     }
 
-    
+    /**
+     * Runs at the beginning of test mode
+     */
     public void initTestMode() {
         try {
-            if (m_AutoModeExecutor != null) {
-                m_AutoModeExecutor.stop();
+            if (mAutoModeExecutor != null) {
+                mAutoModeExecutor.stop();
             }
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -238,28 +243,31 @@ public class RobotContainer {
         }
     }
 
-    public void testModePeriodic() {
-        
-    }
-
-
+    /**
+     * Runs every cycle in test mode
+     */
+    public void testModePeriodic() {}
 
     /** 
-     * init robot for simulation mode
+     * Runs at the beginning of simulation mode
     */
-    private void initSimulation() {
-        //put robot on the start line  to simulate the actual game
+    public void initSimulation() {
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (!ally.isPresent()){
             System.out.println("Alliance is NOT present! Abort!");
             return;
         }
 		if (ally.get() == Alliance.Blue) {
-            m_SwerveDrive.zeroGyro(180);
-            m_SwerveDrive.resetOdometry(new Pose2d(new Translation2d(8.0,7.0), Rotation2d.fromDegrees(0)));
-        }else{
-            m_SwerveDrive.zeroGyro(0);
-            m_SwerveDrive.resetOdometry(new Pose2d(new Translation2d(9.5,1.26), Rotation2d.fromDegrees(0)));
+            mSwerveDrive.zeroGyro(180);
+            mSwerveDrive.resetOdometry(new Pose2d(new Translation2d(8.0,7.0), Rotation2d.fromDegrees(0)));
+        } else {
+            mSwerveDrive.zeroGyro(0);
+            mSwerveDrive.resetOdometry(new Pose2d(new Translation2d(9.5,1.26), Rotation2d.fromDegrees(0)));
         }
     }
+
+    /**
+     * Runs every cycle in simulation mode
+     */
+    public void simulationPeriodic() {}
 }

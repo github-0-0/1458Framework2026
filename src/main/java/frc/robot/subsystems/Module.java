@@ -76,13 +76,13 @@ public class Module extends Subsystem {
 		// Angle motor config
 		mAngleMotor = new TalonFX(moduleConstants.angleMotorID, "CV");
 		Phoenix6Util.checkErrorAndRetry(() ->
-				mAngleMotor.getConfigurator().apply(Constants.Swerve.AzimuthFXConfig(), Constants.kLongCANTimeoutMs));
+				mAngleMotor.getConfigurator().apply(Constants.Swerve.AngleMotorConfig(), Constants.LONG_CANT_TIMEOUT_MS));
 		mAngleMotor.setInverted(moduleConstants.angleInvert);
 
 		// Drive motor config
 		mDriveMotor = new TalonFX(moduleConstants.driveMotorID, "CV");
 		Phoenix6Util.checkErrorAndRetry(() ->
-				mDriveMotor.getConfigurator().apply(Constants.Swerve.DriveFXConfig(), Constants.kLongCANTimeoutMs));
+				mDriveMotor.getConfigurator().apply(Constants.Swerve.DriveMotorConfig(), Constants.LONG_CANT_TIMEOUT_MS));
 		mDriveMotor.setInverted(moduleConstants.driveInvert);
 		mDriveMotor.setPosition(0.0);
 
@@ -96,11 +96,11 @@ public class Module extends Subsystem {
 
 		mDriveMotorSim = new DCMotorSim(
 			LinearSystemId.createDCMotorSystem(
-				DCMotor.getKrakenX60Foc(1), 0.001, Constants.Swerve.driveGearRatio),
+				DCMotor.getKrakenX60Foc(1), 0.001, Constants.Swerve.DRIVE_GEAR_RATIO),
 				DCMotor.getKrakenX60Foc(1));
 		mAngleMotorSim = new DCMotorSim(
 			LinearSystemId.createDCMotorSystem(
-				DCMotor.getKrakenX60Foc(1), 0.001, Constants.Swerve.angleGearRatio),
+				DCMotor.getKrakenX60Foc(1), 0.001, Constants.Swerve.ANGEL_GEAR_RATIO),
 				DCMotor.getFalcon500Foc(1));
 	}
 
@@ -136,8 +136,8 @@ public class Module extends Subsystem {
 		double flip = setSteeringAngleOptimized(new Rotation2d(desiredState.angle.getRadians())) ? -1 : 1;
 		mPeriodicIO.targetVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
-				mPeriodicIO.targetVelocity, Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio);
-		mPeriodicIO.driveDemand = new VoltageOut(rotorSpeed * Constants.Swerve.kV)
+				mPeriodicIO.targetVelocity, Constants.Swerve.WHEEL_CIRCUMFERENCE, Constants.Swerve.DRIVE_GEAR_RATIO);
+		mPeriodicIO.driveDemand = new VoltageOut(rotorSpeed * Constants.Swerve.DRIVE_MOTOR_KV)
 				.withEnableFOC(true)
 				.withOverrideBrakeDurNeutral(false);
 	}
@@ -147,8 +147,8 @@ public class Module extends Subsystem {
 		mPeriodicIO.targetVelocity = desiredState.speedMetersPerSecond * flip;
 		double rotorSpeed = Conversions.MPSToRPS(
 				mPeriodicIO.targetVelocity,
-				Constants.Swerve.wheelCircumference,
-				Constants.Swerve.driveGearRatio);
+				Constants.Swerve.WHEEL_CIRCUMFERENCE,
+				Constants.Swerve.DRIVE_GEAR_RATIO);
 
 		if (Math.abs(rotorSpeed) < 0.002) {
 			mPeriodicIO.driveDemand = new NeutralOut();
@@ -181,7 +181,7 @@ public class Module extends Subsystem {
 	private double target_angle;
 
 	private void setSteeringAngleRaw(double angleDegrees) {
-		double rotorPosition = Conversions.degreesToRotation(angleDegrees, Constants.Swerve.angleGearRatio);
+		double rotorPosition = Conversions.degreesToRotation(angleDegrees, Constants.Swerve.ANGEL_GEAR_RATIO);
 		mPeriodicIO.rotationDemand = new PositionDutyCycle(rotorPosition);
 		SmartDashboard.putNumber("Drive/Module#" + kModuleNumber +"/AngleMotor/DemandAngle", angleDegrees);
 	}
@@ -194,11 +194,11 @@ public class Module extends Subsystem {
 
 
 	public void resetToAbsolute() {
- 		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.kLongCANTimeoutMs);
+ 		angleEncoder.getAbsolutePosition().waitForUpdate(Constants.LONG_CANT_TIMEOUT_MS);
 		double angle = Util.placeInAppropriate0To360Scope(
 				getCurrentUnboundedDegrees(), -(getCanCoder().getDegrees() - kAngleOffset));
-		double absolutePosition = Conversions.degreesToRotation(angle, Constants.Swerve.angleGearRatio);
-		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.setPosition(absolutePosition, Constants.kLongCANTimeoutMs));
+		double absolutePosition = Conversions.degreesToRotation(angle, Constants.Swerve.ANGEL_GEAR_RATIO);
+		Phoenix6Util.checkErrorAndRetry(() -> mAngleMotor.setPosition(absolutePosition, Constants.LONG_CANT_TIMEOUT_MS));
 	}
 
 	public void setDriveNeutralBrake(boolean wantBrake) {
@@ -266,19 +266,19 @@ public class Module extends Subsystem {
 	public double getCurrentVelocity() {
 		return Conversions.RPSToMPS(
 				mPeriodicIO.driveVelocity,
-				Constants.Swerve.wheelCircumference,
-				Constants.Swerve.driveGearRatio);
+				Constants.Swerve.WHEEL_CIRCUMFERENCE,
+				Constants.Swerve.DRIVE_GEAR_RATIO);
 	}
 
 	public double getDriveDistanceMeters() {
 		return Conversions.rotationsToMeters(
 				mPeriodicIO.drivePosition,
-				Constants.Swerve.wheelCircumference,
-				Constants.Swerve.driveGearRatio);
+				Constants.Swerve.WHEEL_CIRCUMFERENCE,
+				Constants.Swerve.DRIVE_GEAR_RATIO);
 	}
 
 	public double getCurrentUnboundedDegrees() {
-		return Conversions.rotationsToDegrees(mPeriodicIO.rotationPosition, Constants.Swerve.angleGearRatio);
+		return Conversions.rotationsToDegrees(mPeriodicIO.rotationPosition, Constants.Swerve.ANGEL_GEAR_RATIO);
 	}
 
 	public double getTimestamp() {
@@ -321,22 +321,22 @@ public class Module extends Subsystem {
 		mDriveMotorSim.update(TimedRobot.kDefaultPeriod);
 
 		mDriveMotorSimState.setRawRotorPosition(
-			mDriveMotorSim.getAngularPosition().times(Constants.Swerve.driveGearRatio));
+			mDriveMotorSim.getAngularPosition().times(Constants.Swerve.DRIVE_GEAR_RATIO));
 		mDriveMotorSimState.setRotorVelocity(
-			mDriveMotorSim.getAngularVelocity().times(Constants.Swerve.driveGearRatio));
+			mDriveMotorSim.getAngularVelocity().times(Constants.Swerve.DRIVE_GEAR_RATIO));
 
 		// Simulate steering
 		mAngleMotorSim.setInputVoltage(mAngleMotorSimState.getMotorVoltageMeasure().in(Volts));
 		mAngleMotorSim.update(TimedRobot.kDefaultPeriod);
 
 		mAngleMotorSimState.setRawRotorPosition(
-			mAngleMotorSim.getAngularPosition().times(Constants.Swerve.angleGearRatio));
+			mAngleMotorSim.getAngularPosition().times(Constants.Swerve.ANGEL_GEAR_RATIO));
 		mAngleMotorSimState.setRotorVelocity(
-			mAngleMotorSim.getAngularVelocity().times(Constants.Swerve.angleGearRatio));
+			mAngleMotorSim.getAngularVelocity().times(Constants.Swerve.ANGEL_GEAR_RATIO));
 
 		angleEncoderSimState.setRawPosition(
-			mAngleMotorSim.getAngularPosition().times(Constants.Swerve.angleGearRatio));
+			mAngleMotorSim.getAngularPosition().times(Constants.Swerve.ANGEL_GEAR_RATIO));
 		angleEncoderSimState.setVelocity(
-			mAngleMotorSim.getAngularVelocity().times(Constants.Swerve.angleGearRatio));
+			mAngleMotorSim.getAngularVelocity().times(Constants.Swerve.ANGEL_GEAR_RATIO));
 	}
 }

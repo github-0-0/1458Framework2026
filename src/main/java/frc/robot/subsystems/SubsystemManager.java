@@ -47,7 +47,7 @@ public class SubsystemManager implements ILooper {
 
     // Telemetry output
     public void outputTelemetry() {
-        if (Constants.disableExtraTelemetry) {
+        if (Constants.DISABLE_EXTRA_TELEMETRY) {
             return;
         }
         subsystems.forEach(Subsystem::outputTelemetry);

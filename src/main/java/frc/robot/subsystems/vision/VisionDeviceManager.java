@@ -32,10 +32,10 @@ public class VisionDeviceManager extends Subsystem {
 	private static boolean disable_vision = false;
 
 	private VisionDeviceManager() {
-		mLeftCamera = new VisionDevice(Constants.Limelight.kLeftVisionDevice);
-		mRightCamera = new VisionDevice(Constants.Limelight.kRightVisionDevice);
-		mFrontCamera = new VisionDevice(Constants.Limelight.kFrontVisionDevice);
-		mBackCamera = new VisionDevice(Constants.Limelight.kBackVisionDevice);
+		mLeftCamera = new VisionDevice(Constants.Limelight.LEFT_VISION_DEVICE);
+		mRightCamera = new VisionDevice(Constants.Limelight.RIGHT_VISION_DEVICE);
+		mFrontCamera = new VisionDevice(Constants.Limelight.FRONT_VISION_DEVICE);
+		mBackCamera = new VisionDevice(Constants.Limelight.BACK_VISION_DEVICE);
 		mAllCameras = List.of(mLeftCamera, mRightCamera, mFrontCamera, mBackCamera);
 	}
 

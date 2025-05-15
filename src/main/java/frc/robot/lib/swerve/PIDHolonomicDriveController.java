@@ -13,11 +13,12 @@ import frc.robot.RobotState;
 import frc.robot.lib.control.PIDV;
 import frc.robot.lib.control.ProfiledPIDV;
 import frc.robot.lib.trajectory.TrajectoryIterator;
+import frc.robot.lib.util.Stopwatch;
 
 public class PIDHolonomicDriveController implements DriveController {
-    private final PIDV xController;
-    private final PIDV yController;
-    private final ProfiledPIDV thetaController;
+    private final PIDV mXController;
+    private final PIDV mYController;
+    private final ProfiledPIDV mThetaController;
     private double translationKa;
 
     private TrajectoryIterator trajectory;
@@ -26,29 +27,27 @@ public class PIDHolonomicDriveController implements DriveController {
 
     private boolean enabled = true;
 
-    private double prevTime = 0.0;
-
-    private RobotState mRobotState = RobotState.getInstance();
+    private Stopwatch mStopwatch = null;
 
     public PIDHolonomicDriveController(PIDConstants translationConstants, PIDConstants rotationConstants, TrapezoidProfile.Constraints thetaConstraints) {
-        xController = new PIDV(
-                translationConstants.kP, translationConstants.kI, translationConstants.kD, 0.02);
-        yController = new PIDV(
-                translationConstants.kP, translationConstants.kI, translationConstants.kD, 0.02);
+        mXController = new PIDV(
+                translationConstants.kP, translationConstants.kI, translationConstants.kD, Constants.LOOPER_DT);
+        mYController = new PIDV(
+                translationConstants.kP, translationConstants.kI, translationConstants.kD, Constants.LOOPER_DT);
 
-        xController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
-        yController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
+        mXController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
+        mYController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
 
-        thetaController = new ProfiledPIDV(
+        mThetaController = new ProfiledPIDV(
                 rotationConstants.kP, rotationConstants.kI, rotationConstants.kD, thetaConstraints);
-        thetaController.setIntegratorRange(-rotationConstants.iZone, rotationConstants.iZone);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        mThetaController.setIntegratorRange(-rotationConstants.iZone, rotationConstants.iZone);
+        mThetaController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
     public void setTrajectory(TrajectoryIterator trajectory) {
         this.trajectory = trajectory;
-        prevTime = Timer.getFPGATimestamp();
+        mStopwatch.reset();
         this.trajectory.visualizeTrajectory();
     }
 
@@ -61,20 +60,21 @@ public class PIDHolonomicDriveController implements DriveController {
     public void reset() {
         if (trajectory != null && trajectory.getInitialState() != null) {
             trajectory.advance(Double.MIN_VALUE);
-            thetaController.reset(currentPose.getRotation().getRadians(), currentSpeeds.omegaRadiansPerSecond);
-            prevTime = Timer.getFPGATimestamp();
+            mThetaController.reset(currentPose.getRotation().getRadians(), currentSpeeds.omegaRadiansPerSecond);
+            mStopwatch.reset();
         }
     }
 
     @Override
     public ChassisSpeeds calculate() {
-        setRobotState(mRobotState.getLatestFieldToVehicle(), mRobotState.getSmoothedVelocity());
+        setRobotState(RobotState.getLatestFieldToVehicle(), RobotState.getSmoothedVelocity());
         if (trajectory == null || currentPose == null || currentSpeeds == null || trajectory.isDone()) {
             return new ChassisSpeeds(0, 0, 0);
         }
 
         Trajectory.State targetState = trajectory.getState();
-        trajectory.advance(Timer.getFPGATimestamp() - prevTime); // Move to next state internally
+        trajectory.advance(mStopwatch.getDeltaTime()); // Move to next state internally
+        mStopwatch.update();
 
         double vxFF = targetState.velocityMetersPerSecond * targetState.poseMeters.getRotation().getCos();
         double vyFF = targetState.velocityMetersPerSecond * targetState.poseMeters.getRotation().getSin();
@@ -87,18 +87,16 @@ public class PIDHolonomicDriveController implements DriveController {
         // xAccelFF += -angularAccel * targetState.poseMeters.getRotation().getSin();
         // yAccelFF += angularAccel * targetState.poseMeters.getRotation().getCos();
 
-        double xFeedback = xController.calculate(
+        double xFeedback = mXController.calculate(
                 currentPose.getX(), currentSpeeds.vxMetersPerSecond, targetState.poseMeters.getX(), vxFF);
-        double yFeedback = yController.calculate(
+        double yFeedback = mYController.calculate(
                 currentPose.getY(), currentSpeeds.vyMetersPerSecond, targetState.poseMeters.getY(), vyFF);
 
-        double thetaFeedback = thetaController.calculate(
+        double thetaFeedback = mThetaController.calculate(
                 currentPose.getRotation().getRadians(), currentSpeeds.omegaRadiansPerSecond,
-                new TrapezoidProfile.State(targetState.poseMeters.getRotation().getRadians(), 0), new TrapezoidProfile.Constraints(Constants.Swerve.maxAngularVelocity, Constants.Swerve.kMaxAngularAcceleration));
+                new TrapezoidProfile.State(targetState.poseMeters.getRotation().getRadians(), 0), new TrapezoidProfile.Constraints(Constants.Swerve.MAX_ANGULAR_VELOCITY, Constants.Swerve.MAX_ANGULAR_ACCELERATION));
 
-        double rotation = thetaFeedback + thetaController.getSetpoint().velocity;
-        
-        prevTime = Timer.getFPGATimestamp();
+        double rotation = thetaFeedback + mThetaController.getSetpoint().velocity;
 
         return ChassisSpeeds.fromFieldRelativeSpeeds(
                 vxFF + xFeedback, // + xAccelFF * translationKa,
@@ -110,7 +108,7 @@ public class PIDHolonomicDriveController implements DriveController {
     @Override
     public boolean isDone() {
         if (trajectory == null || trajectory.isDone()) {
-            System.out.println("Done with trajectory, error: " + Math.hypot(xController.getPositionError(), yController.getPositionError()));
+            System.out.println("Done with trajectory, error: " + Math.hypot(mXController.getPositionError(), mYController.getPositionError()));
             return true;
         }
         return false;

@@ -42,8 +42,8 @@ public class WheelTracker {
 		for (int i = 0; i < WheelProperties.length; i++) {
 			WheelProperties w = new WheelProperties();
 			Translation2d robotToWheel = new Translation2d(
-					Constants.Swerve.swerveModuleLocations[i].getX(),
-					Constants.Swerve.swerveModuleLocations[i].getY());
+					Constants.Swerve.MODULE_LOCATIONS[i].getX(),
+					Constants.Swerve.MODULE_LOCATIONS[i].getY());
 			w.startingPosition = robotToWheel;
 			WheelProperties[i] = w;
 		}

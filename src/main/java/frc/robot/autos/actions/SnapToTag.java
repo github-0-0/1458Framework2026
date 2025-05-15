@@ -8,13 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.pathplanner.lib.path.ConstraintsZone;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.IdealStartingState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.RotationTarget;
-import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.*;
@@ -46,7 +39,7 @@ public class SnapToTag implements Action {
 
 	static {
         offsets.put("CENTER",
-            new Translation2d(Constants.Swerve.trackWidth/2 + 0.20,0.0));
+            new Translation2d(Constants.Swerve.TRACK_WIDTH/2 + 0.20,0.0));
     
         presets.put("ANY", new int[] {});
 	}
@@ -100,8 +93,8 @@ public class SnapToTag implements Action {
     }
 
     private void getInitialState() {
-        initialSpeed = RobotState.getInstance().getSmoothedVelocity();
-        initialPose = RobotState.getInstance().getLatestFieldToVehicle();
+        initialSpeed = RobotState.getSmoothedVelocity();
+        initialPose = RobotState.getLatestFieldToVehicle();
     }
     
     private void getTagPosition() {

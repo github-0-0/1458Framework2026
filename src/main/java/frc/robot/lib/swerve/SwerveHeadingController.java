@@ -59,16 +59,10 @@ public class SwerveHeadingController {
 
 	public SwerveHeadingController() {
 		stabilizePID = new SynchronousPIDF(
-				Constants.Swerve.kStabilizeSwerveHeadingKp,
-				Constants.Swerve.kStabilizeSwerveHeadingKi,
-				Constants.Swerve.kStabilizeSwerveHeadingKd,
-				Constants.Swerve.kStabilizeSwerveHeadingKf);
+			Constants.Swerve.STABILIZE_HEADING_PIDF_CONSTANTS);
 
 		snapPID = new SynchronousPIDF(
-				Constants.Swerve.kSnapSwerveHeadingKp,
-				Constants.Swerve.kSnapSwerveHeadingKi,
-				Constants.Swerve.kSnapSwerveHeadingKd,
-				Constants.Swerve.kSnapSwerveHeadingKf);
+				Constants.Swerve.SNAP_HEADING_PIDF_CONSTANTS);
 
 		stabilizePID.setInputRange(-Math.PI, Math.PI);
 		stabilizePID.setContinuous();
