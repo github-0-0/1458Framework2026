@@ -11,7 +11,6 @@ import java.util.List;
  * Contains basic functions that are used often.
  */
 public class Util {
-
 	public static final double kEpsilon = 1e-12;
 
 	/**
@@ -19,72 +18,73 @@ public class Util {
 	 */
 	private Util() {}
 
-	/**
-	 * Limits the given input to the given magnitude.
-	 */
-	public static double limit(double v, double maxMagnitude) {
-		return limit(v, -maxMagnitude, maxMagnitude);
-	}
+	public static class MathUtil {
+		/**
+		 * Limits the given input to the given magnitude.
+		 */
+		public static double limit(double v, double maxMagnitude) {
+			return limit(v, -maxMagnitude, maxMagnitude);
+		}
 
-	public static double limit(double v, double min, double max) {
-		return Math.min(max, Math.max(min, v));
-	}
+		public static double limit(double v, double min, double max) {
+			return Math.min(max, Math.max(min, v));
+		}
 
-	public static boolean inRange(double v, double maxMagnitude) {
-		return inRange(v, -maxMagnitude, maxMagnitude);
-	}
+		public static boolean inRange(double v, double maxMagnitude) {
+			return inRange(v, -maxMagnitude, maxMagnitude);
+		}
 
-	/**
-	 * Checks if the given input is within the range (min, max), both exclusive.
-	 */
-	public static boolean inRange(double v, double min, double max) {
-		return v > min && v < max;
-	}
+		/**
+		 * Checks if the given input is within the range (min, max), both exclusive.
+		 */
+		public static boolean inRange(double v, double min, double max) {
+			return v > min && v < max;
+		}
 
-	public static double interpolate(double a, double b, double x) {
-		x = limit(x, 0.0, 1.0);
-		return a + (b - a) * x;
-	}
+		public static double interpolate(double a, double b, double x) {
+			x = limit(x, 0.0, 1.0);
+			return a + (b - a) * x;
+		}
 
-	public static String joinStrings(final String delim, final List<?> strings) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < strings.size(); ++i) {
-			sb.append(strings.get(i).toString());
-			if (i < strings.size() - 1) {
-				sb.append(delim);
+		public static String joinStrings(final String delim, final List<?> strings) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < strings.size(); ++i) {
+				sb.append(strings.get(i).toString());
+				if (i < strings.size() - 1) {
+					sb.append(delim);
+				}
 			}
-		}
-		return sb.toString();
-	}
-
-	public static boolean epsilonEquals(double a, double b, double epsilon) {
-		return (a - epsilon <= b) && (a + epsilon >= b);
-	}
-
-	public static boolean epsilonEquals(double a, double b) {
-		return epsilonEquals(a, b, kEpsilon);
-	}
-
-	public static boolean epsilonEquals(int a, int b, int epsilon) {
-		return (a - epsilon <= b) && (a + epsilon >= b);
-	}
-
-	public static boolean allCloseTo(final List<Double> list, double value, double epsilon) {
-		boolean result = true;
-		for (Double value_in : list) {
-			result &= epsilonEquals(value_in, value, epsilon);
-		}
-		return result;
-	}
-
-	public static double clamp(double value, double min, double max) {
-		if (min > max) {
-			throw new IllegalArgumentException("min must not be greater than max");
+			return sb.toString();
 		}
 
-		return Math.max(min, Math.min(value, max));
-	}
+		public static boolean epsilonEquals(double a, double b, double epsilon) {
+			return (a - epsilon <= b) && (a + epsilon >= b);
+		}
 
+		public static boolean epsilonEquals(double a, double b) {
+			return epsilonEquals(a, b, kEpsilon);
+		}
+
+		public static boolean epsilonEquals(int a, int b, int epsilon) {
+			return (a - epsilon <= b) && (a + epsilon >= b);
+		}
+
+		public static boolean allCloseTo(final List<Double> list, double value, double epsilon) {
+			boolean result = true;
+			for (Double value_in : list) {
+				result &= epsilonEquals(value_in, value, epsilon);
+			}
+			return result;
+		}
+
+		public static double clamp(double value, double min, double max) {
+			if (min > max) {
+				throw new IllegalArgumentException("min must not be greater than max");
+			}
+
+			return Math.max(min, Math.min(value, max));
+		}
+	}
 	public static double placeInAppropriate0To360Scope(double scopeReference, double newAngle) {
 		double lowerBound;
 		double upperBound;
@@ -116,7 +116,7 @@ public class Util {
 
 	public static double scaledDeadband(double value, double maxValue, double deadband) {
 		double deadbandedValue = deadBand(value, deadband);
-		if (epsilonEquals(deadbandedValue, 0.0)) return 0.0;
+		if (MathUtil.epsilonEquals(deadbandedValue, 0.0)) return 0.0;
 		return Math.signum(deadbandedValue) * ((Math.abs(deadbandedValue) - deadband) / (maxValue - deadband));
 	}
 
@@ -161,31 +161,6 @@ public class Util {
 		return argument;
 	}
 
-/* 
-	public static Pose2d toWPILibPose(com.team254.lib.geometry.Pose2d pose) {
-		return new Pose2d(
-				pose.getTranslation().x(),
-				pose.getTranslation().y(),
-				edu.wpi.first.math.geometry.Rotation2d.fromDegrees(
-						pose.getRotation().getDegrees()));
-	}
-
-	public static com.team254.lib.geometry.Pose2d to254Pose(Pose2d pose) {
-		return new com.team254.lib.geometry.Pose2d(
-				pose.getTranslation().getX(),
-				pose.getTranslation().getY(),
-				Rotation2d.fromDegrees(pose.getRotation().getDegrees()));
-	}
-
-	public static edu.wpi.first.math.geometry.Rotation2d toWPILibRotation(Rotation2d rot) {
-		return edu.wpi.first.math.geometry.Rotation2d.fromDegrees(rot.getDegrees());
-	}
-
-	public static double quaternionTo2dRadians(double w, double x, double y, double z) {
-		return new Rotation3d(new Quaternion(w, x, y, z)).toRotation2d().getRadians();
-	}
-*/
-
 	public static Pose2d inversePose2d(Pose2d curPose) {
 		// Invert the rotation
 		Rotation2d inverseRotation = curPose.getRotation().unaryMinus();
@@ -198,8 +173,7 @@ public class Util {
 	}
 
 	/**
-	 * Ported from Citrus Pose2d static function exp() and log. 
-     * Obtain a new Pose2d from a (constant curvature=arc) velocity. See:
+     * Obtain a new Pose2d from a curvature velocity. See:
      * https://github.com/strasdat/Sophus/blob/master/sophus/se2.hpp
      */
 	private final static double kEps = 1E-9;	//only used by exp() and log() mapping functions
@@ -215,9 +189,9 @@ public class Util {
             c = (1.0 - cos_theta) / delta.dtheta;
         }
         return new Pose2d(new Translation2d(delta.dx * s - delta.dy * c, delta.dx * c + delta.dy * s),
-                new Rotation2d(cos_theta, sin_theta)); //take out the normalize: false parameter from citrus code
+                new Rotation2d(cos_theta, sin_theta));
     }
-
+	
     /**
      * Logical inverse of the exp() function above.
      */
@@ -243,9 +217,9 @@ public class Util {
 
 	//compare delta of two chassisspeeds is less than epsilon
 	public static boolean chassisSpeedsEpsilonEquals(ChassisSpeeds speed1, ChassisSpeeds other, double epsilon) {
-		return Util.epsilonEquals(speed1.vxMetersPerSecond, other.vxMetersPerSecond, epsilon)
-				&& Util.epsilonEquals(speed1.vyMetersPerSecond, other.vyMetersPerSecond, epsilon)
-				&& Util.epsilonEquals(speed1.omegaRadiansPerSecond, other.omegaRadiansPerSecond, epsilon);
+		return MathUtil.epsilonEquals(speed1.vxMetersPerSecond, other.vxMetersPerSecond, epsilon)
+				&& MathUtil.epsilonEquals(speed1.vyMetersPerSecond, other.vyMetersPerSecond, epsilon)
+				&& MathUtil.epsilonEquals(speed1.omegaRadiansPerSecond, other.omegaRadiansPerSecond, epsilon);
 	}
 
 

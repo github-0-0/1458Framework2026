@@ -14,6 +14,7 @@ import frc.robot.lib.control.PIDV;
 import frc.robot.lib.control.ProfiledPIDV;
 import frc.robot.lib.trajectory.TrajectoryIterator;
 import frc.robot.lib.util.Stopwatch;
+import frc.robot.lib.util.Util;
 
 public class PIDHolonomicDriveController implements DriveController {
     private final PIDV mXController;
@@ -69,7 +70,7 @@ public class PIDHolonomicDriveController implements DriveController {
     public ChassisSpeeds calculate() {
         setRobotState(RobotState.getLatestFieldToVehicle(), RobotState.getSmoothedVelocity());
         if (trajectory == null || currentPose == null || currentSpeeds == null || trajectory.isDone()) {
-            return new ChassisSpeeds(0, 0, 0);
+            return new ChassisSpeeds();
         }
 
         Trajectory.State targetState = trajectory.getState();
@@ -79,13 +80,20 @@ public class PIDHolonomicDriveController implements DriveController {
         double vxFF = targetState.velocityMetersPerSecond * targetState.poseMeters.getRotation().getCos();
         double vyFF = targetState.velocityMetersPerSecond * targetState.poseMeters.getRotation().getSin();
 
-        // double xAccelFF = targetState.accelerationMetersPerSecondSq * targetState.poseMeters.getRotation().getCos();
-        // double yAccelFF = targetState.accelerationMetersPerSecondSq * targetState.poseMeters.getRotation().getSin();
+        double xAccelFF = Util.deadBand(
+                targetState.accelerationMetersPerSecondSq * targetState.poseMeters.getRotation().getCos(),    
+                Constants.Swerve.MAX_ACCELERATION * 0.5);
+        double yAccelFF = Util.deadBand(
+                targetState.accelerationMetersPerSecondSq 
+                * targetState.poseMeters.getRotation().getSin(),
+                Constants.Swerve.MAX_ACCELERATION * 0.5);
 
         // Optional: curvature-based angular acceleration contribution
-        // double angularAccel = targetState.curvatureRadPerMeter * targetState.velocityMetersPerSecond * targetState.velocityMetersPerSecond;
-        // xAccelFF += -angularAccel * targetState.poseMeters.getRotation().getSin();
-        // yAccelFF += angularAccel * targetState.poseMeters.getRotation().getCos();
+        double angularAccel = Util.deadBand(
+                targetState.curvatureRadPerMeter * targetState.velocityMetersPerSecond * targetState.velocityMetersPerSecond,
+                Constants.Swerve.MAX_ANGULAR_ACCELERATION * 0.5);
+        xAccelFF += -angularAccel * targetState.poseMeters.getRotation().getSin();
+        yAccelFF += angularAccel * targetState.poseMeters.getRotation().getCos();
 
         double xFeedback = mXController.calculate(
                 currentPose.getX(), currentSpeeds.vxMetersPerSecond, targetState.poseMeters.getX(), vxFF);
@@ -99,8 +107,8 @@ public class PIDHolonomicDriveController implements DriveController {
         double rotation = thetaFeedback + mThetaController.getSetpoint().velocity;
 
         return ChassisSpeeds.fromFieldRelativeSpeeds(
-                vxFF + xFeedback, // + xAccelFF * translationKa,
-                vyFF + yFeedback, // + yAccelFF * translationKa,
+                vxFF + xFeedback + xAccelFF * translationKa,
+                vyFF + yFeedback + yAccelFF * translationKa,
                 rotation,
                 currentPose.getRotation());
     }

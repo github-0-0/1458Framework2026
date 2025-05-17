@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.autos.actions.*;
+import frc.robot.actions.*;
 import frc.robot.lib.sysid.subsystems.*;
 import frc.robot.lib.util.Stopwatch;
 

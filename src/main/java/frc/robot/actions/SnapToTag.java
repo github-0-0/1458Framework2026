@@ -1,4 +1,4 @@
-package frc.robot.autos.actions;
+package frc.robot.actions;
 
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
@@ -132,7 +132,7 @@ public class SnapToTag implements Action {
 		AprilTag closest_tag = null;
 		double closest_distance = Double.MAX_VALUE;
 
-		for (AprilTag tag : FieldLayout.kTagMap.getTags()) {
+		for (AprilTag tag : FieldLayout.APRILTAG_MAP.getTags()) {
 			double distance = robot_position.getDistance(tag.pose.getTranslation().toTranslation2d());
 
 			for (int num : ids) {

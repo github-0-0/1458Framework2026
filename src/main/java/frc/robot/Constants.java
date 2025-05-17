@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -46,7 +47,7 @@ public final class Constants {
             new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0)
         };
         
-        public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
+        public static final SwerveDriveKinematics Kinematics = new SwerveDriveKinematics(
             MODULE_LOCATIONS[0],
             MODULE_LOCATIONS[1],
             MODULE_LOCATIONS[2],
@@ -255,9 +256,9 @@ public final class Constants {
     }
 
     public static final class Auto { //TODO: This must be tuned to specific robot
-        public static final double X_CONTROLLER = 6;
-        public static final double Y_CONTROLLER = 6;
-        public static final double THETA_CONTROLLER = 4;
+        public static final PIDConstants X_CONSTANTS = new PIDConstants(6.0, 0.0, 0.0);
+        public static final PIDConstants Y_CONSTANTS = new PIDConstants(6.0, 0.0, 0.0);
+        public static final PIDConstants THETA_CONSTANTS = new PIDConstants(4.0, 0.0, 0.0);
     
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =

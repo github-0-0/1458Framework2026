@@ -29,12 +29,12 @@ public class FieldLayout {
 	public static double kFieldLength = Units.inchesToMeters(651.223);
 	public static double kFieldWidth = Units.inchesToMeters(323.277);
 
-	public static final double kApriltagWidth = Units.inchesToMeters(6.50);
-	public static final AprilTagFieldLayout kTagMap;
+	public static final double APRITAG_WIDTH = Units.inchesToMeters(6.50);
+	public static final AprilTagFieldLayout APRILTAG_MAP;
 
 	static {
 		try {
-			kTagMap = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
+			APRILTAG_MAP = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

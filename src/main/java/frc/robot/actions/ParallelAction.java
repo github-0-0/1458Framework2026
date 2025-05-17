@@ -1,4 +1,4 @@
-package frc.robot.autos.actions;
+package frc.robot.actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import java.util.List;
  *
  */
 public class ParallelAction implements Action {
-
 	private final ArrayList<Action> mActions;
 
 	public ParallelAction(List<Action> actions) {

@@ -7,41 +7,41 @@ import frc.robot.lib.loops.CrashTrackingRunnable;
  * mode.
  */
 public class AutoModeExecutor {
-	private AutoModeBase m_auto_mode;
-	private Thread m_thread = null;
+	private AutoModeBase mAutoMode;
+	private Thread mThread = null;
 
 	public synchronized void setAutoMode(AutoModeBase new_auto_mode) {
-		m_auto_mode = new_auto_mode;
+		mAutoMode = new_auto_mode;
 	}
 
 	public AutoModeBase getAutoMode() {
-		return m_auto_mode;
+		return mAutoMode;
 	}
 
 	public void start() {
-		if (m_thread == null) {
-			m_thread = new Thread(new CrashTrackingRunnable() {
+		if (mThread == null) {
+			mThread = new Thread(new CrashTrackingRunnable() {
 				@Override
 				public void runCrashTracked() {
-					if (m_auto_mode != null) {
-						m_auto_mode.run();
+					if (mAutoMode != null) {
+						mAutoMode.run();
 						System.out.println("Auto Executor Running!");
 					}
 				}
 			});
 
-			m_thread.start();
+			mThread.start();
 		}
 
 		System.out.println("Auto Executor Started!");
 	}
 
 	public void stop() {
-		if (m_auto_mode != null) {
-			m_auto_mode.stop();
+		if (mAutoMode != null) {
+			mAutoMode.stop();
 		}
 
-		m_thread = null;
+		mThread = null;
 		System.out.println("Auto Executor Stopped!");
 	}
 }

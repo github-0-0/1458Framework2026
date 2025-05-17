@@ -3,16 +3,13 @@ package frc.robot.autos.modes;
 import java.util.ArrayList;
 import java.util.List;
 
+import frc.robot.actions.*;
 import frc.robot.autos.AutoModeBase;
 import frc.robot.autos.AutoModeEndedException;
-import frc.robot.autos.actions.SwerveTrajectoryAction.ResetWheelTracker;
-import frc.robot.autos.actions.*;
 
 public class AutoStringAuto extends AutoModeBase {
     public String autoString;
     private String lastPoint = null;
-    private Boolean isFirstTrajectory = true;
-
 
     /**
      * Syntax:
@@ -37,8 +34,7 @@ public class AutoStringAuto extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("AutoStringAuto: run auto =" + autoString);
-        lastPoint = null; //last point on field
-        isFirstTrajectory = true;
+        lastPoint = null;
         runAction(new SeriesAction(parseAuto(autoString)));
         System.out.println("Finished auto!");
     }
@@ -59,13 +55,9 @@ public class AutoStringAuto extends AutoModeBase {
                         lastPoint = point;
                     } else {
                         listOfActions.add(new SwerveTrajectoryAction(
-                                lastPoint + "-" + point,
-                                isFirstTrajectory ? 
-                                    ResetWheelTracker.SET_TO_STARTING_POS 
-                                    : ResetWheelTracker.NO
+                                lastPoint + "-" + point
                         ));
                         lastPoint = point;
-                        isFirstTrajectory = false;
                     }
                     break;                
                 case("E"):
@@ -75,13 +67,9 @@ public class AutoStringAuto extends AutoModeBase {
                         lastPoint = point;
                     } else {
                         listOfActions.add(new SwerveTrajectoryAction(
-                                lastPoint + "-" + point,
-                                isFirstTrajectory ? 
-                                    ResetWheelTracker.SET_TO_STARTING_POS 
-                                    : ResetWheelTracker.NO
+                                lastPoint + "-" + point
                         ));
                         lastPoint = point;
-                        isFirstTrajectory = false;
                     }
                     break;
                 case("F"):
@@ -91,13 +79,9 @@ public class AutoStringAuto extends AutoModeBase {
                         lastPoint = point;
                     } else {
                         listOfActions.add(new SwerveTrajectoryAction(
-                                lastPoint + "-" + point,
-                                isFirstTrajectory ? 
-                                    ResetWheelTracker.SET_TO_STARTING_POS 
-                                    : ResetWheelTracker.NO
+                                lastPoint + "-" + point
                         ));
                         lastPoint = point;
-                        isFirstTrajectory = false;
                     }
                     break;
                 case("G"):
@@ -107,13 +91,9 @@ public class AutoStringAuto extends AutoModeBase {
                         lastPoint = point;
                     } else {
                         listOfActions.add(new SwerveTrajectoryAction(
-                                lastPoint + "-" + point,
-                                isFirstTrajectory ? 
-                                    ResetWheelTracker.SET_TO_STARTING_POS 
-                                    : ResetWheelTracker.NO
+                                lastPoint + "-" + point
                         ));
                         lastPoint = point;
-                        isFirstTrajectory = false;
                     }
                     break;
                 case "[":

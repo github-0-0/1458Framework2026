@@ -2,10 +2,11 @@ package frc.robot.subsystems;
 import frc.robot.lib.loops.ILooper;
 import frc.robot.lib.loops.Loop;
 public class ExampleSubsystem extends Subsystem {
+    public static boolean enabled = false;
 	private static ExampleSubsystem m_Instance;
 
     public static ExampleSubsystem getInstance() {
-		if (m_Instance == null) {
+		if (m_Instance == null && enabled) {
 			m_Instance = new ExampleSubsystem();
 		}
 		return m_Instance;

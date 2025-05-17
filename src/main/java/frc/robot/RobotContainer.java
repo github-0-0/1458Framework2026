@@ -57,6 +57,11 @@ public class RobotContainer {
 
     public RobotContainer() {
         try {
+            ExampleSubsystem.enabled = true;
+            Drive.enabled = true;
+            LED.enabled = true;
+            VisionDeviceManager.enabled = true;
+
             // initialize subsystems
             mExampleSubsystem = ExampleSubsystem.getInstance();
             mSwerveDrive = Drive.getInstance();
@@ -125,7 +130,7 @@ public class RobotContainer {
         
    		try {
             // Create an empty TeleopAutomation and bind it to controller
-            TeleopActionExecutor mTeleopActionExecutor = new TeleopActionExecutor();
+            ActionExecutor mTeleopActionExecutor = new ActionExecutor();
             mController = new KeyMap(mXboxController, mTeleopActionExecutor, mJoyStick);
             System.out.println("Initializing Teleop Mode");
             if (mSwerveDrive != null)
@@ -227,6 +232,8 @@ public class RobotContainer {
         } catch (Exception e) {}
 
         mFoundStation = true;
+
+        RobotState.setAlliance(ally);
     }
 
     /**

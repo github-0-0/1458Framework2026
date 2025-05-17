@@ -92,7 +92,7 @@ public class SynchronousPIDF {
             }
         }
 
-        if (Util.inRange(m_error * m_P, m_minimumOutput, m_maximumOutput)) {
+        if (Util.MathUtil.inRange(m_error * m_P, m_minimumOutput, m_maximumOutput)) {
             m_totalError += m_error * dt;
         } else {
             m_totalError = 0;
@@ -105,7 +105,7 @@ public class SynchronousPIDF {
                 + m_F * m_setpoint);
         m_prevError = m_error;
 
-        return Util.limit(m_result, m_minimumOutput, m_maximumOutput);
+        return Util.MathUtil.limit(m_result, m_minimumOutput, m_maximumOutput);
     }
 
     /**

@@ -80,12 +80,12 @@ public class VisionDevice extends Subsystem {
 				.getIntegerTopic("tid")
 				.subscribe(0, PubSubOption.keepDuplicates(true), PubSubOption.sendAll(true));
 
-		mConfigTable.getDoubleTopic("fiducial_size_m").publish().set(FieldLayout.kApriltagWidth);
+		mConfigTable.getDoubleTopic("fiducial_size_m").publish().set(FieldLayout.APRITAG_WIDTH);
 		try {
 			mConfigTable
 					.getStringTopic("tag_layout")
 					.publish()
-					.set(new ObjectMapper().writeValueAsString(FieldLayout.kTagMap));
+					.set(new ObjectMapper().writeValueAsString(FieldLayout.APRILTAG_MAP));
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("Failed to serialize apriltag layout");
 		}

@@ -8,10 +8,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
 public class VisionDeviceManager extends Subsystem {
+    public static boolean enabled;
 	private static VisionDeviceManager mInstance;
 
 	public static VisionDeviceManager getInstance() {
-		if (mInstance == null) {
+		if (mInstance == null && enabled) {
 			mInstance = new VisionDeviceManager();
 		}
 		return mInstance;

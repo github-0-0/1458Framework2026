@@ -100,15 +100,14 @@ public class PurePursuitDriveController implements DriveController {
 					motion_direction.getSin() * velocity_m,
 					velocity_m * mSetpoint.curvatureRadPerMeter);
 		
-
-			double searchStepSize =KPurePursuitMaxSearchRadius; 
+			double searchStepSize = KPurePursuitMaxSearchRadius; 
 			double previewQuantity = 0.0;
 			double searchDirection = 1.0;
 			double forwardDistance = distanceToTrajectory(current_pose, previewQuantity + searchStepSize);
 			double reverseDistance = distanceToTrajectory(current_pose, previewQuantity - searchStepSize);
 			searchDirection = Math.signum(reverseDistance - forwardDistance);
 			while (searchStepSize > 0.001) {
-				if (Util.epsilonEquals(distanceToTrajectory(current_pose, previewQuantity), 0.0, 0.0003937)) break; 
+				if (Util.MathUtil.epsilonEquals(distanceToTrajectory(current_pose, previewQuantity), 0.0, 0.0003937)) break; 
 				while (distanceToTrajectory(current_pose, previewQuantity + searchStepSize * searchDirection) 
 						< distanceToTrajectory(current_pose, previewQuantity)) { 
 							previewQuantity += searchStepSize * searchDirection;	

@@ -1,7 +1,7 @@
 package frc.robot.autos;
 
-import frc.robot.autos.actions.Action;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.actions.Action;
 
 /**
  * An abstract class that is the basis of the robot's autonomous routines. This

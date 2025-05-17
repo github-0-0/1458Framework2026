@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.vision.VisionDeviceManager;
-import frc.robot.autos.actions.*;
+import frc.robot.actions.*;
 import frc.robot.lib.util.Util;
 
 /**
@@ -23,56 +23,56 @@ import frc.robot.lib.util.Util;
  */
 public class KeyMap {
     private XboxController mXboxController1 = null;
-    private TeleopActionExecutor mTeleopActionExecutor = null;
-    private Joystick m_JoyStick = null;
-    private Drive m_SwerveDrive = null;
-    private VisionDeviceManager m_VisionDevices = null;
-    private LED m_LED = null;
+    private ActionExecutor mTeleopActionExecutor = null;
+    private Joystick mJoyStick = null;
+    private Drive mSwerveDrive = null;
+    private VisionDeviceManager mVisionDevices = null;
+    private LED mLED = null;
 
-    private final EventLoop m_loop = new EventLoop();
+    private final EventLoop mLoop = new EventLoop();
     
     private boolean isFieldRelative = true;
 
-    private final int translationAxis = XboxController.Axis.kLeftY.value;
-    private final int strafeAxis = XboxController.Axis.kLeftX.value;
-    private final int rotationAxis = XboxController.Axis.kRightX.value;
+    private final int TRANSLATION_AXIS = XboxController.Axis.kLeftY.value;
+    private final int STRAFE_AXIS = XboxController.Axis.kLeftX.value;
+    private final int ROTATION_AXIS = XboxController.Axis.kRightX.value;
 
     public KeyMap(
         XboxController xboxController1, 
-        TeleopActionExecutor teleopAutoMode,
+        ActionExecutor teleopAutoMode,
         Joystick joystick
     ) {
         mXboxController1 = xboxController1;
         mTeleopActionExecutor = teleopAutoMode;
-        m_JoyStick = joystick;
-        m_SwerveDrive = Drive.getInstance();
-        m_VisionDevices = VisionDeviceManager.getInstance();
-        m_LED = LED.getInstance();
+        mJoyStick = joystick;
+        mSwerveDrive = Drive.getInstance();
+        mVisionDevices = VisionDeviceManager.getInstance();
+        mLED = LED.getInstance();
         
         //XYAB
-        mXboxController1.a(m_loop).rising().ifHigh(
+        mXboxController1.a(mLoop).rising().ifHigh(
                 () -> mTeleopActionExecutor.runAction(new EmptyAction()));
-        mXboxController1.b(m_loop).rising().ifHigh(
+        mXboxController1.b(mLoop).rising().ifHigh(
                 () -> mTeleopActionExecutor.runAction(new EmptyAction()));
-        mXboxController1.x(m_loop).rising().ifHigh(
+        mXboxController1.x(mLoop).rising().ifHigh(
                 () -> mTeleopActionExecutor.runAction(new EmptyAction()));
-        mXboxController1.y(m_loop).rising().ifHigh(
+        mXboxController1.y(mLoop).rising().ifHigh(
                 () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         //Bumper
-        mXboxController1.leftBumper(m_loop).rising().ifHigh(
+        mXboxController1.leftBumper(mLoop).rising().ifHigh(
                 () -> mTeleopActionExecutor.runAction(new SnapToTag("CENTER", "ANY")));
-        mXboxController1.rightBumper(m_loop).rising().ifHigh(
+        mXboxController1.rightBumper(mLoop).rising().ifHigh(
                 () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         //Triggers
-        mXboxController1.rightTrigger(0.5, m_loop).ifHigh(
+        mXboxController1.rightTrigger(0.5, mLoop).ifHigh(
                 () -> mTeleopActionExecutor.runAction(new EmptyAction()));
-        mXboxController1.leftTrigger(0.5, m_loop).rising().ifHigh(
+        mXboxController1.leftTrigger(0.5, mLoop).rising().ifHigh(
                 () -> mTeleopActionExecutor.runAction(new EmptyAction()));
         //Misc
-        mXboxController1.button(7, m_loop).rising().ifHigh(
+        mXboxController1.button(7, mLoop).rising().ifHigh(
                 () -> mTeleopActionExecutor.runAction(new EmptyAction()));
 
-        mXboxController1.start(m_loop).ifHigh(
+        mXboxController1.start(mLoop).ifHigh(
                 () -> isFieldRelative = !isFieldRelative
         );
     }
@@ -81,13 +81,13 @@ public class KeyMap {
         if (mTeleopActionExecutor == null)
             return;
 
-        m_loop.poll();
+        mLoop.poll();
 
-        double translationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(translationAxis), Constants.STICK_DEADBAND)
+        double translationVal = -MathUtil.applyDeadband(mJoyStick.getRawAxis(TRANSLATION_AXIS), Constants.STICK_DEADBAND)
                 * Constants.Swerve.MAX_SPEED;
-        double strafeVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(strafeAxis), Constants.STICK_DEADBAND)
+        double strafeVal = -MathUtil.applyDeadband(mJoyStick.getRawAxis(STRAFE_AXIS), Constants.STICK_DEADBAND)
                 * Constants.Swerve.MAX_SPEED;
-        double rotationVal = -MathUtil.applyDeadband(m_JoyStick.getRawAxis(rotationAxis), Constants.STICK_DEADBAND)
+        double rotationVal = -MathUtil.applyDeadband(mJoyStick.getRawAxis(ROTATION_AXIS), Constants.STICK_DEADBAND)
                 * Constants.Swerve.MAX_ANGULAR_VELOCITY;
 
         if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
@@ -96,24 +96,24 @@ public class KeyMap {
         }
 
         if (mXboxController1.getPOV() == 90) {
-            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+            mSwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
                     0, -0.4, 0));
         } else if (mXboxController1.getPOV() == 0) {
-            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+            mSwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
                     0.4, 0, 0));
         } else if (mXboxController1.getPOV() == 270) {
-            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+            mSwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
                     0, 0.4, 0));
         } else if (mXboxController1.getPOV() == 180) {
-            m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+            mSwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
                     -0.4, 0, 0));
         } else {
             if (isFieldRelative) {
-                m_SwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
+                mSwerveDrive.feedTeleopSetpoint(ChassisSpeeds.fromFieldRelativeSpeeds(
                         translationVal, strafeVal, rotationVal,
-                        Util.robotToFieldRelative(m_SwerveDrive.getHeading(), DriverStation.getAlliance().get() == Alliance.Red)));
+                        Util.robotToFieldRelative(mSwerveDrive.getHeading(), DriverStation.getAlliance().get() == Alliance.Red)));
             } else {
-                m_SwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
+                mSwerveDrive.feedTeleopSetpoint(new ChassisSpeeds(
                         translationVal, strafeVal, rotationVal));
             }
         }

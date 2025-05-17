@@ -1,4 +1,4 @@
-package frc.robot.autos.actions;
+package frc.robot.actions;
 
 public class ConditionalAction implements Action {
     public Action currentAction = null;

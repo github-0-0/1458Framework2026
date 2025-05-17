@@ -12,13 +12,14 @@ import frc.robot.lib.loops.ILooper;
 import frc.robot.lib.loops.Loop;
 
 public class LED extends Subsystem {
-    private static LED m_Instance;
+    public static boolean enabled = false;
+    private static LED mInstance;
 
     public static LED getInstance() {
-        if (m_Instance == null) {
-            m_Instance = new LED();
+        if (mInstance == null && enabled) {
+            mInstance = new LED();
         }
-        return m_Instance;
+        return mInstance;
     }
 
     public enum State {

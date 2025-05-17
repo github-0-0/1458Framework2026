@@ -1,6 +1,6 @@
 package frc.robot.lib.sysid.actions;
 
-import frc.robot.autos.actions.*;
+import frc.robot.actions.*;
 import frc.robot.lib.sysid.subsystems.*;
 
 public class ArmAction implements Action {

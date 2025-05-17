@@ -1,4 +1,4 @@
-package frc.robot.autos.actions;
+package frc.robot.actions;
 
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
