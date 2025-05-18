@@ -93,7 +93,6 @@ public class SnapToPose implements Action {
         }
 		
         mAction = new SwerveTrajectoryAction(mTrajectory);
-        System.out.println("Snapped to pose successfully");
     
         mAction.start();
     }
@@ -116,7 +115,7 @@ public class SnapToPose implements Action {
         if (mAction == null) {
             return;
         }
-        System.out.println("Done with snap");
+        System.out.println("Snapped to pose successfully");
         mAction.done();
     }
 

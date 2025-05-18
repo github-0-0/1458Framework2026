@@ -14,25 +14,30 @@ import frc.robot.lib.loops.CrashTrackingRunnable;
  */
 public class ActionExecutor {
     private Thread mThread = null;
-    private volatile boolean mIsActive = false;
+    private volatile boolean enabled = false;
 	private static final long WAIT_MS = (long) (Constants.LOOPER_DT * 1000);
 
     // Buffer for incoming actions
-    private final BlockingQueue<Action> mActionBuffer = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Action> mActionBuffer;
     // Active actions being executed
-    private final List<Action> mRunningActions = new ArrayList<>();
+    private final List<Action> mRunningActions;
+
+    public ActionExecutor() {
+        mActionBuffer = new LinkedBlockingQueue<>();
+        mRunningActions = new ArrayList<>();
+    }
 
     /**
      * Starts the executor thread.
      */
     public synchronized void start() {
         if (mThread == null) {
-            mIsActive = true;
+            enabled = true;
             mThread = new Thread(new CrashTrackingRunnable() {
                 @Override
                 public void runCrashTracked() {
                     try {
-                        while (mIsActive) {
+                        while (enabled) {
                             // Drain buffered actions into running list
                             Action action;
                             while ((action = mActionBuffer.poll()) != null) {
@@ -80,7 +85,7 @@ public class ActionExecutor {
      * Stops the executor thread cleanly.
      */
     public synchronized void stop() {
-        mIsActive = false;
+        enabled = false;
         if (mThread != null) {
             mThread.interrupt();
             try {

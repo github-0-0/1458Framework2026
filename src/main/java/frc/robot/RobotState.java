@@ -338,6 +338,7 @@ public class RobotState {
 
 	public static void setAlliance(Optional<Alliance> alliance) {
 		mAlliance = alliance;
+		System.out.println(alliance.toString());
 	}
 
 	public static Optional<Alliance> getAlliance() {

@@ -110,6 +110,12 @@ public class Util {
 		return newAngle;
 	}
 
+	/**
+	 * Applies a deadband to a specified value
+	 * @param val the value to deadband
+	 * @param deadband the deadband threshold
+	 * @return the deadbanded value
+	 */
 	public static double deadBand(double val, double deadband) {
 		return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
 	}

@@ -29,7 +29,7 @@ import frc.robot.lib.util.interpolation.InterpolatingPose2d;
 public class RobotContainer {
     public static boolean mIsRedAlliance = false;  //TODO: code the update logic for this property
 
-    private KeyMap mController;
+    private KeyMap2 mController;
     
     private Boolean mFoundStation = false;
 
@@ -51,7 +51,7 @@ public class RobotContainer {
     public AutoModeExecutor mAutoModeExecutor;
     public static final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
-    public AutoModeExecutor mTeleopAutoExecutor;
+    public ActionExecutor mTeleopActionExecutor;
 	
     private VisionDeviceManager mVisionDevices;
 
@@ -104,6 +104,8 @@ public class RobotContainer {
             // set swerves to neutral brake
             if (mSwerveDrive != null)
                 mSwerveDrive.setNeutralBrake(true);
+            
+            getAlliance();
 
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
@@ -125,18 +127,19 @@ public class RobotContainer {
      * Runs at the start of teleop mode
      */
     public void initTeleopMode() {
+        getAlliance();
         if (mAutoModeExecutor != null) 
             mAutoModeExecutor.stop();  
         
    		try {
             // Create an empty TeleopAutomation and bind it to controller
-            ActionExecutor mTeleopActionExecutor = new ActionExecutor();
-            mController = new KeyMap(mXboxController, mTeleopActionExecutor, mJoyStick);
+            mTeleopActionExecutor = new ActionExecutor();
+            mController = new KeyMap2(mXboxController, mEnabledLooper, mTeleopActionExecutor);
             System.out.println("Initializing Teleop Mode");
             if (mSwerveDrive != null)
                 mSwerveDrive.feedTeleopSetpoint(new ChassisSpeeds());
             switchOnLooper(mEnabledLooper, mDisabledLooper);
-            mTeleopAutoExecutor.start();
+            mTeleopActionExecutor.start();
 		} catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -148,7 +151,7 @@ public class RobotContainer {
      */
     public void teleopModePeriodic() {
         try {
-            mController.processKeyCommand();
+            //mController.processKeyCommand();
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
@@ -159,6 +162,7 @@ public class RobotContainer {
      * Runs at the beginning of autonomous mode
      */
     public void initAutoMode() {
+        getAlliance();
 		mAutoModeSelector.reset();
 		mAutoModeSelector.updateModeCreator(true);
         Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
@@ -168,10 +172,9 @@ public class RobotContainer {
             mAutoModeExecutor.setAutoMode(autoMode.get());
         }
 
-        Optional<Alliance> ally = DriverStation.getAlliance();
-        if (!ally.isPresent())
+        if (!RobotState.getAlliance().isPresent())
             return;
-		if (ally.get() == Alliance.Blue) {
+		if (RobotState.getAlliance().get() == Alliance.Blue) {
             mSwerveDrive.zeroGyro(180);
         } else {
             mSwerveDrive.zeroGyro(0);
@@ -190,6 +193,7 @@ public class RobotContainer {
      * Runs at the beginning of disabled mode
      */
     public void initDisabledMode() {
+        getAlliance();
         if (mAutoModeExecutor != null) {
             mAutoModeExecutor.stop();
         }
@@ -207,19 +211,6 @@ public class RobotContainer {
      * Runs every cycle in disabled mode
      */
     public void disabledPeriodicMode() {
-        if (mFoundStation) 
-            return;
-
-        Optional<Alliance> ally = DriverStation.getAlliance();
-
-        if (!ally.isPresent()){
-            return;
-        } if (ally.get() == Alliance.Blue) {
-            mSwerveDrive.zeroGyro(180);
-        } else {
-            mSwerveDrive.zeroGyro(0);
-        }
-
         if (RobotState.mLatestVisionUpdate.isPresent()) {
             mSwerveDrive.resetOdometry(new Pose2d(
                     RobotState.mLatestVisionUpdate.get().getFieldToVehicle(),
@@ -230,16 +221,13 @@ public class RobotContainer {
         try {
             mLed.writePeriodicOutputs();
         } catch (Exception e) {}
-
-        mFoundStation = true;
-
-        RobotState.setAlliance(ally);
     }
 
     /**
      * Runs at the beginning of test mode
      */
     public void initTestMode() {
+        getAlliance();
         try {
             if (mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();
@@ -259,12 +247,12 @@ public class RobotContainer {
      * Runs at the beginning of simulation mode
     */
     public void initSimulation() {
-        Optional<Alliance> ally = DriverStation.getAlliance();
-        if (!ally.isPresent()){
+        getAlliance();
+        if (!RobotState.getAlliance().isPresent()){
             System.out.println("Alliance is NOT present! Abort!");
             return;
         }
-		if (ally.get() == Alliance.Blue) {
+		if (RobotState.getAlliance().get() == Alliance.Blue) {
             mSwerveDrive.zeroGyro(180);
             mSwerveDrive.resetOdometry(new Pose2d(new Translation2d(8.0,7.0), Rotation2d.fromDegrees(0)));
         } else {
@@ -277,4 +265,18 @@ public class RobotContainer {
      * Runs every cycle in simulation mode
      */
     public void simulationPeriodic() {}
+
+    public void getAlliance() {
+        Optional<Alliance> ally = DriverStation.getAlliance();
+
+        RobotState.setAlliance(ally);
+
+        if (!ally.isPresent()){
+            return;
+        } if (ally.get() == Alliance.Blue) {
+            mSwerveDrive.zeroGyro(180);
+        } else {
+            mSwerveDrive.zeroGyro(0);
+        }
+    }
 }

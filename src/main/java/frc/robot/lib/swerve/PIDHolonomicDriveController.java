@@ -43,6 +43,7 @@ public class PIDHolonomicDriveController implements DriveController {
                 rotationConstants.kP, rotationConstants.kI, rotationConstants.kD, thetaConstraints);
         mThetaController.setIntegratorRange(-rotationConstants.iZone, rotationConstants.iZone);
         mThetaController.enableContinuousInput(-Math.PI, Math.PI);
+        mStopwatch = new Stopwatch();
     }
 
     @Override

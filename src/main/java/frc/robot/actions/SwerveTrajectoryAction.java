@@ -18,7 +18,6 @@ public class SwerveTrajectoryAction implements Action {
 	private String name = null;
 
 	public SwerveTrajectoryAction(String key) {
-		mDrive = Drive.getInstance();
 		PathPlannerTrajectory pTraj = TrajectoryGenerator
 				.getInstance().getTrajectorySet().loadPathPlannerTrajectory(key);
 		Optional<Alliance> ally = RobotState.getAlliance();
@@ -38,6 +37,7 @@ public class SwerveTrajectoryAction implements Action {
 	public void start() {
 		mTrajectoryIterator = new TrajectoryIterator(kTrajectory);
 		System.out.println("Swerve Trajectory Action Started! " + ((name != null) ? name : ""));
+		mDrive = Drive.getInstance();
 		mDrive.setTrajectory(mTrajectoryIterator);
 	}
 
