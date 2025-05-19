@@ -208,12 +208,12 @@ public class XboxBinder {
      */
     public void bindAxes(Consumer<List<Double>> consumer, Axes... keys) {
         List<Supplier<Double>> suppliers = Arrays.stream(keys)
-        .map(key -> {
-            Axis axis = mAxes.get(key);
-            if (axis == null) throw new IllegalArgumentException("No axis for " + key);
-            return axis.getSupplier();
-        })
-        .collect(Collectors.toList());
+            .map(key -> {
+                Axis axis = mAxes.get(key);
+                if (axis == null) throw new IllegalArgumentException("No axis for " + key);
+                return axis.getSupplier();
+            })
+            .collect(Collectors.toList());
 
         mLooper.register(new Loop() {
             @Override

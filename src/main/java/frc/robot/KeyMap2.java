@@ -64,8 +64,8 @@ public class KeyMap2 {
         //Joysticks
 		mBinder.bindAxes((List<Double> values) -> {
 			double x = values.get(0);
-			double y = values.get(0);
-			double z = values.get(0); 
+			double y = values.get(1);
+			double z = values.get(2); 
 			Optional<Alliance> ally = RobotState.getAlliance();
 			if (ally.isPresent()) {
 				if (ally.get() == Alliance.Red) {
@@ -81,10 +81,5 @@ public class KeyMap2 {
         }, Axes.LEFT_JOYSTICK_X, Axes.LEFT_JOYSTICK_Y, Axes.RIGHT_JOYSTICK_X);
 
 		mBinder.start();
-    }
-
-    public void processKeyCommand() {
-        if (mActionExecutor == null)
-            return;
     }
 }

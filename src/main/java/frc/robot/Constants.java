@@ -261,6 +261,10 @@ public final class Constants {
         public static final PIDConstants THETA_CONSTANTS = new PIDConstants(4.0, 0.0, 0.0);
     
         /* Constraint for the motion profilied robot angle controller */
+        public static final TrapezoidProfile.Constraints TRANSLATION_CONTROLLER_CONSTRAINTS =
+            new TrapezoidProfile.Constraints(
+                Swerve.MAX_AUTO_SPEED, Swerve.MAX_ACCELERATION); // currently unused
+        /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =
             new TrapezoidProfile.Constraints(
                 Swerve.MAX_ANGULAR_VELOCITY, Swerve.MAX_ANGULAR_ACCELERATION);
